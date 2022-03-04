@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"apsry.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="红日靶场">
+<meta property="og:type" content="article">
+<meta property="og:title" content="红日靶场一">
+<meta property="og:url" content="https://apsry.github.io/2022/03/04/OWASP-TOP10/index.html">
+<meta property="og:site_name" content="apsry">
+<meta property="og:description" content="红日靶场">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203042120203.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203042133400.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203042135064.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203042146707.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203042147943.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203042148687.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203042150000.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203042151663.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203042152065.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203042153756.png">
+<meta property="article:published_time" content="2022-03-04T11:26:00.000Z">
+<meta property="article:modified_time" content="2022-03-04T14:08:28.938Z">
+<meta property="article:author" content="apsry">
+<meta property="article:tag" content="web渗透">
+<meta property="article:tag" content="owasp">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203042120203.png">
+
+<link rel="canonical" href="https://apsry.github.io/2022/03/04/OWASP-TOP10/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>红日靶场一 | apsry</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+<!-- 引入目录截取js -->
+<script type="text/javascript" src="/js/src/abstract.js"></script>
+
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">apsry</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">去留无意，宠辱不惊</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://apsry.github.io/2022/03/04/OWASP-TOP10/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="apsry">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="apsry">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          红日靶场一
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-03-04 19:26:00 / 修改时间：22:08:28" itemprop="dateCreated datePublished" datetime="2022-03-04T19:26:00+08:00">2022-03-04</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web%E6%B8%97%E9%80%8F/" itemprop="url" rel="index"><span itemprop="name">web渗透</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>红日靶场</p>
+<span id="more"></span>
+
+<h2 id="A01：2021-失效的访问控制-Broken-Access-Control"><a href="#A01：2021-失效的访问控制-Broken-Access-Control" class="headerlink" title="A01：2021-失效的访问控制 Broken Access Control"></a>A01：2021-失效的访问控制 Broken Access Control</h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>访问控制强制实施策略，使用户无法在其预期权限之外进行操作。失败的访问控制通常会导致未经授权 的信息泄露、修改或销毁所有数据、或在用户权限之外执行业务功能。常见的访问控制脆弱点包括： </p>
+<ul>
+<li>违反最小特权原则或默认拒绝原则，即访问权限应该只授予特定能力、角色或用户，但实际上任何人都可 以访问。 </li>
+<li>通过修改 URL（参数篡改或强制浏览）、内部应用程序状态或 HTML 页面，或使用修改 API 请求的攻击 工具来绕过访问控制检查。</li>
+<li>通过提供唯一标识符（不安全的直接对象引用）允许查看或编辑其他人的帐户 </li>
+<li>API没有对POST、PUT 和DELETE强制执行访问控制。特权提升。 在未登录的情况下假扮用户或以用户身份登录时充当管理员。</li>
+<li>元数据操作，例如通过重放或篡改 JSON Web 令牌 (JWT) 来访问控制令牌，或操纵cookie 或隐藏字段以 提升权限，或滥用 JWT 失效。</li>
+<li>CORS 配置错误以致允许未授权或不可信的API访问。</li>
+<li>以未通过身份验证的用户身份强制浏览的通过身份验证时才能看到的页面或作为标准用户身份访问特权页 面。</li>
+</ul>
+<h3 id="预防措施"><a href="#预防措施" class="headerlink" title="预防措施"></a>预防措施</h3><p>访问控制只在受信服务器端代码或无服务器API中有效，这样攻击者才无法修改访问控制检查或元数据。 </p>
+<ul>
+<li><p>除公有资源外，默认为“拒绝访问”。 </p>
+</li>
+<li><p>使用一次性的访问控制机制，并在整个应用程序中不断重用它们，包括最小化跨源资源共享 (CORS) 的使 用。 </p>
+</li>
+<li><p>建立访问控制模型以强制执行所有权记录，而不是简单接受用户创建、读取、更新或删除的任何记录。 </p>
+</li>
+<li><p>特别的业务应用访问限制需求应由领域模型强制执行。 </p>
+</li>
+<li><p>禁用Web服务器目录列表，并确保文件元数据（例如： .git）和备份文件不存在于Web的根目录中。 </p>
+</li>
+<li><p>在日志中记录失败的访问控制，并在适当时向管理员告警（例如：重复故障）。 </p>
+</li>
+<li><p>对API和控制器的访问进行速率限制，以最大限度地降低自动化攻击工具带来的危害。 </p>
+</li>
+<li><p>当用户注销后，服务器上的状态会话标识符应失效。无状态的JWT令牌应该是短暂的，以便让攻击者的攻 击机会窗口最小化。 对于时间较长的JWT，强烈建议遵循OAuth标准来撤销访问。</p>
+</li>
+</ul>
+<p>开发人员和QA人员应进行访问控制功能的单元测试和集成测试。</p>
+<h3 id="攻击范例"><a href="#攻击范例" class="headerlink" title="攻击范例"></a>攻击范例</h3><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203042120203.png" alt="image-20220304212037145"></p>
+<h2 id="A02：2021-加密机制失效Cryptographic-Failures"><a href="#A02：2021-加密机制失效Cryptographic-Failures" class="headerlink" title="A02：2021-加密机制失效Cryptographic Failures"></a>A02：2021-加密机制失效Cryptographic Failures</h2><h3 id="概述-1"><a href="#概述-1" class="headerlink" title="概述"></a>概述</h3><p>首先要确认：对传输中数据和存储数据都有哪些保护需求。 例如，密码、信用卡号、医疗记录、个人信 息和商业秘密需要额外保护，尤其是在这些数据属于隐私保护法（如：欧盟GDPR) 或法规条例（如：金融数 据保护标准PCI DSS)适用范围的情况下。 对于这些数据，要确定： </p>
+<ul>
+<li><p>在传输数据过程中是否使用明文传输？这和传输协议有关，如：HTTP、SMTP、经过TLS升级（如 STARTTLS ）的FTP。外部网络流量是有害的。需要验证所有的内部通信，如，负载平衡、Web服务器或 后端系统之间的流量。 </p>
+</li>
+<li><p>无论是在默认情况下还是在旧的代码中，是否还在使用任何旧的或脆弱的加密算法或传输协议？ </p>
+</li>
+<li><p>是否使用默认加密密钥、生成或重复使用脆弱的加密密钥，或者是否缺少适当的密钥管理或密钥回转？加 密密钥是否已经提交到源代码存储库？ </p>
+</li>
+<li><p>是否未执行强制加密，例如，是否缺少安全相关的HTTP（浏览器）指令或标头？ </p>
+</li>
+<li><p>接收到的服务器证书和信任链是否经过正确验证？ </p>
+</li>
+<li><p>初始化向量是否忽略，重用或生成的密码操作模式是否不够安全？ 是否正在使用不安全的操作模式，例如 欧洲央行正在使用的操作模式？ 当认证加密更合适时是否使用加密？ </p>
+</li>
+<li><p>在缺乏密码基密钥派生函数的情况下，是否将密码用作加密密钥？ </p>
+</li>
+<li><p>随机性是否用于并非旨在满足加密要求的加密目的？ 即使选择了正确的函数，它是否需要由开发人员播种， 如果不需要，开发人员是否用缺乏足够熵&#x2F;不可预测性的种子覆盖了内置的强大播种功能？ </p>
+</li>
+<li><p>是否使用过时的散列函数，例如 MD5 或 SHA1，或者在散列函数需要加密时使用非加密散列函数？ </p>
+</li>
+<li><p>是否在使用已弃用的加密填充方法，例如 PCKS number 1 v1.5？ </p>
+</li>
+<li><p>加密的错误消息或侧信道信息是否可以利用，例如使用填充预言机攻击的形式？</p>
+</li>
+</ul>
+<h3 id="预防措施-1"><a href="#预防措施-1" class="headerlink" title="预防措施"></a>预防措施</h3><p>至少执行以下操作，并查阅参考资料： </p>
+<ul>
+<li><p>对应用程序处理、存储或传输的数据分类，并根据隐私法、监管要求或业务需求确定哪些数据是敏感的。 </p>
+</li>
+<li><p>对于没有必要存储的敏感数据，应当尽快清除，或者通过PCI DSS标记化或拦截。 未存储的数据不能窃取。 </p>
+</li>
+<li><p>确保加密存储的所有敏感数据。 </p>
+</li>
+<li><p>确保使用了最新的、强大的标准算法、协议和密钥；并且密钥管理到位。 </p>
+</li>
+<li><p>确保加密传输过程中的数据，如使用安全协议（例如具有前向保密 (FS) 密码的 TLS、服务器的密码优先级 和安全参数）。确保强制执行数据加密，如使用HTTP 严格安全传输协议 (HSTS) 等指令。 </p>
+</li>
+<li><p>禁用缓存对包含敏感数据的响应。 </p>
+</li>
+<li><p>根据数据分类应用实施所需的安全控制。 </p>
+</li>
+<li><p>不要使用FTP 和SMTP 等传统协议来传输敏感数据。 </p>
+</li>
+<li><p>使用具有工作因子（延迟因子）的强自适应和加盐散列函数存储密码，例如 Argon2、scrypt、bcrypt 或 PBKDF2。 </p>
+</li>
+<li><p>必须选择适合操作模式的初始化向量。对于大多数模式，可以使用CSPRNG（密码安全伪随机数生成器）。 对于需要随机数的模式，则初始化向量 (IV) 不需要使用CSPRNG。 在所有情况下，对于一个固定密钥，永 远不应该使用两次IV。 </p>
+</li>
+<li><p>始终使用经过验证的加密，而不仅仅是加密。 </p>
+</li>
+<li><p>密钥应以加密方式随机生成并作为字节数组存储在内存中。 如果使用密码，则必须通过适当的密码基密钥 派生函数将其转换为密钥。 </p>
+</li>
+<li><p>确保在适当的地方使用加密随机性，并且没有以可预测的方式或低熵进行播种。 大多数现代 API 不需要开 发人员为 CSPRNG 设置种子以获得安全性。 </p>
+</li>
+<li><p>避免使用的已废弃的加密函数和填充方案，例如 MD5、SHA1、PKCS number 1 v1.5。 </p>
+</li>
+<li><p>单独验证每个安全配置项的有效性。</p>
+</li>
+</ul>
+<h3 id="攻击范例-1"><a href="#攻击范例-1" class="headerlink" title="攻击范例"></a>攻击范例</h3><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203042133400.png" alt="image-20220304213332323"></p>
+<h2 id="A03：2021-注入Injection"><a href="#A03：2021-注入Injection" class="headerlink" title="A03：2021-注入Injection"></a>A03：2021-注入Injection</h2><h3 id="概述-2"><a href="#概述-2" class="headerlink" title="概述"></a>概述</h3><p>在以下情况下，应用程序易受攻击：</p>
+<ul>
+<li><p>应用程序不会验证、过滤或清洗用户提供的数据。 </p>
+</li>
+<li><p>动态查询或无上下文感知转义的非参数化调用直接在解释器中使用。 </p>
+</li>
+<li><p>恶意数据在对象关系映射（ORM）搜索参数中用于提取额外的敏感记录。 </p>
+</li>
+<li><p>恶意数据被直接使用或连接。SQL或命令包含动态查询、命令或存储过程中的结构和恶意数据。</p>
+</li>
+</ul>
+<p>​        一些更常见的注入包括：SQL、NoSQL、OS命令、对象关系映射（ORM）、LDAP和表达式 语言（EL）或对象图导航库（OGNL）注入。这一概念在所有解析器中都是相同的。源代码审查是 检测应用程序是否易受注入攻击的最佳方法。强烈鼓励针对所有参数、标题、URL、cookies、 JSON、SOAP和XML数据输入的自动测试。组织可以在CI&#x2F;CD管道中引入静态（SAST）、动态 （DAST）和交互式（IAST）应用程序安全测试工具，以在产品部署之前识别引入的注入缺陷。</p>
+<h3 id="预防措施-2"><a href="#预防措施-2" class="headerlink" title="预防措施"></a>预防措施</h3><p>防止注入需要将数据与命令和查询分开： </p>
+<ul>
+<li><p>推荐的选择是使用安全的API，这样可以避免完全使用解释器、提供参数化接口或迁移到对象关系 映射工具（ORM）。注意：即使参数化，如果PL&#x2F;SQL或T-SQL将查询和数据连接起来，或者使用 EXECUTE IMMEDIATE或exec（）执行恶意数据，则存储过程仍然可以引入SQL注入。 </p>
+</li>
+<li><p>使用肯定（positive）或“白名单”服务器端输入验证。这并不是一种完美的防御，因为许多应用 程序需要特殊字符，例如移动应用程序中的文本区域或API。 </p>
+</li>
+<li><p>对于任何残余的动态查询，请使用该解释器的特定转义语法转义特殊字符。注意：SQL结构（如表 名、列名等）无法转义，因此用户提供的结构名是危险的。这是报表编写软件中的常见问题。 </p>
+</li>
+<li><p>在查询中使用LIMIT和其他SQL控件，以防止在SQL注入的情况下大量披露记录。</p>
+</li>
+</ul>
+<h3 id="攻击范例-2"><a href="#攻击范例-2" class="headerlink" title="攻击范例"></a>攻击范例</h3><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203042135064.png" alt="image-20220304213505002"></p>
+<h2 id="A04：2021-不安全设计Insecure-Design"><a href="#A04：2021-不安全设计Insecure-Design" class="headerlink" title="A04：2021-不安全设计Insecure Design"></a>A04：2021-不安全设计Insecure Design</h2><h3 id="概述-3"><a href="#概述-3" class="headerlink" title="概述"></a>概述</h3><p>​        不安全设计是一个广泛的类别，代表不同的弱点，表示为“缺少或无效的控制设计”。不安全设计 不是所有其他前10个风险类别的来源。不安全设计和不安全的实现之间存在差异。我们区分设计缺陷和 实现缺陷是有原因的，它们有不同的根本原因和补救措施。安全设计仍然可能存在实现缺陷，从而导致 可能被利用的漏洞。一个不安全设计不能通过一个完美的实现来修复，因为根据定义，所需的安全控制 从未被创建来抵御特定的攻击。导致不安全设计的因素之一是开发的软件或系统中缺乏固有的业务风险 分析，因此无法确定需要何种级别的安全设计。 </p>
+<ul>
+<li>需求和资源管理</li>
+</ul>
+<p>​        收集应用程序的业务需求并与业务部门协商，包括所有数据资产和预期业务逻辑的机密性、完整性、可 用性和真实性方面的保护需求。考虑应用程序的公开程度，以及是否需要租户隔离（除访问控制外）。 编制技术要求，包括功能性和非功能性安全要求。计划和协商所有设计、建造、测试和运营的预算，包 括安全活动。 </p>
+<ul>
+<li>安全设计</li>
+</ul>
+<p>​        安全设计是一种文化和方法，它不断评估威胁，并确保代码经过稳健的设计和测试，以防止已知的攻击 方法。威胁建模应整合到细化会议（或类似活动）中；查看数据流和访问控制或其他安全控制中的更改。 在用户故事开发中，确定正确的流程和故障状态，确保责任方和受影响方充分理解并同意这些状态。分 析预期和故障流的假设和条件，确保其仍然准确和可取。确定如何验证正确行为所需的假设和实施条件。 确保结果记录在用户故事中。从错误中吸取教训，并提供积极的激励以促进改进。安全设计既不是附加 组件，也不是可以添加到软件中的工具。 </p>
+<ul>
+<li>安全开发生命周期</li>
+</ul>
+<p>​        安全的软件需要安全开发生命周期、某种形式的安全设计模式、AppSec规划方法、安全的组件库、工 具和威胁建模。在整个项目和软件维护过程中，在软件项目开始时联系您的安全专家。考虑利用 OWASP软件保证成熟度模型（SAMM）来帮助构建您的安全软件开发工作。</p>
+<h3 id="预防措施-3"><a href="#预防措施-3" class="headerlink" title="预防措施"></a>预防措施</h3><ul>
+<li><p>与应用安全专业人员建立并使用安全的开发生命周期，以帮助评估和设计与安全和隐私相关的控制。 </p>
+</li>
+<li><p>建立并使用安全设计模式的库，或使用AppSec规划中现有的要素。 </p>
+</li>
+<li><p>对关键身份验证、访问控制、业务逻辑和密钥流使用威胁建模。 </p>
+</li>
+<li><p>将安全语言和安全控制集成到用户故事中。 </p>
+</li>
+<li><p>在应用程序的每一层（从前端到后端）集成合理性检查。 </p>
+</li>
+<li><p>编写单元和集成测试，以验证所有关键流是否能够抵抗威胁模型。为应用程序的每一层编译正确用 例和误用案例。 </p>
+</li>
+<li><p>根据暴露和保护需要，对系统层和网络层进行分层。 </p>
+</li>
+<li><p>通过设计在所有层中严格隔离租户。 </p>
+</li>
+<li><p>限制用户或服务的资源消耗。</p>
+</li>
+</ul>
+<h3 id="攻击范例-3"><a href="#攻击范例-3" class="headerlink" title="攻击范例"></a>攻击范例</h3><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203042146707.png" alt="image-20220304214511220"></p>
+<h2 id="A05：2021-安全配置错误Security-Misconfiguration"><a href="#A05：2021-安全配置错误Security-Misconfiguration" class="headerlink" title="A05：2021-安全配置错误Security Misconfiguration"></a>A05：2021-安全配置错误Security Misconfiguration</h2><h3 id="概述-4"><a href="#概述-4" class="headerlink" title="概述"></a>概述</h3><p>您的应用程序可能受到攻击，如果应用程序是： </p>
+<ul>
+<li><p>应用程序栈的任何部分缺少适当的安全加固，或者云服务的权限配置错误。 </p>
+</li>
+<li><p>应用程序启用或安装了不必要的功能（例如：不必要的端口、服务、网页、帐户或权限）。 </p>
+</li>
+<li><p>默认帐户和密码仍然可用且没有更改。 </p>
+</li>
+<li><p>错误处理机制向用户纰漏堆栈信息或其他大量错误信息。 </p>
+</li>
+<li><p>对于升级的系统，最新的安全特性被禁用或未安全配置。 </p>
+</li>
+<li><p>应用程序服务器、应用程序框架（如：Struts、Spring、ASP.NET）、库文件、数据库等没有进 行安全配置。 </p>
+</li>
+<li><p>服务器不发送安全标头或指令，或未被设定安全参数。 </p>
+</li>
+<li><p>您的应用软件已过期或易受攻击（参见“A6:2021-脆弱和过时的组件”）。</p>
+</li>
+</ul>
+<p>缺少一个体系的、可重复的应用程序安全配置过程，系统将处于高风险中。</p>
+<h3 id="预防措施-4"><a href="#预防措施-4" class="headerlink" title="预防措施"></a>预防措施</h3><p>应实施安全的安装过程，包括： </p>
+<ul>
+<li><p>一个可以快速且易于部署在另一个锁定环境的可重复的加固过程。开发、质量保证和生产环境都应 该进行相同配置，并且在每个环境中使用不同的密码。这个过程应该是自动化的，以尽量减少安装 一个新安全环境的耗费。 </p>
+</li>
+<li><p>搭建最小化平台，该平台不包含任何不必要的功能、组件、文档和示例。移除或不安装不适用的功 能和框架。 </p>
+</li>
+<li><p>检查和修复安全配置项来适应最新的安全说明、更新和补丁，并将其作为更新管理过程的一部分 （参见“A6:2021-脆弱和过时的组件”）。在检查过程中，应特别注意云存储权限（如：S3桶权 限）。 </p>
+</li>
+<li><p>一个能在组件和用户间提供有效的分离和安全性的分段应用程序架构，包括：分段、容器化和云安 全组（ACL）。 * 向客户端发送安全指令，例如：安全标头。 </p>
+</li>
+<li><p>一个能够验证所有环境中进行了正确的安全配置和设置的自动化过程。</p>
+</li>
+</ul>
+<h3 id="攻击范例-4"><a href="#攻击范例-4" class="headerlink" title="攻击范例"></a>攻击范例</h3><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203042147943.png" alt="image-20220304214726888"></p>
+<h2 id="A06：2021-自带缺陷和过时的组件Vulnerable-and-Outdated-Components"><a href="#A06：2021-自带缺陷和过时的组件Vulnerable-and-Outdated-Components" class="headerlink" title="A06：2021-自带缺陷和过时的组件Vulnerable and Outdated Components"></a>A06：2021-自带缺陷和过时的组件Vulnerable and Outdated Components</h2><h3 id="概述-5"><a href="#概述-5" class="headerlink" title="概述"></a>概述</h3><p>如果满足下面的某个条件，那么您的应用就易受此类攻击： </p>
+<ul>
+<li><p>如果您不知道所有使用的组件版本信息（包括：服务端和客户端）。这包括了直接使用的组件或间 接依赖的组件。 </p>
+</li>
+<li><p>如果软件易受攻击，不再支持或者过时。这包括：系统、Web服务器、应用程序服务器、数据库 管理系统（DBMS）、应用程序、API和所有的组件、运行环境和库。 </p>
+</li>
+<li><p>如果您没有定期做漏洞扫描和订阅使用组件的安全公告。 </p>
+</li>
+<li><p>如果您不基于风险及时修复或升级底层平台、框架和依赖库。很可能发生这种情况：根据变更控制， 每月或每季度进行升级，这使得组织在这段时间内会受到已修复但未修补的漏洞的威胁。 </p>
+</li>
+<li><p>如果软件工程师没有对更新的、升级的或打过补丁的组件进行兼容性测试。 </p>
+</li>
+<li><p>如果您没有对组件进行安全配置（参见“A05:2021–安全配置错误”)。</p>
+</li>
+</ul>
+<h3 id="预防措施-5"><a href="#预防措施-5" class="headerlink" title="预防措施"></a>预防措施</h3><p>应制定一个补丁管理流程： </p>
+<ul>
+<li><p>移除不使用的依赖、不需要的功能、组件、文件和文档。 </p>
+</li>
+<li><p>利用如versions、OWASP Dependency Check、retire.js等工具来持续的记录客户端和服务器端 以及它们的依赖库的版本信息。持续监控如CVE和NVD等是否发布已使用组件的漏洞信息，可以 使用软件分析工具来自动完成此功能。订阅关于使用组件安全漏洞的警告邮件。 </p>
+</li>
+<li><p>仅从官方渠道安全的获取组件，并使用签名机制来降低组件被篡改或加入恶意漏洞的风险 (参见 “A08:2021-软件和数据完整性故障”)。 </p>
+</li>
+<li><p>监控那些不再维护或者不发布安全补丁的库和组件。如果不能打补丁，可以考虑部署虚拟补丁来监 控、检测或保护。 每个组织都应该制定相应的计划，对整个软件生命周期进行监控、评审、升级或更改配置。</p>
+</li>
+</ul>
+<h3 id="攻击范例-5"><a href="#攻击范例-5" class="headerlink" title="攻击范例"></a>攻击范例</h3><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203042148687.png" alt="image-20220304214822640"></p>
+<h2 id="A07：2021-身份识别和身份验证错误Identification-and-Authentication-Failures"><a href="#A07：2021-身份识别和身份验证错误Identification-and-Authentication-Failures" class="headerlink" title="A07：2021-身份识别和身份验证错误Identification and Authentication Failures"></a>A07：2021-身份识别和身份验证错误Identification and Authentication Failures</h2><h3 id="概述-6"><a href="#概述-6" class="headerlink" title="概述"></a>概述</h3><ul>
+<li><p>允许像是攻击者已经拥有有效用户名称和密码列表的撞库自动化攻击。 </p>
+</li>
+<li><p>允许暴力或其他自动化攻击。 </p>
+</li>
+<li><p>允许预设、脆弱、常见的密码。 </p>
+</li>
+<li><p>使用脆弱或无效的认证资讯回复或忘记密码的流程，如不安全的”知识相关问答”。 </p>
+</li>
+<li><p>使用明码、被加密的或使用较脆弱杂凑法的密码</p>
+</li>
+<li><p>不具有或是无效的多因素认证。 </p>
+</li>
+<li><p>于URL中泄漏会话(session) ID(如URL重写)。 * 成功登入后没有轮换会话(session) ID。 </p>
+</li>
+<li><p>没 有 正 确 的 注 销 会 话 (session) ID。用 户 的 会 话(session)或 认 证tokens(主 要 是 单 一 登 入 (SSO)token) 没有在登出时或一段时间没活动时被适当的注销。</p>
+</li>
+</ul>
+<h3 id="预防措施-6"><a href="#预防措施-6" class="headerlink" title="预防措施"></a>预防措施</h3><ul>
+<li><p>在可能的情况下，实施多因素认证来防止自动化撞库攻击、暴力破解、以及遭窃认证资讯被重复 利用的攻击。 </p>
+</li>
+<li><p>不要交付或部署任何预设的认证凭证，特别是管理者。 </p>
+</li>
+<li><p>实施弱密码的检查，如测试新设定或变更的密码是否存在于前10000个最差密码清单。 </p>
+</li>
+<li><p>将密码长度、复杂度和轮换政策与NIST 800-63b文件“第5.1.1节-被记忆的秘密或其他现代基于 证据的密码政策”的内容保持一致。 </p>
+</li>
+<li><p>对所有结果使用相同的讯息回应，确保注册、认证凭据回复以及API路径能够抵御帐号枚举攻击。 </p>
+</li>
+<li><p>限制或增加登入失败尝试的延迟。记录所有失败并于侦测到撞库、暴力破解或其他攻击时发出告 警。</p>
+</li>
+<li><p>使用服器端、安全的内建会话管理器，在登入后产生有高熵值的新随机会话ID。会话ID不应出现 在URL中，必须被安全的储存，并且在登出后、闲置、超时后被注销。</p>
+</li>
+</ul>
+<h3 id="攻击范例-6"><a href="#攻击范例-6" class="headerlink" title="攻击范例"></a>攻击范例</h3><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203042150000.png" alt="image-20220304215011927"></p>
+<h2 id="A08：2021-软件和数据完整性故障Software-and-Data-Integrity-Failures"><a href="#A08：2021-软件和数据完整性故障Software-and-Data-Integrity-Failures" class="headerlink" title="A08：2021-软件和数据完整性故障Software and Data Integrity Failures"></a>A08：2021-软件和数据完整性故障Software and Data Integrity Failures</h2><h3 id="概述-7"><a href="#概述-7" class="headerlink" title="概述"></a>概述</h3><p>​        软件和数据完整性故障与无法防止违反完整性的代码和基础设施有关。这方面的一个例子是， 应用程序依赖于不受信任的源、存储库和内容分发网络（CDN）的插件、库或模块。不安全的 CI&#x2F;CD管道可能会带来未经授权的访问、恶意代码或系统安全风险。最后，许多应用程序现在包括 自动更新功能。其中，更新包在没有进行充足完整性验证的情况下被下载，并应用于以前受信任的 应用程序。攻击者可能会上传自己的更新包，以便在所有安装上分发和运行。另一个例子是，对象 或数据被编码或序列化为攻击者可以看到和修改的结构，很容易受到不安全的反序列化的影响。</p>
+<h3 id="预防措施-7"><a href="#预防措施-7" class="headerlink" title="预防措施"></a>预防措施</h3><ul>
+<li><p>使用数字签名或类似机制来验证软件或数据来自预期来源，且未被修改。 </p>
+</li>
+<li><p>确保库和依赖项目，如：npm 或 Maven，正在使用受信任的存储库。如果您的风险较高，请考虑 托管一个经过审核的、内部已知合格的存储库。 </p>
+</li>
+<li><p>确保使用软件供应链安全工具（如：OWASP Dependency Check 或 OWASP CycloneDX）来验 证组件不包含已知漏洞。 * 确保对代码和配置更改进行审核，以最大限度地减少恶意代码或配置引入软件管道的可能性。 </p>
+</li>
+<li><p>确保您的CI&#x2F;CD管道具有适当的隔离、配置和访问控制，以确保代码在构建和部署过程中的完整性。 </p>
+</li>
+<li><p>确保通过特定形式的完整性检查或数字签名来检测序列化数据是否存在篡改或重播，所有未签名或 未加密的序列化数据不会发送到不受信任的客户端。</p>
+</li>
+</ul>
+<h3 id="攻击范例-7"><a href="#攻击范例-7" class="headerlink" title="攻击范例"></a>攻击范例</h3><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203042151663.png" alt="image-20220304215117596"></p>
+<h2 id="A09：2021-安全日志和监控故障Security-Logging-and-Monitoring-Failures"><a href="#A09：2021-安全日志和监控故障Security-Logging-and-Monitoring-Failures" class="headerlink" title="A09：2021-安全日志和监控故障Security Logging and Monitoring Failures"></a>A09：2021-安全日志和监控故障Security Logging and Monitoring Failures</h2><h3 id="概述-8"><a href="#概述-8" class="headerlink" title="概述"></a>概述</h3><p>​        2021年版OWASP Top 10中，该类别是为了帮助检测、升级和应对活跃的违规行为。如果不进 行日志记录和监测，就无法发现违规行为。任何时候都会发生日志记录、检测、监视和主动响应不 足的情况: </p>
+<ul>
+<li><p>需要审计的事件，例如：登录、失败的登录和高价值交易，但未记录。 </p>
+</li>
+<li><p>警告和错误未生成日志或日志记录不充分或日志消息不清晰。 </p>
+</li>
+<li><p>应用程序和 API的日志未进行安全可疑活动的监控。 * 日志只存储在本地。 </p>
+</li>
+<li><p>适当的警报阈值和响应升级过程不到位或无效。 </p>
+</li>
+<li><p>渗透测试和动态应用安全测试（DAST）工具（例如：OWASP ZAP）的扫描没有触发警报。 </p>
+</li>
+<li><p>应用无法实时或接近实时地检测、升级或或对主动攻击发出警报。 </p>
+</li>
+<li><p>如果让用户或攻击者看到日志和警报事件，您就容易受到信息泄露的攻击（查看“A01:2021-失 效的访问控制”）。</p>
+</li>
+</ul>
+<h3 id="预防措施-8"><a href="#预防措施-8" class="headerlink" title="预防措施"></a>预防措施</h3><p>开发人员应根据应用的风险，实施以下部分或全部控制： </p>
+<ul>
+<li><p>确保所有的登录、访问控制和服务器端输入验证失败都可以被记录在足够的用户上下文中，以识别 可疑或恶意的帐户，并保留足够的时间以允许延迟的取证分析。 </p>
+</li>
+<li><p>确保日志是日志管理解决方案以方便使用的格式生成的。 </p>
+</li>
+<li><p>确保日志数据被正确编码加密，以防止对日志或监控系统的注入或攻击。 </p>
+</li>
+<li><p>确保高价值交易有完整性控制的审计跟踪，以防止篡改或删除，例如：只附加数据库表或类似的内 容。 </p>
+</li>
+<li><p>DevSecOps团队应该建立有效的监控和警报，以便发现可疑的活动并迅速做出反应。 </p>
+</li>
+<li><p>建立或采用事故应对和恢复计划，例如：美国国家标准技术研究所(NIST)800-61r2或更高版本。 </p>
+</li>
+<li><p>有一些商业和开源的应用程序保护框架，如：OWASP ModSecurity核心规则集，以及开源的日 志相关软件，如：Elasticsearch、Logstash、Kibana（ELK），具有自定义仪表盘和告警功能。</p>
+</li>
+</ul>
+<h3 id="攻击范例-8"><a href="#攻击范例-8" class="headerlink" title="攻击范例"></a>攻击范例</h3><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203042152065.png" alt="image-20220304215240996"></p>
+<h2 id="A10：2021-服务端请求伪造Server-Side-Request-Forgery"><a href="#A10：2021-服务端请求伪造Server-Side-Request-Forgery" class="headerlink" title="A10：2021-服务端请求伪造Server-Side Request Forgery"></a>A10：2021-服务端请求伪造Server-Side Request Forgery</h2><h3 id="概述-9"><a href="#概述-9" class="headerlink" title="概述"></a>概述</h3><p>​        一旦Web应用在获取远程资源时没有验证用户提供的URL，就会出现SSRF缺陷。它允许攻击 者强制应用程序发送一个精心构建的请求到一个意外目的地，即使是在有防火墙、VPN或其他类型 的网络访问控制列表（ACL）保护的情况下。 </p>
+<p>​        随着现代Web应用为终端用户提供便利的功能，获取URL成为一种常见的场景。因此，SSRF安 全攻击事件也在不断增加。此外，由于云服务和架构的复杂性，SSRF的严重性也越来越高。</p>
+<h3 id="预防措施-9"><a href="#预防措施-9" class="headerlink" title="预防措施"></a>预防措施</h3><p>开发者可以通过实现以下部分或全部防御手段，纵深防御来阻止 SSRF: </p>
+<p>网络层防御建议： </p>
+<ul>
+<li><p>在隔离的网络中设置多个远程资源访问功能的网段，以减少SSRF的影响。 </p>
+</li>
+<li><p>执行“默认拒绝”防火墙策略或网络访问控制规则，以阻止除必要的内部网通信外的所有通信。</p>
+</li>
+</ul>
+<p>提示: </p>
+<p>​    建立基于应用的防火墙规则的所有权和生命周期。 </p>
+<p>​    在防火墙上记录所有接受和阻止的网络流(参见“A09:2021-安全日志和监控故障”)。 </p>
+<p>应用层防御建议： </p>
+<ul>
+<li><p>检查和验证所有客户端提供的输入数据。 </p>
+</li>
+<li><p>使用白名单允许列表允许列表执行URL统一资源标志符、端口和目标。 </p>
+</li>
+<li><p>不要给客户端发送原始的回复。 </p>
+</li>
+<li><p>禁用 HTTP 重定向。 </p>
+</li>
+<li><p>注意URL的一致性，以避免DNS重新绑定和“检查时间，使用时间”(TOCTOU)竞争条件等攻击。 </p>
+</li>
+<li><p>不要通过使用黑名单拒绝列表或正则表达式来缓解SSRF。攻击者拥有有效载荷列表、工具和绕过 拒绝列表的技能。</p>
+</li>
+</ul>
+<p>需额外考虑的措施: </p>
+<ul>
+<li>不要在前端系统上部署其他与安全相关的服务（如：OpenID）。控制这些系统上的本地流量（如： localhost）。 对于专用和可管理的前端用户，可以在独立系统上使用网络加密（如：vpn）来满足非常高的安全 保护需求。</li>
+</ul>
+<h3 id="攻击范例-9"><a href="#攻击范例-9" class="headerlink" title="攻击范例"></a>攻击范例</h3><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203042153756.png" alt="image-20220304215356693"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/web%E6%B8%97%E9%80%8F/" rel="tag"># web渗透</a>
+              <a href="/tags/owasp/" rel="tag"># owasp</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/03/04/%E7%BA%A2%E6%97%A5%E9%9D%B6%E5%9C%BA%EF%BC%881%EF%BC%89/" rel="prev" title="红日靶场一">
+      <i class="fa fa-chevron-left"></i> 红日靶场一
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#A01%EF%BC%9A2021-%E5%A4%B1%E6%95%88%E7%9A%84%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6-Broken-Access-Control"><span class="nav-text">A01：2021-失效的访问控制 Broken Access Control</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%84%E9%98%B2%E6%8E%AA%E6%96%BD"><span class="nav-text">预防措施</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%BB%E5%87%BB%E8%8C%83%E4%BE%8B"><span class="nav-text">攻击范例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#A02%EF%BC%9A2021-%E5%8A%A0%E5%AF%86%E6%9C%BA%E5%88%B6%E5%A4%B1%E6%95%88Cryptographic-Failures"><span class="nav-text">A02：2021-加密机制失效Cryptographic Failures</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-1"><span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%84%E9%98%B2%E6%8E%AA%E6%96%BD-1"><span class="nav-text">预防措施</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%BB%E5%87%BB%E8%8C%83%E4%BE%8B-1"><span class="nav-text">攻击范例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#A03%EF%BC%9A2021-%E6%B3%A8%E5%85%A5Injection"><span class="nav-text">A03：2021-注入Injection</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-2"><span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%84%E9%98%B2%E6%8E%AA%E6%96%BD-2"><span class="nav-text">预防措施</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%BB%E5%87%BB%E8%8C%83%E4%BE%8B-2"><span class="nav-text">攻击范例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#A04%EF%BC%9A2021-%E4%B8%8D%E5%AE%89%E5%85%A8%E8%AE%BE%E8%AE%A1Insecure-Design"><span class="nav-text">A04：2021-不安全设计Insecure Design</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-3"><span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%84%E9%98%B2%E6%8E%AA%E6%96%BD-3"><span class="nav-text">预防措施</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%BB%E5%87%BB%E8%8C%83%E4%BE%8B-3"><span class="nav-text">攻击范例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#A05%EF%BC%9A2021-%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE%E9%94%99%E8%AF%AFSecurity-Misconfiguration"><span class="nav-text">A05：2021-安全配置错误Security Misconfiguration</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-4"><span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%84%E9%98%B2%E6%8E%AA%E6%96%BD-4"><span class="nav-text">预防措施</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%BB%E5%87%BB%E8%8C%83%E4%BE%8B-4"><span class="nav-text">攻击范例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#A06%EF%BC%9A2021-%E8%87%AA%E5%B8%A6%E7%BC%BA%E9%99%B7%E5%92%8C%E8%BF%87%E6%97%B6%E7%9A%84%E7%BB%84%E4%BB%B6Vulnerable-and-Outdated-Components"><span class="nav-text">A06：2021-自带缺陷和过时的组件Vulnerable and Outdated Components</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-5"><span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%84%E9%98%B2%E6%8E%AA%E6%96%BD-5"><span class="nav-text">预防措施</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%BB%E5%87%BB%E8%8C%83%E4%BE%8B-5"><span class="nav-text">攻击范例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#A07%EF%BC%9A2021-%E8%BA%AB%E4%BB%BD%E8%AF%86%E5%88%AB%E5%92%8C%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81%E9%94%99%E8%AF%AFIdentification-and-Authentication-Failures"><span class="nav-text">A07：2021-身份识别和身份验证错误Identification and Authentication Failures</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-6"><span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%84%E9%98%B2%E6%8E%AA%E6%96%BD-6"><span class="nav-text">预防措施</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%BB%E5%87%BB%E8%8C%83%E4%BE%8B-6"><span class="nav-text">攻击范例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#A08%EF%BC%9A2021-%E8%BD%AF%E4%BB%B6%E5%92%8C%E6%95%B0%E6%8D%AE%E5%AE%8C%E6%95%B4%E6%80%A7%E6%95%85%E9%9A%9CSoftware-and-Data-Integrity-Failures"><span class="nav-text">A08：2021-软件和数据完整性故障Software and Data Integrity Failures</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-7"><span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%84%E9%98%B2%E6%8E%AA%E6%96%BD-7"><span class="nav-text">预防措施</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%BB%E5%87%BB%E8%8C%83%E4%BE%8B-7"><span class="nav-text">攻击范例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#A09%EF%BC%9A2021-%E5%AE%89%E5%85%A8%E6%97%A5%E5%BF%97%E5%92%8C%E7%9B%91%E6%8E%A7%E6%95%85%E9%9A%9CSecurity-Logging-and-Monitoring-Failures"><span class="nav-text">A09：2021-安全日志和监控故障Security Logging and Monitoring Failures</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-8"><span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%84%E9%98%B2%E6%8E%AA%E6%96%BD-8"><span class="nav-text">预防措施</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%BB%E5%87%BB%E8%8C%83%E4%BE%8B-8"><span class="nav-text">攻击范例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#A10%EF%BC%9A2021-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%AF%B7%E6%B1%82%E4%BC%AA%E9%80%A0Server-Side-Request-Forgery"><span class="nav-text">A10：2021-服务端请求伪造Server-Side Request Forgery</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-9"><span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%84%E9%98%B2%E6%8E%AA%E6%96%BD-9"><span class="nav-text">预防措施</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%BB%E5%87%BB%E8%8C%83%E4%BE%8B-9"><span class="nav-text">攻击范例</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">apsry</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">apsry</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
