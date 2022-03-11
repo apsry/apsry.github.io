@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"apsry.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="外网信息收集">
+<meta property="og:type" content="article">
+<meta property="og:title" content="外网信息收集">
+<meta property="og:url" content="https://apsry.github.io/2022/03/11/%E7%BA%A2%E9%98%9F%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86%E6%89%93%E7%82%B9checklist/index.html">
+<meta property="og:site_name" content="apsry">
+<meta property="og:description" content="外网信息收集">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081853520.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081853574.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081853662.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081853801.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081853818.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081853940.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081853271.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081853363.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081853253.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081853511.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081853522.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081853776.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203111721827.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203111722371.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081910591.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203111723243.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203111723493.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203111724686.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203111725539.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081915534.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203111726688.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081915371.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203111727641.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/20181004133738125">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203111729967.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203111729728.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081952541.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081952601.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081952737.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081952697.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081952798.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081952804.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081952468.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081952659.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081952610.png">
+<meta property="article:published_time" content="2022-03-11T09:26:00.000Z">
+<meta property="article:modified_time" content="2022-03-11T09:31:39.318Z">
+<meta property="article:author" content="apsry">
+<meta property="article:tag" content="web渗透">
+<meta property="article:tag" content="信息收集">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081853520.png">
+
+<link rel="canonical" href="https://apsry.github.io/2022/03/11/%E7%BA%A2%E9%98%9F%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86%E6%89%93%E7%82%B9checklist/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>外网信息收集 | apsry</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+<!-- 引入目录截取js -->
+<script type="text/javascript" src="/js/src/abstract.js"></script>
+
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">apsry</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">去留无意，宠辱不惊</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://apsry.github.io/2022/03/11/%E7%BA%A2%E9%98%9F%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86%E6%89%93%E7%82%B9checklist/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="apsry">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="apsry">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          外网信息收集
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-03-11 17:26:00 / 修改时间：17:31:39" itemprop="dateCreated datePublished" datetime="2022-03-11T17:26:00+08:00">2022-03-11</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" itemprop="url" rel="index"><span itemprop="name">信息收集</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>外网信息收集</p>
+<span id="more"></span>
+
+
+
+<h1 id="外网信息收集"><a href="#外网信息收集" class="headerlink" title="外网信息收集"></a>外网信息收集</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>最近在对以往所学习的有关红队的知识点进行梳理总结，这里主要参考了 ATT&amp;CK 矩阵模型，不过对其进行了简化，同时加入了一些国内特有的情况放了进去。</p>
+<p>大体上会按照外网信息收集、打点、权限维持、提权、内网信息收集、横向移动、痕迹清理这样的顺序展开。</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081853520.png" alt="img"></p>
+<p>因为是梳理总结性的文章，所以文章的侧重点在于「面」而不在于具体的某个「点」，因此文中的具体技术细节不会展开去谈，不然内容会很多。</p>
+<p>想了解具体细节的读者可以去看看我的个人公众号 TeamsSix 里的历史文章，里面会有针对一些点展开描述的文章。</p>
+<p>受限于个人水平，文中难免会出现错误或者描述不当的地方，还望在评论处指出，望谅解。</p>
+<h2 id="1-确定目标"><a href="#1-确定目标" class="headerlink" title="1 确定目标"></a>1 确定目标</h2><p>当开始做信息收集之前，肯定是要先确定目标的，在红队项目或者 HW 项目中，一般目标都是一个公司的名称，然后通过这个公司的名称获取各种信息，接着开展外网打点、内网渗透等等工作。</p>
+<p>在我们得知目标公司名称后，就可以开展信息收集的工作了。</p>
+<h2 id="2-外网信息收集"><a href="#2-外网信息收集" class="headerlink" title="2 外网信息收集"></a>2 外网信息收集</h2><p>我这里梳理了大概以下这些信息收集的方式，当然肯定是不全的，欢迎大家在评论区一起补充讨论：</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081853574.png" alt="img"></p>
+<h3 id="1、组织股权结构"><a href="#1、组织股权结构" class="headerlink" title="1、组织股权结构"></a>1、组织股权结构</h3><p>拿到公司名称后，先不用急着查备案、找域名，而是先看看这家公司的股权构成，因为一般一家公司的子公司也是可以作为目标去打的，不过有时是要求 50% 持股或者 100% 持股，这个就要看具体实际情况了。</p>
+<p>比较常见的查询公司组织股权结构的网站有天眼查、企查查、爱企查、小蓝本、钉钉企典等等。</p>
+<p>如果目标持股公司不多，可以直接看股权穿透图，比较直观；如果持股公司比较多，股权穿透图看着就比较费力了。</p>
+<p><strong>重点：一般是官网，微信公众号，app</strong></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081853662.png" alt="img"></p>
+<p>除了股权穿透之外，还可以看它的对外投资信息</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081853801.png" alt="img"></p>
+<p>这两个地方都可以查到有目标持股的公司。</p>
+<p>如果目标比较少一个一个子公司的去看还好，但如果目标很多，那这效率就很低了，好在现在也有了现成的工具。</p>
+<p><strong>ENScanGo</strong></p>
+<p>ENScanGo 是现有开源项目 ENScan 的升级版本，工具地址：<a target="_blank" rel="noopener" href="https://github.com/wgpsec/ENScan_GO">https://github.com/wgpsec/ENScan_GO</a></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081853818.png" alt="img"></p>
+<p>这是一款由狼组安全团队的 Keac 师傅写的专门用来解决企业信息收集难的问题的工具，可以一键收集目标及其控股公司的 ICP 备案、APP、小程序、微信公众号等信息然后聚合导出。</p>
+<p>例如我这里搜集「北京百度网讯科技有限公司」以及他持股了 50% 的公司信息。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">enscan -n 北京百度网讯科技有限公司 -invest-num <span class="number">50</span></span><br></pre></td></tr></table></figure>
+
+<p>收集后的结果如下：</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081853940.png" alt="img"></p>
+<p>这样一来，直接省去了收集 ICP 备案的步骤，一键获得了目标公司及其子公司的公司名称、app、微信公众号、ICP 备案等信息。</p>
+<h3 id="2、主域名查询"><a href="#2、主域名查询" class="headerlink" title="2、主域名查询"></a>2、主域名查询</h3><p>主域名查询可以分为备案域名查询和未备案域名查询</p>
+<h4 id="备案域名查询"><a href="#备案域名查询" class="headerlink" title="备案域名查询"></a>备案域名查询</h4><p>除了上面从企业信息查询网站中获取到备案信息外，最全也是最准确的方法就是去国家的备案信息查询网站里查询了，地址为：<a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">https://beian.miit.gov.cn</a></p>
+<p>除了官方的渠道外，还有一些第三方的备案域名查询站点，比如站长之家等等。</p>
+<h4 id="未备案域名查询"><a href="#未备案域名查询" class="headerlink" title="未备案域名查询"></a>未备案域名查询</h4><ul>
+<li>通过目标已知的网站获取</li>
+</ul>
+<p>有些企业会把自己的其他业务站点放在网站尾部，里面也许会包含未备案的站点。</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081853271.png" alt="img"></p>
+<ul>
+<li>通过 Fofa 等空间引擎进行证书、图标关联搜索，然后指定搜索规则 is_domain&#x3D;true，即表示只返回域名</li>
+</ul>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081853363.png" alt="img"></p>
+<h3 id="3、子域获取"><a href="#3、子域获取" class="headerlink" title="3、子域获取"></a>3、子域获取</h3><p>比较常见的工具就是 OneForAll，除此之外还有 amass、subfinder、xray、ksubdomainr、subDomainsBrute等等。</p>
+<p>如果提前知道目标，还可以提前收集一波子域，然后项目快开始的时候，再收集一波子域，将两次收集的结果做下对比，优先打新增子域。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/shmilylty/OneForAll">https://github.com/shmilylty/OneForAll</a></p>
+<h3 id="4、端口扫描"><a href="#4、端口扫描" class="headerlink" title="4、端口扫描"></a>4、端口扫描</h3><p>一般比较常见的可能就是 nmap ,masscan ,fofa ,goby 了，这里分享一个 nmap 快速扫描全部端口的命令</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sS -Pn -n --open --min-hostgroup <span class="number">4</span> --min-parallelism <span class="number">1024</span> --host-timeout <span class="number">30</span> -T4 -v -p <span class="number">1</span><span class="number">-65535</span> -iL ip.txt -oX output.xml </span><br></pre></td></tr></table></figure>
+
+<p>不过除了这些方法外，fscan 其实也可以拿来做外网的端口扫描，而且速度更快</p>
+<p>比如用 fscan 只扫描端口，不做漏洞扫描</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fscan -hf hosts.txt --nopoc -t <span class="number">100</span></span><br></pre></td></tr></table></figure>
+
+<p>fscan 默认线程是 600，因为是外网扫描 600 的线程就比较大了，所以这里设置了 100，如果感觉扫描结果不理想，线程还可以设置的再小点。</p>
+<p>端口扫描可以结合空间搜索引擎的结果，如果通过空间搜索引擎发现目标存在很多的高位端口，那么在进行端口扫描的时候就要记得也把这些高位端口加上。</p>
+<h3 id="5、指纹识别"><a href="#5、指纹识别" class="headerlink" title="5、指纹识别"></a>5、指纹识别</h3><p>指纹识别是我个人觉着非常重要的一点，因为指纹识别的结果对打点的帮助是很大的，可以让打点更有针对性，同时也会节省很多时间。</p>
+<p>比较常见的在线指纹查询网站有 godeye 和云悉等，工具有 observer_ward 和 Ehole 等。</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081853253.png" alt="img"></p>
+<blockquote>
+<p><strong>云悉</strong></p>
+<p><a target="_blank" rel="noopener" href="https://www.yunsee.cn/">https://www.yunsee.cn/</a></p>
+<p><strong>在线识别</strong></p>
+<p><a target="_blank" rel="noopener" href="http://whatweb.bugscaner.com/look/">http://whatweb.bugscaner.com/look/</a></p>
+<p><strong>fofa,goby测绘</strong></p>
+<p><a target="_blank" rel="noopener" href="https://fofa.so/">https://fofa.so/</a></p>
+<p><strong>wappalyzer插件</strong></p>
+<p>火狐，谷歌插件</p>
+<p><strong>潮汐指纹识别</strong></p>
+<p><a target="_blank" rel="noopener" href="http://finger.tidesec.net/">http://finger.tidesec.net/</a></p>
+<p><strong>数字观星</strong></p>
+<p><a target="_blank" rel="noopener" href="https://fp.shuziguanxing.com/#/">https://fp.shuziguanxing.com/#/</a></p>
+<p><strong>一些工具</strong></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/lHIJmIWbm8ylK6yjjmmNkg">https://mp.weixin.qq.com/s/lHIJmIWbm8ylK6yjjmmNkg</a></p>
+</blockquote>
+<h3 id="6、空间搜索引擎"><a href="#6、空间搜索引擎" class="headerlink" title="6、空间搜索引擎"></a>6、空间搜索引擎</h3><p>擅用空间搜索引擎，有时可以在最初刚拿确定目标的时候就发现目标弱点。</p>
+<p>目前比较常见的空间搜索引擎有 Fofa、Shodan、360 夸克、奇安信全球鹰、知道创宇 ZoomEye 等等。</p>
+<p>常见的工具有 Fofa_Viewer、FofaX、Kunyu，其中 Fofa_Viewer 为图形化界面，使用友好，下载地址：<a target="_blank" rel="noopener" href="https://github.com/wgpsec/fofa_viewer">https://github.com/wgpsec/fofa_viewer</a></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081853511.png" alt="img"></p>
+<p>FofaX 为命令行界面，FofaX 可以结合其他工具联动使用，除了这两个工具调用 Fofa 接口外，上面提到的 Ehole 也可以调用 Fofa 查询。</p>
+<p>Kunyu 调用的是 ZoomEye 的接口，工具下载地址：<a target="_blank" rel="noopener" href="https://github.com/knownsec/Kunyu">https://github.com/knownsec/Kunyu</a></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081853522.png" alt="img"></p>
+<h3 id="7、api-接口"><a href="#7、api-接口" class="headerlink" title="7、api 接口"></a>7、api 接口</h3><p>获取 api 接口常用的工具有 jsinfo、findsomething、jsfinder、BurpJSLinkFinder 等等。</p>
+<p>如果找到了一些未授权接口，也许就可以搞到一些高价值信息，比如大量敏感信息泄露之类的。</p>
+<p>另外在翻 js 文件的时候，可以关注下有没有以 runtime 命名的 js 文件，因为在这种 js 文件中会包含其他 js 文件的名称（包括当前页面没有加载的 js 文件），这样利用 runtime js 文件就发现了更多的 js 文件，使得找到 api 接口的概率又大了些。</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081853776.png" alt="img"></p>
+<h3 id="8、目录获取"><a href="#8、目录获取" class="headerlink" title="8、目录获取"></a>8、目录获取</h3><p>目录扫描比较常用的工具有 dirsearch、ffuf，wfuzz，御剑</p>
+<p>ffuf 更侧重于 FFUZ，不过不管是目录扫描还是 FFUZ ，扫描的结果都在于字典，Github 上 4k 多个 star 的字典：<a target="_blank" rel="noopener" href="https://github.com/TheKingOfDuck/fuzzDicts">https://github.com/TheKingOfDuck/fuzzDicts</a></p>
+<h3 id="9、邮箱地址获取"><a href="#9、邮箱地址获取" class="headerlink" title="9、邮箱地址获取"></a>9、邮箱地址获取</h3><p>邮箱地址比较常用的方法有直接通过搜索引擎找网上公开的邮箱信息，这种往往会指向目标的网站中，比如目标某个网页的附件中包含有邮箱等信息。</p>
+<p>之外还可以使用 Github 搜索目标公司开发者在代码中注释的邮箱信息，其实不太明白为什么开发者都喜欢把自己的邮箱注释到代码里。</p>
+<p>也可以通过领英找到目标公司的员工姓名，通过「拼音+@公司域名」的方法去构造员工邮箱。</p>
+<p>也有一些网站可以查询邮箱，这种比较方便，比如以下网站：</p>
+<p><a target="_blank" rel="noopener" href="https://www.skymem.info/">https://www.skymem.info/</a></p>
+<p><a target="_blank" rel="noopener" href="https://app.snov.io/domain-search">https://app.snov.io/domain-search</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.email-format.com/i/search/">https://www.email-format.com/i/search/</a></p>
+<p>另外如果收集到了目标的 outlook 站点，也可以尝试去爆破邮箱用户名</p>
+<h3 id="11、真实ip"><a href="#11、真实ip" class="headerlink" title="11、真实ip"></a>11、真实ip</h3><p><strong>关于真实ip</strong></p>
+<blockquote>
+<p>现在大多数的网站都开启了CDN加速，导致我们获取到的IP地址不一定是真实的IP地址。<br>什么是CDN呢？<br>CDN的全称是Content Delivery Network，即内容分发网络。其基本思路是尽可能避开互联网上有可能影响数据传输速度和稳定性的瓶颈和环节，使内容传输的更快、更稳定。通过在网络各处放置节点服务器所构成的在现有的互联网基础之上的一层智能虚拟网络，CDN系统能够实时地根据网络流量和各节点的连接、负载状况以及到用户的距离和响应时间等综合信息将用户的请求重新导向离用户最近的服务节点上。其目的是使用户可就近取得所需内容，解决 Internet网络拥挤的状况，提高用户访问网站的响应速度。<br>如果想获取真实IP，我们可以使用以下几种方法</p>
+</blockquote>
+<h4 id="多地Ping法："><a href="#多地Ping法：" class="headerlink" title="多地Ping法："></a><strong>多地Ping法：</strong></h4><p>由CDN的原理，不同的地方去Ping服务器，如果IP不一样，则目标网站肯定使用了CDN。<br>这里推荐一个网站可以多个地点ping服务器，<a target="_blank" rel="noopener" href="https://asm.ca.com/en/ping.php">https://asm.ca.com/en/ping.php</a></p>
+<p><a target="_blank" rel="noopener" href="https://ping.chinaz.com/">https://ping.chinaz.com/</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.webkaka.com/ping.aspx">http://www.webkaka.com/ping.aspx</a></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203111721827.png" alt="image-20220311172148709"></p>
+<h4 id="二级域名法："><a href="#二级域名法：" class="headerlink" title="二级域名法："></a><strong>二级域名法：</strong></h4><p>目标站点一般不会把所有的二级域名放cdn上。通过在线工具如站长帮手，收集子域名，确定了没使用CDN的二级域名后。本地将目标域名绑定到同IP（修改host文件），如果能访问就说明目标站与此二级域名在同一个服务器上；如果两者不在同一服务器也可能在同C段，扫描C段所有开80端口的IP，然后挨个尝试。</p>
+<h4 id="nslookup法："><a href="#nslookup法：" class="headerlink" title="nslookup法："></a><strong>nslookup法：</strong></h4><p><a target="_blank" rel="noopener" href="http://tool.chinaz.com/nslookup">http://tool.chinaz.com/nslookup</a></p>
+<p>找国外的比较偏僻的DNS解析服务器进行DNS查询，因为大部分CDN提供商只针对国内市场，而对国外市场几乎是不做CDN，所以有很大的几率会直接解析到真实IP。</p>
+<h4 id="Ping法："><a href="#Ping法：" class="headerlink" title="Ping法："></a><strong>Ping法：</strong></h4><p>直接ping example.com而不是<a target="_blank" rel="noopener" href="http://www.example.com,因为现有很多cdn厂商基本只要求把www.example.com/">www.example.com，因为现有很多CDN厂商基本只要求把www.example.com</a> cname到CDN主服务器上去，那么直接ping example.com有可能直接获得真实IP。</p>
+<h4 id="浏览器插件："><a href="#浏览器插件：" class="headerlink" title="浏览器插件："></a><strong>浏览器插件：</strong></h4><p>fofa pro view ；shadon</p>
+<p><strong>shadon</strong></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203111722371.png" alt="image-20220311172243091"></p>
+<p><strong>fofa pro view</strong></p>
+<p>可以看fofa对该网站的基本信息，查询C段</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081910591.png" alt="Snipaste_2021-08-04_10-52-16"></p>
+<h3 id="12：信息泄露"><a href="#12：信息泄露" class="headerlink" title="12：信息泄露"></a>12：信息泄露</h3><h4 id="github泄露"><a href="#github泄露" class="headerlink" title="github泄露"></a>github泄露</h4><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203111723243.png" alt="image-20220311172327105"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203111723493.png" alt="image-20220311172357416"></p>
+<h4 id="百度贴吧"><a href="#百度贴吧" class="headerlink" title="百度贴吧"></a>百度贴吧</h4><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203111724686.png" alt="image-20220311172445599"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203111725539.png" alt="image-20220311172527444"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081915534.png" alt="Snipaste_2021-08-04_15-45-00"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203111726688.png" alt="image-20220311172611612"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081915371.png" alt="Snipaste_2021-08-04_15-50-40"></p>
+<h4 id="社会工程，大学表白墙"><a href="#社会工程，大学表白墙" class="headerlink" title="社会工程，大学表白墙"></a>社会工程，大学表白墙</h4><h4 id="JS信息泄露"><a href="#JS信息泄露" class="headerlink" title="JS信息泄露"></a>JS信息泄露</h4><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python JSFinder.py -u http:<span class="regexp">//</span>aaaaa<span class="regexp">/AC/</span>sso/login</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203111727641.png" alt="image-20220311172757561"></p>
+<h4 id="网盘信息"><a href="#网盘信息" class="headerlink" title="网盘信息"></a>网盘信息</h4><p>网盘信息里有时也会发现不少好东西，这类网站也很多，可以在爱达杂货铺导航站里找到很多网盘搜索类站点。</p>
+<h4 id="谷歌hack"><a href="#谷歌hack" class="headerlink" title="谷歌hack"></a>谷歌hack</h4><p>参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/u012991692/article/details/82937100">https://blog.csdn.net/u012991692/article/details/82937100</a></p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">与或非</span><br><span class="line"></span><br><span class="line">AND <span class="string">|  -</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/20181004133738125" alt="img"></p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">查找登陆点</span><br><span class="line">site:域名inurl:login|<span class="string">admin</span>|<span class="string">manage</span>|<span class="string">member</span>|<span class="string">admin_login</span>|<span class="string">login_admin</span>|<span class="string">system</span>|<span class="string">login</span>|<span class="string">user</span>|<span class="string">main</span>|cms</span><br><span class="line"></span><br><span class="line">查找文本内容：site:域名 intext:管理|<span class="string">后台</span>|<span class="string">登陆</span>|<span class="string">用户名</span>|<span class="string">密码</span>|<span class="string">验证码</span>|<span class="string">系统</span>|<span class="string">帐号</span>|<span class="string">admin</span>|<span class="string">login</span>|<span class="string">sys</span>|<span class="string">managetem</span>|<span class="string">password</span>|username</span><br><span class="line">查找可注入点：</span><br><span class="line">site:域名 inurl:aspx|<span class="string">jsp</span>|<span class="string">php</span>|asp</span><br><span class="line">查找上传漏洞：</span><br><span class="line">site:域名 inurl:file|<span class="string">load</span>|<span class="string">editor</span>|Files</span><br><span class="line">查找eweb编辑器：</span><br><span class="line">site:域名 inurl:ewebeditor|<span class="string">editor</span>|<span class="string">uploadfile</span>|<span class="string">eweb</span>|edit</span><br><span class="line">存在的数据库：</span><br><span class="line">site:域名 filetype:mdb|<span class="string">asp</span>|</span><br><span class="line">查看脚本类型：</span><br><span class="line">site:域名 filetype:asp/aspx/php/jsp</span><br><span class="line">迂回策略入侵：inurl:cms/data/templates/images/index/</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">site:.edu.cn   intext:管理|<span class="string">后台</span>|<span class="string">登陆</span>|<span class="string">用户名</span>|<span class="string">密码</span>|<span class="string">验证码</span>|<span class="string">系统</span>|<span class="string">帐号</span>|<span class="string">admin</span>|<span class="string">login</span>|<span class="string">sys</span>|<span class="string">managetem</span>|<span class="string">password</span>|username</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203111729967.png" alt="image-20220311172907872"></p>
+<figure class="highlight coq"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">site:.edu.cn   inurl:login|<span class="type">admin</span>|<span class="type">manage</span>|<span class="type">member</span>|<span class="type">admin_login</span>|<span class="type">login_admin</span>|<span class="type">system</span>|<span class="type">login</span>|<span class="type">user</span>|<span class="type">main</span>|<span class="type">cms</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203111729728.png" alt="image-20220311172906641"></p>
+<h3 id="13：whois查询"><a href="#13：whois查询" class="headerlink" title="13：whois查询"></a>13：whois查询</h3><p><a target="_blank" rel="noopener" href="https://whois.chinaz.com/">https://whois.chinaz.com/</a></p>
+<p><a target="_blank" rel="noopener" href="http://whoissoft.com/">http://whoissoft.com/</a></p>
+<p><a target="_blank" rel="noopener" href="http://tool.chinaz.com/ipwhois">http://tool.chinaz.com/ipwhois</a></p>
+<p><a target="_blank" rel="noopener" href="https://tool.chinaz.com/ipwhois/?q=222.22.241.83">https://tool.chinaz.com/ipwhois/?q=222.22.241.83</a></p>
+<p>whois中包含了用户，邮箱，以及购买的网段！</p>
+<p><strong>whois反查</strong></p>
+<p><a target="_blank" rel="noopener" href="http://whois.chinaz.com/reverse?ddlSearchMode=1">http://whois.chinaz.com/reverse?ddlSearchMode=1</a></p>
+<p><strong>微步在线ip反查域名</strong></p>
+<p><a target="_blank" rel="noopener" href="https://x.threatbook.cn/">https://x.threatbook.cn/</a></p>
+<h3 id="14、资产监控平台"><a href="#14、资产监控平台" class="headerlink" title="14、资产监控平台"></a>14、资产监控平台</h3><h4 id="水泽"><a href="#水泽" class="headerlink" title="水泽"></a>水泽</h4><p><a target="_blank" rel="noopener" href="https://github.com/0x727/ShuiZe_0x727">https://github.com/0x727/ShuiZe_0x727</a></p>
+<h4 id="ARL灯塔"><a href="#ARL灯塔" class="headerlink" title="ARL灯塔"></a>ARL灯塔</h4><p><a target="_blank" rel="noopener" href="https://github.com/TophantTechnology/ARL">https://github.com/TophantTechnology/ARL</a></p>
+<h4 id="rengine-国外的，很好用"><a href="#rengine-国外的，很好用" class="headerlink" title="rengine(国外的，很好用)"></a>rengine(国外的，很好用)</h4><p><a target="_blank" rel="noopener" href="https://github.com/yogeshojha/rengine">https://github.com/yogeshojha/rengine</a></p>
+<h3 id="15、其他信息"><a href="#15、其他信息" class="headerlink" title="15、其他信息"></a>15、其他信息</h3><p>其他的信息比如 app、小程序、供应商、外包合作商、公众号等，或多或少都可以从上面的组织股权架构类网站中查询到，或者使用 ENScan 也可以。</p>
+<p>其中比较值得注意是的供应商和外包合作商，如果拿下供应商也许可以直接进入目标内网，如果拿下外包合作商则可以借助这一层关系进行社工或者尝试进入目标内网等操作。</p>
+<h2 id="3-后记"><a href="#3-后记" class="headerlink" title="3 后记"></a>3 后记</h2><p>红队中的信息收集当然远不止上面说到的，其他比较常用的还有资产监控平台、社工库、自动化信息收集工具（比如 ShuiZe）以及各种内部红队平台等等，这里篇幅有限就不再展开了。</p>
+<p>本文将聊一聊红队中的打点。</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081952541.png" alt="img"></p>
+<blockquote>
+<p>受限于个人水平，文中难免会出现错误或者描述不当的地方，还望各位在评论处指出，望谅解。</p>
+</blockquote>
+<h1 id="打点"><a href="#打点" class="headerlink" title="打点"></a>打点</h1><p>打点或者说建立据点、最初入口，都是一个意思，这就类似于古代攻打城墙，不管是通过直接正面撞城门还是翻城墙、亦或是挖地道、利用间谍从内部打开城门等等方法，最终的目的都是为了进入到城墙里。</p>
+<p>在红队中的打点也是这个概念，不管是通过 0day 还是 nday、亦或是利用钓鱼、社工、近源等等，最终的目的都是为了进入到目标的内网里。</p>
+<p>这里就简单谈谈红队中关于打点的那些事儿。</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081952601.png" alt="img"></p>
+<h2 id="1、0day-和-nday"><a href="#1、0day-和-nday" class="headerlink" title="1、0day 和 nday"></a>1、0day 和 nday</h2><p>0day 和 nday 去打的方式是目前最常见的方式，同时也是蓝队比较关注的方式。</p>
+<p>这些年来比较常见的 0day 与 nday 相关服务有 Shiro、Fastjson 为代表的中间件，泛微、致远、通达为代表的 OA 系统，之外还有用友、各类安全设备、VPN 等等。</p>
+<p>在上文中提到了指纹识别，这里就能派上用场了，比如如果最近爆出来了某某 cms 存在 0day，那么通过指纹识别的结果找到存在这个 cms 的资产，直接就能打到点，但如果指纹识别的不准确或者漏识别，也许就会比别人少了一个点。</p>
+<p>另外可以预见的是，未来关于 log4j2 的利用肯定会越来越多。</p>
+<p>同时结合目前的国内情况来看，关于这些 0day 和 nday 的详情以及相应的利用工具也会越来越小范围得被传播，即使有些会被大范围传播，但一些内部版、增强版的工具还是会小范围的传播。</p>
+<h2 id="2、合法账号"><a href="#2、合法账号" class="headerlink" title="2、合法账号"></a>2、合法账号</h2><p>合法账号也是目前比较常见的方式，比如通过字典爆破、社工字典爆破、弱密码猜解或者钓鱼获得目标的 VPN、SSH、RDP、Citrix 可用账号等等。</p>
+<p>但这类打点方式有时不如利用 0day 和 nday 来得快，只要对方没有什么弱密码就比较难进了，不过也会经常遇到弱密码 yyds 的情况。</p>
+<p>不过在内网中，利用合法账号就比利用 0day 和 nday 来得快了，因为在内网中常常会有通用密码，拿到这个通用密码，或许就能拿下一大批 Linux、Windows</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081952737.png" alt="img"></p>
+<p>同时在进入系统后，往往还会发现密码本或者浏览器存储密码等等，这样利用合法账号又能拿下不少系统的权限，不过这就偏离本文打点的主题了，就不再展开了。</p>
+<h2 id="3、钓鱼邮件"><a href="#3、钓鱼邮件" class="headerlink" title="3、钓鱼邮件"></a>3、钓鱼邮件</h2><p>钓鱼邮件也是现在比较常用的方法，想要利用好钓鱼邮件，一个是要有好杆一个是要有好饵。</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081952697.png" alt="img"></p>
+<p>好杆就是发送钓鱼邮件的工具，好饵就是邮件的内容，邮件的内容又可以分成正文部分和附件部分，正文部分得让人看了觉着没问题，附件部分打开得不能报毒。</p>
+<p>在平时常规的红队项目中，一般发送钓鱼邮件会批量发送多封，而不是像 APT 那样精准发送某一个或几个人。</p>
+<p>批量发送邮件就需要解决不被对方邮件网关拦截的问题，同时也要解决发送邮件效率的问题，毕竟面对几十上百封的邮件，如果手动发送这个效率是会比较低的。</p>
+<p>其次就是邮件内容的问题，一般会使用一些近期的热点事件、节假日通知等等作为话术的主题，比如《关于离开本市返乡过年需要报备的通知》《关于春节放假时间安排的通知》等等这类吸引人们查看的话术。</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081952798.png" alt="img"></p>
+<p>邮件附件也需要做好免杀，不然可能邮件还没发到别人邮箱里，就被网关拦截了，或者刚想打开附件就被杀软报毒了，这都是不行的。</p>
+<p>钓鱼除了使用邮件外，还可以使用钓鱼站点、问卷调查、微信群、QQ群等等方式。</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081952804.png" alt="img"></p>
+<p>总之，钓鱼是一个环环相扣的过程，不存在那个环节重要不重要，因为所有环节都是重要的，如果其中有一环被忽视或者没处理好，就会导致整个钓鱼的失败。</p>
+<h2 id="4、近源攻击"><a href="#4、近源攻击" class="headerlink" title="4、近源攻击"></a>4、近源攻击</h2><p>近源攻击现在也是比较常见的方式了，常见的手法有以下几种：</p>
+<ul>
+<li>WIFI 钓鱼，比如大菠萝等设备</li>
+<li>通过 NFC 设备复制目标员工门禁卡，方便接下来进入到目标办公区</li>
+<li>通过 bad usb 钓鱼</li>
+<li>直接连接墙上的网卡（风险有些高）</li>
+<li>在目标建筑附近连接对方的访客 WIFI，比如利用无人机、雷达型无线网卡等，或者将一个带有远控功能的 4G 无线路由器放到目标附近</li>
+</ul>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081952468.png" alt="img"></p>
+<ul>
+<li>进入到目标的公共区域内，寻找智能终端设备，一般这种都是通内网的，但一般不通外网，不过如果是智能售货机这种一般就会通外网</li>
+</ul>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081952659.png" alt="img"></p>
+<ul>
+<li>利用目标在互联网上开放的系统，比如开发者平台，有的会提供在线测试真机，这种测试真机一般都是在目标办公区域的，利用这点也可以进行近源</li>
+<li>在墙上贴一个《受疫情影响进入本区域需要扫码登记》的问卷调查二维码</li>
+</ul>
+<p>除了上面的这些方法，肯定还有很多其他的方法，比如伪装成水电工、外卖员、面试人员进入目标内部啥的，近源社工这块感觉还是得向凱文·米特尼克学习，虽然他的那些方法手段是几十年前的，但其中的思路是不会过时的。</p>
+<h2 id="5、供应链攻击"><a href="#5、供应链攻击" class="headerlink" title="5、供应链攻击"></a>5、供应链攻击</h2><p>供应链攻击有时也会被大家所使用，这种一般都是对付难以攻克的目标，比如金融行业。</p>
+<p>首先拿下目标的供应商，借助供应商进入目标内网，一般在一些乙方供应商官网都会写下自己的客户单位，借助这点就能定位到这个供应商是否是目标的供应商。</p>
+<p>但是供应链攻击会有些看运气，也许费力半天劲儿拿下了供应商，却没有通向目标的路，但也有发现通向了很多目标的情况。</p>
+<p>所以当常规的手段都不奏效的时候，就可以试试供应链，也许就会柳暗花明又一村。</p>
+<h2 id="6、水坑攻击"><a href="#6、水坑攻击" class="headerlink" title="6、水坑攻击"></a>6、水坑攻击</h2><p>水坑攻击感觉平时挺少有人去用，水坑攻击顾名思义就是在一个人经常走的路上挖一个坑。</p>
+<p>放到安全的世界里就是事先分析目标的上网活动规律，找到目标经常访问的网站，然后攻击者拿下这个目标网站并植入恶意代码，当目标访问这个网站的时候就会中招了。</p>
+<p>比较常见的手法有以下几种：</p>
+<ul>
+<li>在页面中嵌入 XSS，获取目标的 Cookie</li>
+</ul>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203081952610.png" alt="img"></p>
+<ul>
+<li>在网站上挂上带有后门的软件，例如之前的 phpstudy 后门事件</li>
+<li>引导用户访问精心构造带有 POC 的站点，比如 CVE-2018-4878 或者之前的 Chrome 沙盒 0day 等等</li>
+</ul>
+<p>水坑攻击的方式也是多种多样，只不过不太适合需要短期快速打点的项目。</p>
+<h1 id="2-后记"><a href="#2-后记" class="headerlink" title="2 后记"></a>2 后记</h1><p>在 ATT&amp;CK 里，关于打点的方法是不止这些的，但其中一些平时很少遇到并且很少去使用的，比如硬件攻击等等，这类就不展开谈了。</p>
+<p>总的来说在红队中，攻击的手法可以说是没有手法，因为手法是在是太多了，尤其是在 HW 时期，各种真真假假，让人根本没法判断，总有人能玩出花儿来。</p>
+<p>但是有一点可以确定的是，打点远不止拿个公开已知漏洞去打这一种方式，还有很多其他的方法，还有很多其他的路。</p>
+<p>Web 进不去不代表这个目标就是安全的，人员才是整个系统中最薄弱的环节。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/web%E6%B8%97%E9%80%8F/" rel="tag"># web渗透</a>
+              <a href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" rel="tag"># 信息收集</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/03/11/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2%E7%AC%94%E8%AE%B0/" rel="prev" title="内网笔记">
+      <i class="fa fa-chevron-left"></i> 内网笔记
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%96%E7%BD%91%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="nav-text">外网信息收集</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E7%A1%AE%E5%AE%9A%E7%9B%AE%E6%A0%87"><span class="nav-text">1 确定目标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%A4%96%E7%BD%91%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="nav-text">2 外网信息收集</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81%E7%BB%84%E7%BB%87%E8%82%A1%E6%9D%83%E7%BB%93%E6%9E%84"><span class="nav-text">1、组织股权结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81%E4%B8%BB%E5%9F%9F%E5%90%8D%E6%9F%A5%E8%AF%A2"><span class="nav-text">2、主域名查询</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%87%E6%A1%88%E5%9F%9F%E5%90%8D%E6%9F%A5%E8%AF%A2"><span class="nav-text">备案域名查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%AA%E5%A4%87%E6%A1%88%E5%9F%9F%E5%90%8D%E6%9F%A5%E8%AF%A2"><span class="nav-text">未备案域名查询</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%E3%80%81%E5%AD%90%E5%9F%9F%E8%8E%B7%E5%8F%96"><span class="nav-text">3、子域获取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4%E3%80%81%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F"><span class="nav-text">4、端口扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5%E3%80%81%E6%8C%87%E7%BA%B9%E8%AF%86%E5%88%AB"><span class="nav-text">5、指纹识别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6%E3%80%81%E7%A9%BA%E9%97%B4%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E"><span class="nav-text">6、空间搜索引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7%E3%80%81api-%E6%8E%A5%E5%8F%A3"><span class="nav-text">7、api 接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8%E3%80%81%E7%9B%AE%E5%BD%95%E8%8E%B7%E5%8F%96"><span class="nav-text">8、目录获取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9%E3%80%81%E9%82%AE%E7%AE%B1%E5%9C%B0%E5%9D%80%E8%8E%B7%E5%8F%96"><span class="nav-text">9、邮箱地址获取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11%E3%80%81%E7%9C%9F%E5%AE%9Eip"><span class="nav-text">11、真实ip</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E5%9C%B0Ping%E6%B3%95%EF%BC%9A"><span class="nav-text">多地Ping法：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E7%BA%A7%E5%9F%9F%E5%90%8D%E6%B3%95%EF%BC%9A"><span class="nav-text">二级域名法：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nslookup%E6%B3%95%EF%BC%9A"><span class="nav-text">nslookup法：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Ping%E6%B3%95%EF%BC%9A"><span class="nav-text">Ping法：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%8F%E8%A7%88%E5%99%A8%E6%8F%92%E4%BB%B6%EF%BC%9A"><span class="nav-text">浏览器插件：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12%EF%BC%9A%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2"><span class="nav-text">12：信息泄露</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#github%E6%B3%84%E9%9C%B2"><span class="nav-text">github泄露</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%99%BE%E5%BA%A6%E8%B4%B4%E5%90%A7"><span class="nav-text">百度贴吧</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BE%E4%BC%9A%E5%B7%A5%E7%A8%8B%EF%BC%8C%E5%A4%A7%E5%AD%A6%E8%A1%A8%E7%99%BD%E5%A2%99"><span class="nav-text">社会工程，大学表白墙</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JS%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2"><span class="nav-text">JS信息泄露</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BD%91%E7%9B%98%E4%BF%A1%E6%81%AF"><span class="nav-text">网盘信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B0%B7%E6%AD%8Chack"><span class="nav-text">谷歌hack</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13%EF%BC%9Awhois%E6%9F%A5%E8%AF%A2"><span class="nav-text">13：whois查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14%E3%80%81%E8%B5%84%E4%BA%A7%E7%9B%91%E6%8E%A7%E5%B9%B3%E5%8F%B0"><span class="nav-text">14、资产监控平台</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B0%B4%E6%B3%BD"><span class="nav-text">水泽</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ARL%E7%81%AF%E5%A1%94"><span class="nav-text">ARL灯塔</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rengine-%E5%9B%BD%E5%A4%96%E7%9A%84%EF%BC%8C%E5%BE%88%E5%A5%BD%E7%94%A8"><span class="nav-text">rengine(国外的，很好用)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15%E3%80%81%E5%85%B6%E4%BB%96%E4%BF%A1%E6%81%AF"><span class="nav-text">15、其他信息</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%90%8E%E8%AE%B0"><span class="nav-text">3 后记</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%89%93%E7%82%B9"><span class="nav-text">打点</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1%E3%80%810day-%E5%92%8C-nday"><span class="nav-text">1、0day 和 nday</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2%E3%80%81%E5%90%88%E6%B3%95%E8%B4%A6%E5%8F%B7"><span class="nav-text">2、合法账号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3%E3%80%81%E9%92%93%E9%B1%BC%E9%82%AE%E4%BB%B6"><span class="nav-text">3、钓鱼邮件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4%E3%80%81%E8%BF%91%E6%BA%90%E6%94%BB%E5%87%BB"><span class="nav-text">4、近源攻击</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5%E3%80%81%E4%BE%9B%E5%BA%94%E9%93%BE%E6%94%BB%E5%87%BB"><span class="nav-text">5、供应链攻击</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6%E3%80%81%E6%B0%B4%E5%9D%91%E6%94%BB%E5%87%BB"><span class="nav-text">6、水坑攻击</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E5%90%8E%E8%AE%B0"><span class="nav-text">2 后记</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">apsry</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">apsry</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
