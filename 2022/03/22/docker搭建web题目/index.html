@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"apsry.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="docker搭建web题目">
+<meta property="og:type" content="article">
+<meta property="og:title" content="docker搭建web题目">
+<meta property="og:url" content="https://apsry.github.io/2022/03/22/docker%E6%90%AD%E5%BB%BAweb%E9%A2%98%E7%9B%AE/index.html">
+<meta property="og:site_name" content="apsry">
+<meta property="og:description" content="docker搭建web题目">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://apsry.github.io/docker.assets/image-20220226124134167.png">
+<meta property="og:image" content="https://apsry.github.io/docker.assets/image-20220226124240543.png">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5244221-2c2a9bad9d634e49">
+<meta property="og:image" content="https://apsry.github.io/docker.assets/image-20220226191118970.png">
+<meta property="og:image" content="https://apsry.github.io/docker.assets/image-20220226191435641.png">
+<meta property="og:image" content="https://apsry.github.io/docker.assets/image-20220226191355512.png">
+<meta property="og:image" content="https://apsry.github.io/docker.assets/image-20220226190811010.png">
+<meta property="og:image" content="https://apsry.github.io/docker.assets/image-20220226191622986.png">
+<meta property="og:image" content="https://img2020.cnblogs.com/blog/137119/202006/137119-20200614183345059-1787805001.png">
+<meta property="og:image" content="https://img2020.cnblogs.com/blog/137119/202006/137119-20200614183500724-22164375.png">
+<meta property="og:image" content="https://img-blog.csdn.net/20170914150927687?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvd2lueV9sbQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
+<meta property="og:image" content="https://img-blog.csdn.net/20170914151152134?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvd2lueV9sbQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
+<meta property="og:image" content="https://img-blog.csdn.net/20170914151412257?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvd2lueV9sbQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
+<meta property="og:image" content="https://img-blog.csdn.net/20170914151752147?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvd2lueV9sbQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
+<meta property="article:published_time" content="2022-03-22T10:26:00.000Z">
+<meta property="article:modified_time" content="2022-03-24T08:42:23.806Z">
+<meta property="article:author" content="apsry">
+<meta property="article:tag" content="web安全">
+<meta property="article:tag" content="docker">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://apsry.github.io/docker.assets/image-20220226124134167.png">
+
+<link rel="canonical" href="https://apsry.github.io/2022/03/22/docker%E6%90%AD%E5%BB%BAweb%E9%A2%98%E7%9B%AE/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>docker搭建web题目 | apsry</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+<!-- 引入目录截取js -->
+<script type="text/javascript" src="/js/src/abstract.js"></script>
+
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">apsry</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">去留无意，宠辱不惊</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://apsry.github.io/2022/03/22/docker%E6%90%AD%E5%BB%BAweb%E9%A2%98%E7%9B%AE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="apsry">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="apsry">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          docker搭建web题目
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-03-22 18:26:00" itemprop="dateCreated datePublished" datetime="2022-03-22T18:26:00+08:00">2022-03-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-24 16:42:23" itemprop="dateModified" datetime="2022-03-24T16:42:23+08:00">2022-03-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">web安全</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>docker搭建web题目</p>
+<span id="more"></span>
+
+<h2 id="基本搭建"><a href="#基本搭建" class="headerlink" title="基本搭建"></a>基本搭建</h2><h3 id="一：lamp介绍-amp-run"><a href="#一：lamp介绍-amp-run" class="headerlink" title="一：lamp介绍&amp;run"></a>一：lamp介绍&amp;run</h3><p>LAMP指的Linux（操作系统）、Apache HTTP 服务器，MySQL（有时也指MariaDB，数据库软件和PHP（有时也是指Perl或Python 的第一个字母，一般用来建立web应用平台。<br> 找到一个合适的lamp镜像</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker search lamp</span><br></pre></td></tr></table></figure>
+
+<p>会出现很多,复制去<a target="_blank" rel="noopener" href="https://hub.docker.com/%E6%89%BE%E5%88%B0%E7%9B%B8%E5%85%B3%E4%BB%8B%E7%BB%8D,%E7%A1%AE%E5%AE%9A%E5%85%B7%E4%BD%93%E4%BD%BF%E7%94%A8%E5%93%AA%E7%A7%8D">https://hub.docker.com/找到相关介绍,确定具体使用哪种</a>.</p>
+<p>这里使用linode&#x2F;lamp</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker run -dt -p PORT:<span class="number">80</span> -v /opt/web:/<span class="keyword">var</span>/www/web linode/lamp</span><br><span class="line"><span class="meta">#-v outdir:indir</span></span><br><span class="line"><span class="meta">#这里将容器内的/var/www/web映射到本机的/Documents/web</span></span><br><span class="line"><span class="meta">#具体可以参考https://www.cnblogs.com/ivictor/p/4834864.html</span></span><br><span class="line"><span class="meta">#注:若映射到内部有内容的文件夹则会将内部文件夹的内容清空(我外部用的是一个空文件夹)</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/docker.assets/image-20220226124134167.png" alt="image-20220226124134167"></p>
+<h3 id="二：-进入容器配置apache2"><a href="#二：-进入容器配置apache2" class="headerlink" title="二： 进入容器配置apache2"></a>二： 进入容器配置apache2</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it CONTAINERID /bin/bash</span><br><span class="line"><span class="comment">#CONTAINERID使用docker ps 查看</span></span><br></pre></td></tr></table></figure>
+
+<p>参考<a target="_blank" rel="noopener" href="https://www.linode.com/docs/websites/hosting-a-website-ubuntu-18-04/#install-mysql%E8%BF%9B%E8%A1%8C%E9%85%8D%E7%BD%AE">https://www.linode.com/docs/websites/hosting-a-website-ubuntu-18-04/#install-mysql进行配置</a></p>
+<p>进入容器后</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">service apache2 start</span><br><span class="line">service mysql start</span><br><span class="line"><span class="comment">#打开apache2和mysql服务</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/docker.assets/image-20220226124240543.png" alt="image-20220226124240543"></p>
+<p>修改连接数等配置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo <span class="built_in">cp</span> /etc/apache2/apache2.conf /etc/apache2/apache2.conf.bak <span class="comment">#做备份</span></span><br><span class="line">sudo nano /etc/apache2/apache2.conf <span class="comment">#使用nano打开配置文件</span></span><br></pre></td></tr></table></figure>
+
+<p>拉到最后</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">   &lt;IfModule mpm_prefork_module&gt;</span><br><span class="line">       StartServers 4</span><br><span class="line">       MinSpareServers 20</span><br><span class="line">       MaxSpareServers 40</span><br><span class="line">       MaxClients 200</span><br><span class="line">       MaxRequestsPerChild 4500</span><br><span class="line">   &lt;/IfModule&gt;</span><br><span class="line">StartServers <span class="comment">#apache启动时候默认开始的子进程数</span></span><br><span class="line">MinSpareServers <span class="comment">#最小的闲置子进程数</span></span><br><span class="line">MaxSpareServers <span class="comment">#最大的闲置子进程数</span></span><br><span class="line">MaxClients <span class="comment">#控制最大进程数</span></span><br><span class="line">MaxConnectionsPerChild </span><br><span class="line"><span class="comment">#设置的是每个子进程可处理的请求数。</span></span><br><span class="line"><span class="comment">#每个子进程在处理了“MaxConnectionsPerChild”个请求后将自动销毁。</span></span><br><span class="line"><span class="comment">#0意味着无限，即子进程永不销毁。</span></span><br><span class="line"><span class="comment">#虽然缺省设为0可以使每个子进程处理更多的请求，但如果设成非零值也有两点重要的好处：</span></span><br><span class="line"><span class="comment">#1、可防止意外的内存泄漏。</span></span><br><span class="line"><span class="comment">#2、在服务器负载下降的时侯会自动减少子进程数。因此，可根据服务器的负载来调整这个值。</span></span><br><span class="line"><span class="comment">#在Apache2.3.9之前称之为MaxRequestsPerChild。</span></span><br></pre></td></tr></table></figure>
+
+<p>ctrl+x退出,Y保存,ENTER退出</p>
+<p>重启apache2</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service  apache2 restart</span><br></pre></td></tr></table></figure>
+
+<p>修改网页根目录等</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">sudo nano /etc/apache2/sites-available/example.com.conf</span><br><span class="line">&lt;VirtualHost *:<span class="number">80</span>&gt;</span><br><span class="line">  <span class="comment"># Admin email, Server Name (domain name), and any aliases</span></span><br><span class="line">  ServerAdmin webmaster@example.com</span><br><span class="line">  ServerName  example.com</span><br><span class="line">  ServerAlias www.example.com</span><br><span class="line"></span><br><span class="line">  <span class="comment"># Index file and Document Root (where the public files are located)</span></span><br><span class="line">  DirectoryIndex index.html index.php</span><br><span class="line">  DocumentRoot /<span class="keyword">var</span>/www/html/example.com/public_html</span><br><span class="line">  <span class="comment"># Log file locations</span></span><br><span class="line">  LogLevel warn</span><br><span class="line">  ErrorLog  /<span class="keyword">var</span>/www/html/example.com/log/error.log</span><br><span class="line">  CustomLog /<span class="keyword">var</span>/www/html/example.com/log/access.log combined</span><br><span class="line">&lt;/VirtualHost&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment">#这里我对DocumentRoot,ErrorLog,CustomLog进行了修改</span></span><br><span class="line"><span class="comment">#由于我映射的目录是/var/www/web,所以把DocumentRoot 改为/var/www/web</span></span><br><span class="line"><span class="comment">#ErrorLog改为/var/www/log/error.log</span></span><br><span class="line"><span class="comment">#CustomLog改为/var/www/log/access.log combined</span></span><br></pre></td></tr></table></figure>
+
+<p>ctrl+x退出,Y保存,ENTER退出</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo a2ensite example<span class="selector-class">.com</span><span class="selector-class">.conf</span></span><br><span class="line">service  apache2 restart</span><br><span class="line">#重读配置文件</span><br></pre></td></tr></table></figure>
+
+<h3 id="三：配置MySQL"><a href="#三：配置MySQL" class="headerlink" title="三：配置MySQL"></a>三：配置MySQL</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mysql_secure_installation</span><br></pre></td></tr></table></figure>
+
+<p>这里密码是Admin2015,官方没写,找了很久!!</p>
+<p>基本是一路按照默认的一直ENTER就行(y和n大写的就是默认选项)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">service  mysql restart</span><br><span class="line"><span class="comment">#重启mysql</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="四：修改目录用户组"><a href="#四：修改目录用户组" class="headerlink" title="四：修改目录用户组"></a>四：修改目录用户组</h3><p>权限介绍<br> <a target="_blank" rel="noopener" href="https://blog.csdn.net/u013197629/article/details/73608613">https://blog.csdn.net/u013197629/article/details/73608613</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /var/www</span><br><span class="line">ps aux </span><br><span class="line"><span class="comment">#显示其他用户启动的进程（a）</span></span><br><span class="line"><span class="comment">#查看系统中属于自己的进程（x）</span></span><br><span class="line"><span class="comment">#启动这个进程的用户和它启动的时间（u）</span></span><br><span class="line"><span class="built_in">chown</span> -R www-data:www-data web</span><br><span class="line"><span class="comment">#这里通过ps aux看到apache服务是www-data用户启动的</span></span><br><span class="line"><span class="comment">#将web文件夹加入www-data用户组</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="五：打包push到私有registry"><a href="#五：打包push到私有registry" class="headerlink" title="五：打包push到私有registry"></a>五：打包push到私有registry</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">exit</span>  <span class="comment">#退出容器</span></span><br></pre></td></tr></table></figure>
+
+<p>保存对容器的更改</p>
+<p>动手之前，我们先到docker官网注册一个账号，这样我们才能将制作好的镜像上传到docker仓库，打开<a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=https://hub.docker.com/">https://hub.docker.com/</a></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/5244221-2c2a9bad9d634e49" alt="img"></p>
+<p>打包镜像</p>
+<p>**docker commit :**从容器创建一个新的镜像。</p>
+<p>语法</p>
+<figure class="highlight inform7"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker commit <span class="comment">[OPTIONS]</span> <span class="keyword">CONTAINER</span> <span class="comment">[REPOSITORY<span class="comment">[:TAG]</span>]</span></span><br></pre></td></tr></table></figure>
+
+<p>OPTIONS说明：</p>
+<ul>
+<li><p>**-a :**提交的镜像作者；</p>
+</li>
+<li><p>**-c :**使用Dockerfile指令来创建镜像；</p>
+</li>
+<li><p>**-m :**提交时的说明文字；</p>
+</li>
+<li><p>**-p :**在commit时，将容器暂停。</p>
+</li>
+</ul>
+<p>实例</p>
+<p><img src="/docker.assets/image-20220226191118970.png" alt="image-20220226191118970"></p>
+<p>先把配置好的镜像重新打包</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker commit -a <span class="string">&quot;adsry&quot;</span> -m <span class="string">&quot;the_signature_thinkcmf&quot;</span> d99d64836722  adsry/the_signature:thinkcmf</span><br></pre></td></tr></table></figure>
+
+<p>注意<code>adsry/the_signature:thinkcmf</code></p>
+<p>前面adsry&#x2F;the_signature是镜像名称，而且必须加作者名字，不然后面push会报错，后面是tag</p>
+<p>改镜像的tag</p>
+<p><img src="/docker.assets/image-20220226191435641.png" alt="image-20220226191435641"></p>
+<p>后面是改的名字和tag</p>
+<p><img src="/docker.assets/image-20220226191355512.png" alt="image-20220226191355512"></p>
+<p>最后是push到私有仓库</p>
+<p><img src="/docker.assets/image-20220226190811010.png" alt="image-20220226190811010"></p>
+<p>传到registry</p>
+<p><img src="/docker.assets/image-20220226191622986.png" alt="image-20220226191622986"></p>
+<h2 id="docker其它知识"><a href="#docker其它知识" class="headerlink" title="docker其它知识"></a>docker其它知识</h2><h3 id="一：docker上传本地文件"><a href="#一：docker上传本地文件" class="headerlink" title="一：docker上传本地文件"></a>一：docker上传本地文件</h3><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/guohu/p/13125606.html">怎样将本地文件上传到docker容器</a></p>
+<p>怎样将本地文件上传到<a target="_blank" rel="noopener" href="https://www.west.cn/paas/container/">docker容器</a>？<a target="_blank" rel="noopener" href="https://www.west.cn/paas/container/">docker</a> 是一个开源的应用容器引擎，让开发者可以打包他们的应用以及依赖包到一个可移植的容器中。在往docker容器中直接使用rz上传文件时，速度很慢，所以我们会考虑将本地文件上传至容器。</p>
+<p>首先我们要进入docker容器内部</p>
+<p><strong>查找所有容器id</strong></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker ps -<span class="selector-tag">a</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2020.cnblogs.com/blog/137119/202006/137119-20200614183345059-1787805001.png" alt="img"></p>
+<p><strong>查找容器长ID</strong></p>
+<figure class="highlight handlebars"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="language-xml">docker inspect -f &#x27;</span><span class="template-variable">&#123;&#123;<span class="name">.ID</span>&#125;&#125;</span><span class="language-xml">&#x27; tomcat-container-id</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2020.cnblogs.com/blog/137119/202006/137119-20200614183500724-22164375.png" alt="img"></p>
+<p><strong>拷贝本地文件到容器</strong></p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker cp 本地路径 容器长ID:容器路径</span><br><span class="line">docker cp <span class="regexp">/usr/my</span><span class="keyword">file</span><span class="regexp">/Test.war 38ef22f922704b32cf2650407e16b146bf61c221e6b8ef679989486d6ad9e856:/u</span>sr<span class="regexp">/local/</span>tomcat<span class="regexp">/webapps/</span>Test.war</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="二：docker相关操作"><a href="#二：docker相关操作" class="headerlink" title="二：docker相关操作"></a>二：docker相关操作</h3><ul>
+<li>查看镜像—-docker images</li>
+<li>查找镜像—-docker search xxx</li>
+<li>查看容器映射端口—-docker port 容器id</li>
+<li>打开容器—-docker start 容器id</li>
+<li>进入容器bash—-docker exec -it 容器id &#x2F;bin&#x2F;bash</li>
+</ul>
+<h3 id="三：docker删除镜像"><a href="#三：docker删除镜像" class="headerlink" title="三：docker删除镜像"></a>三：docker删除镜像</h3><p>本以为删除镜像会很简单，但是删除过程中并不是那么顺利。</p>
+<ol>
+<li>查询镜像</li>
+</ol>
+<p><img src="https://img-blog.csdn.net/20170914150927687?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvd2lueV9sbQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="img"></p>
+<p>现在想删除第一个，ID为 99f85991949f 的镜像。</p>
+<p><img src="https://img-blog.csdn.net/20170914151152134?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvd2lueV9sbQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="img"></p>
+<p>从上面看出，需要先停到ID为 67*** 的容器。</p>
+<ol start="2">
+<li>查询容器</li>
+</ol>
+<p><img src="https://img-blog.csdn.net/20170914151412257?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvd2lueV9sbQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="img"></p>
+<ol start="3">
+<li>先删除容器</li>
+</ol>
+<p>上面可以看出，容器已经删除。</p>
+<ol start="4">
+<li>删除镜像</li>
+</ol>
+<p><img src="https://img-blog.csdn.net/20170914151752147?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvd2lueV9sbQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="img"></p>
+<p>注意点：</p>
+<ol>
+<li><p>删除前需要保证容器是停止的  stop</p>
+</li>
+<li><p>需要注意删除镜像和容器的命令不一样。 docker rmi ID  ,其中 容器(rm)  和 镜像(rmi)</p>
+</li>
+<li><p>顺序需要先删除容器</p>
+</li>
+</ol>
+<h3 id="四：一些注意点"><a href="#四：一些注意点" class="headerlink" title="四：一些注意点"></a>四：一些注意点</h3><p>问题点：<strong>Not Found The requested URL</strong> </p>
+<p>开启<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=apache&spm=1001.2101.3001.7020">apache</a>重写</p>
+<p>先开启<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E9%87%8D%E5%86%99&spm=1001.2101.3001.7020">重写</a>功能</p>
+<figure class="highlight coq"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo a2enmod <span class="built_in">rewrite</span></span><br></pre></td></tr></table></figure>
+
+<p>再修改&#x2F;etc&#x2F;apache2&#x2F;apache2.conf下对应的配置文件</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">&lt;Directory /&gt;</span>  </span><br><span class="line">    <span class="attribute">Options</span> FollowSymLinks  　　 # 追加这行</span><br><span class="line">    <span class="attribute">AllowOverride</span> <span class="literal">All</span>  </span><br><span class="line"><span class="section">&lt;/Directory&gt;</span>  </span><br><span class="line"><span class="section">&lt;Directory <span class="string">&quot;/var/www&quot;</span>&gt;</span>  </span><br><span class="line">    <span class="attribute">Options</span> Indexes FollowSymLinks ExecCGI Includes  </span><br><span class="line">    <span class="attribute">AllowOverride</span> <span class="literal">All</span>  </span><br><span class="line">    <span class="attribute">Order</span> <span class="literal">allow</span>,<span class="literal">deny</span>  </span><br><span class="line">    <span class="attribute">Allow</span> from <span class="literal">all</span>  </span><br><span class="line"><span class="section">&lt;/Directory&gt;</span>  </span><br></pre></td></tr></table></figure>
+
+
+
+<p>还有一些就是Php的依赖问题</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">apt-<span class="built_in">get</span> install php5-gd</span><br><span class="line">sudo apt-<span class="built_in">get</span> install php5-curl</span><br><span class="line">sudo apt-<span class="built_in">get</span> install php5-m</span><br></pre></td></tr></table></figure>
+
+
+
+<p>参考链接：</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/enjoyphp/p/linux002.html">https://www.cnblogs.com/enjoyphp/p/linux002.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/yeqing112/p/10773603.html">https://www.cnblogs.com/yeqing112/p/10773603.html</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/web%E5%AE%89%E5%85%A8/" rel="tag"># web安全</a>
+              <a href="/tags/docker/" rel="tag"># docker</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/03/22/Vulnstack4/" rel="prev" title="红日靶场4-vulnstack4">
+      <i class="fa fa-chevron-left"></i> 红日靶场4-vulnstack4
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/03/24/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/" rel="next" title="MD5,RSA,SHA256,DES原理">
+      MD5,RSA,SHA256,DES原理 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%90%AD%E5%BB%BA"><span class="nav-text">基本搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%EF%BC%9Alamp%E4%BB%8B%E7%BB%8D-amp-run"><span class="nav-text">一：lamp介绍&amp;run</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%EF%BC%9A-%E8%BF%9B%E5%85%A5%E5%AE%B9%E5%99%A8%E9%85%8D%E7%BD%AEapache2"><span class="nav-text">二： 进入容器配置apache2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%EF%BC%9A%E9%85%8D%E7%BD%AEMySQL"><span class="nav-text">三：配置MySQL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%EF%BC%9A%E4%BF%AE%E6%94%B9%E7%9B%AE%E5%BD%95%E7%94%A8%E6%88%B7%E7%BB%84"><span class="nav-text">四：修改目录用户组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94%EF%BC%9A%E6%89%93%E5%8C%85push%E5%88%B0%E7%A7%81%E6%9C%89registry"><span class="nav-text">五：打包push到私有registry</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#docker%E5%85%B6%E5%AE%83%E7%9F%A5%E8%AF%86"><span class="nav-text">docker其它知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%EF%BC%9Adocker%E4%B8%8A%E4%BC%A0%E6%9C%AC%E5%9C%B0%E6%96%87%E4%BB%B6"><span class="nav-text">一：docker上传本地文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%EF%BC%9Adocker%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C"><span class="nav-text">二：docker相关操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%EF%BC%9Adocker%E5%88%A0%E9%99%A4%E9%95%9C%E5%83%8F"><span class="nav-text">三：docker删除镜像</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%EF%BC%9A%E4%B8%80%E4%BA%9B%E6%B3%A8%E6%84%8F%E7%82%B9"><span class="nav-text">四：一些注意点</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">apsry</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">apsry</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
