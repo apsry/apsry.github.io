@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"apsry.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="RMI源码概述">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RMI源码概述">
+<meta property="og:url" content="https://apsry.github.io/2022/04/07/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96RMI/index.html">
+<meta property="og:site_name" content="apsry">
+<meta property="og:description" content="RMI源码概述">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204051506219.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204051543586.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204051606597.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204051736443.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204051737626.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204051738127.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204051739467.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052134925.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052135223.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052136033.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052137475.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052141776.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052144570.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052145290.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052147471.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052148771.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052150181.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052150459.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052151953.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052152284.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052153697.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052155052.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052158081.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052159775.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052200558.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052200179.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052201892.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052203040.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052208458.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052208401.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052210345.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052212706.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052224173.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052225706.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052231163.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052232114.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052239645.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052241809.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052243673.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052244719.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052244818.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052245674.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052246079.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052247107.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052257257.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052257634.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052258544.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052259469.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052300300.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052301960.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052302486.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052304379.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052305596.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052305303.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052326503.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052332150.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052339179.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052339489.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061042987.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061045226.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061045428.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061046133.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061052512.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061054012.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061057349.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061100963.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061101655.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061102399.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061103713.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061104732.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061108157.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061109103.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061110698.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061218665.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061219222.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061221357.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061221928.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061222027.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061222534.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061224794.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061225656.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061226876.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061226837.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061228516.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061229301.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061230151.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061235128.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061236226.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061237114.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061237820.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061242441.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061243546.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061244216.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061245499.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061314117.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061315264.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061316010.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061317269.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061318666.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061322682.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061323583.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061716782.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061715430.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061718553.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061720816.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061721683.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061722642.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061725607.png">
+<meta property="article:published_time" content="2022-04-07T00:26:00.000Z">
+<meta property="article:modified_time" content="2022-04-07T15:53:58.780Z">
+<meta property="article:author" content="apsry">
+<meta property="article:tag" content="java代码审计">
+<meta property="article:tag" content="代码审计">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204051506219.png">
+
+<link rel="canonical" href="https://apsry.github.io/2022/04/07/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96RMI/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>RMI源码概述 | apsry</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+<!-- 引入目录截取js -->
+<script type="text/javascript" src="/js/src/abstract.js"></script>
+
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">apsry</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">去留无意，宠辱不惊</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://apsry.github.io/2022/04/07/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96RMI/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="apsry">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="apsry">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          RMI源码概述
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-04-07 08:26:00 / 修改时间：23:53:58" itemprop="dateCreated datePublished" datetime="2022-04-07T08:26:00+08:00">2022-04-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">代码审计</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>RMI源码概述</p>
+<span id="more"></span>
+
+
+
+
+
+<h1 id="RMI源码概述"><a href="#RMI源码概述" class="headerlink" title="RMI源码概述"></a>RMI源码概述</h1><p><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/tutorial/rmi/overview.html">https://docs.oracle.com/javase/tutorial/rmi/overview.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.javasec.org/javase/RMI/">https://www.javasec.org/javase/RMI/</a></p>
+<p>远程调用方法</p>
+<p>RMI 应用程序通常包含两个独立的程序，一个服务器和一个客户端。典型的服务器程序创建一些远程对象，使对这些对象的引用可访问，并等待客户端调用这些对象上的方法。典型的客户端程序获取对服务器上一个或多个远程对象的远程引用，然后调用它们上的方法。RMI 提供了服务器和客户端通信和来回传递信息的机制。这样的应用程序有时被称为<em>分布式对象应用程序</em>。</p>
+<p>分布式对象应用需要做到以下几点：</p>
+<ul>
+<li><strong>定位远程对象。</strong>应用程序可以使用各种机制来获取对远程对象的引用。例如，应用程序可以使用 RMI 的简单命名工具 RMI 注册表注册其远程对象。或者，应用程序可以传递和返回远程对象引用作为其他远程调用的一部分。</li>
+<li><strong>与远程对象通信。</strong>远程对象之间的通信细节由 RMI 处理。对于程序员来说，远程通信看起来类似于常规的 Java 方法调用。</li>
+<li><strong>为传递的对象加载类定义。</strong>因为 RMI 允许来回传递对象，所以它提供了加载对象的类定义以及传输对象数据的机制。</li>
+</ul>
+<p>相当于封装了一个远程通信</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204051506219.png" alt="image-20220405150625155"></p>
+<p><code>RMI</code>底层通讯采用了<code>Stub(运行在客户端)</code>和<code>Skeleton(运行在服务端)</code>机制，<code>RMI</code>调用远程方法的大致如下：</p>
+<ol>
+<li><code>RMI客户端</code>在调用远程方法时会先创建<code>Stub(sun.rmi.registry.RegistryImpl_Stub)</code>。</li>
+<li><code>Stub</code>会将<code>Remote</code>对象传递给<code>远程引用层(java.rmi.server.RemoteRef)</code>并创建<code>java.rmi.server.RemoteCall(远程调用)</code>对象。</li>
+<li><code>RemoteCall</code>序列化<code>RMI服务名称</code>、<code>Remote</code>对象。</li>
+<li><code>RMI客户端</code>的<code>远程引用层</code>传输<code>RemoteCall</code>序列化后的请求信息通过<code>Socket</code>连接的方式传输到<code>RMI服务端</code>的<code>远程引用层</code>。</li>
+<li><code>RMI服务端</code>的<code>远程引用层(sun.rmi.server.UnicastServerRef)</code>收到请求会请求传递给<code>Skeleton(sun.rmi.registry.RegistryImpl_Skel#dispatch)</code>。</li>
+<li><code>Skeleton</code>调用<code>RemoteCall</code>反序列化<code>RMI客户端</code>传过来的序列化。</li>
+<li><code>Skeleton</code>处理客户端请求：<code>bind</code>、<code>list</code>、<code>lookup</code>、<code>rebind</code>、<code>unbind</code>，如果是<code>lookup</code>则查找<code>RMI服务名</code>绑定的接口对象，序列化该对象并通过<code>RemoteCall</code>传输到客户端。</li>
+<li><code>RMI客户端</code>反序列化服务端结果，获取远程对象的引用。</li>
+<li><code>RMI客户端</code>调用远程方法，<code>RMI服务端</code>反射调用<code>RMI服务实现类</code>的对应方法并序列化执行结果返回给客户端。</li>
+<li><code>RMI客户端</code>反序列化<code>RMI</code>远程方法调用结果。</li>
+</ol>
+<h2 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.rmi.AlreadyBoundException;</span><br><span class="line"><span class="keyword">import</span> java.rmi.NotBoundException;</span><br><span class="line"><span class="keyword">import</span> java.rmi.Remote;</span><br><span class="line"><span class="keyword">import</span> java.rmi.RemoteException;</span><br><span class="line"><span class="keyword">import</span> java.rmi.registry.LocateRegistry;</span><br><span class="line"><span class="keyword">import</span> java.rmi.registry.Registry;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RMIClient</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> RemoteException, NotBoundException &#123;</span><br><span class="line">        <span class="comment">//调用远程</span></span><br><span class="line">        <span class="type">Registry</span> <span class="variable">registry</span> <span class="operator">=</span> LocateRegistry.getRegistry(<span class="string">&quot;127.0.0.1&quot;</span>, <span class="number">1099</span>);</span><br><span class="line">        <span class="type">IRemoteObj</span> <span class="variable">remoteObj</span> <span class="operator">=</span> (IRemoteObj) registry.lookup(<span class="string">&quot;remoteObj&quot;</span>);</span><br><span class="line">        remoteObj.sayHello(<span class="string">&quot;hello&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.rmi.AlreadyBoundException;</span><br><span class="line"><span class="keyword">import</span> java.rmi.Remote;</span><br><span class="line"><span class="keyword">import</span> java.rmi.RemoteException;</span><br><span class="line"><span class="keyword">import</span> java.rmi.registry.LocateRegistry;</span><br><span class="line"><span class="keyword">import</span> java.rmi.registry.Registry;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RMIServer</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> RemoteException, AlreadyBoundException&#123;</span><br><span class="line">        <span class="comment">//远程对象</span></span><br><span class="line">        <span class="type">IRemoteObj</span> <span class="variable">remoteObj</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">RemoteObjImpl</span>();</span><br><span class="line">        <span class="comment">//绑定注册中心</span></span><br><span class="line">        <span class="type">Registry</span> <span class="variable">r</span> <span class="operator">=</span> LocateRegistry.createRegistry(<span class="number">1099</span>);</span><br><span class="line">        r.bind(<span class="string">&quot;remoteObj&quot;</span>, remoteObj);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>定义相同的接口</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.rmi.Remote;</span><br><span class="line"><span class="keyword">import</span> java.rmi.RemoteException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">IRemoteObj</span> <span class="keyword">extends</span> <span class="title class_">Remote</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">sayHello</span><span class="params">(String keywords)</span> <span class="keyword">throws</span> RemoteException;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.sun.javaws.IconUtil;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.rmi.RemoteException;</span><br><span class="line"><span class="keyword">import</span> java.rmi.server.UnicastRemoteObject;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RemoteObjImpl</span> <span class="keyword">extends</span> <span class="title class_">UnicastRemoteObject</span> <span class="keyword">implements</span>  <span class="title class_">IRemoteObj</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">RemoteObjImpl</span><span class="params">()</span> <span class="keyword">throws</span> RemoteException&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">sayHello</span><span class="params">(String keywords)</span>&#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">upKeywords</span> <span class="operator">=</span> keywords.toUpperCase();</span><br><span class="line">        System.out.println(upKeywords);</span><br><span class="line">        <span class="keyword">return</span> upKeywords;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>可以看到做了一个向远程服务端传输了hello，服务端做了一个大写处理</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204051543586.png" alt="image-20220405154324442"></p>
+<p>RMI是由序列化和反序列化实现的。</p>
+<h2 id="RMI创建远程服务"><a href="#RMI创建远程服务" class="headerlink" title="RMI创建远程服务"></a>RMI创建远程服务</h2><p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/9261">https://xz.aliyun.com/t/9261</a></p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/6660#toc-6">https://xz.aliyun.com/t/6660#toc-6</a></p>
+<p><a target="_blank" rel="noopener" href="https://halfblue.github.io/2021/10/26/RMI%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E4%B9%8B%E4%B8%89%E9%A1%BE%E8%8C%85%E5%BA%90-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/">https://halfblue.github.io/2021/10/26/RMI%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E4%B9%8B%E4%B8%89%E9%A1%BE%E8%8C%85%E5%BA%90-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/</a></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204051606597.png" alt="img"></p>
+<p>我们分析是如何创建远程对象的</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204051736443.png" alt="image-20220405173627299"></p>
+<p>首先到了父类的构造函数</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204051737626.png" alt="image-20220405173725525"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204051738127.png"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204051739467.png" alt="image-20220405173904383"></p>
+<p>跟进去</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052134925.png" alt="image-20220405213423795"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052135223.png" alt="image-20220405213557136"></p>
+<p>看构造函数<code>LiveRef</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052136033.png" alt="image-20220405213635967"></p>
+<p>可以看到<code>TCPEndpoint</code>是用来处理网络请求</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052137475.png" alt="image-20220405213718409"></p>
+<p>我们再看<code>LiveRef</code></p>
+<p>可以看到给赋了值</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052141776.png" alt="image-20220405214139681"></p>
+<p>理清楚了<code>LiveRef</code>，我们再返回</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052144570.png" alt="image-20220405214411480"></p>
+<p>可以看到创建的值</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052145290.png" alt="image-20220405214538203"></p>
+<p>继续返回到<code>exportObject</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052147471.png" alt="image-20220405214722378"></p>
+<p>一直在赋值</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052148771.png" alt="image-20220405214823689"></p>
+<p>壳痛看到创建了<code>stub</code>代理</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052150181.png" alt="image-20220405215009087"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052150459.png" alt="img"></p>
+<p>看创建流程</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052151953.png" alt="image-20220405215113840"></p>
+<p>可以看到核心还是<code>LiveRef</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052152284.png" alt="image-20220405215203195"></p>
+<p>可以看到创建了一个动态代理</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052153697.png" alt="image-20220405215317612"></p>
+<p>创建动态代理，还是封装的<code>LiveRef</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052155052.png" alt="image-20220405215524996"></p>
+<p>最后可以看总封装<code>Target</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052158081.png" alt="image-20220405215834966"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052159775.png" alt="image-20220405215924703"></p>
+<p>我们继续往下跟</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052200558.png" alt="image-20220405220019465"></p>
+<p>可以看到<code>listen</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052200179.png" alt="image-20220405220050077"></p>
+<p>跟进去，可以看到直接起连接了</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052201892.png" alt="image-20220405220153807"></p>
+<p>开启线程，等待连接</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052203040.png" alt="image-20220405220305936"></p>
+<p>再一路跟下去</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052208458.png" alt="image-20220405220806364"></p>
+<p>我们分析<code>objTable</code>和<code>implTable</code></p>
+<p>可以看到是一个用来存储的表</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052208401.png" alt="image-20220405220853355"></p>
+<p>可以看到ip和端口已经赋好值了</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052210345.png" alt="image-20220405221027229"></p>
+<p>端口由于未指定，会随机一个端口</p>
+<p>整体流程就是如上，最后到走完</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052212706.png" alt="img"></p>
+<h2 id="创建注册中心-绑定"><a href="#创建注册中心-绑定" class="headerlink" title="创建注册中心+绑定"></a>创建注册中心+绑定</h2><h3 id="创建注册中心"><a href="#创建注册中心" class="headerlink" title="创建注册中心"></a>创建注册中心</h3><p>直接分析代码原理</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052224173.png" alt="image-20220405222429069"></p>
+<p>创建了注册中心</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052225706.png" alt="image-20220405222502632"></p>
+<p>继续跟进去</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052231163.png" alt="image-20220405223144058"></p>
+<p>和创建远程服务步骤基本一样</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052232114.png" alt="image-20220405223234016"></p>
+<p>区别就是stub那里会不一样</p>
+<p>我们按上面的思路跟一下</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052239645.png" alt="image-20220405223924536"></p>
+<p>这里会直接进入判断，和前面不一样的地方，判断了这个</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052241809.png" alt="image-20220405224114704"></p>
+<p>可以看到基本上和前面都是一样的</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052243673.png" alt="image-20220405224309587"></p>
+<p>我们继续往下跟</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052244719.png" alt="image-20220405224401630"></p>
+<p><code>Util.createSkeleton</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052244818.png" alt="image-20220405224429732"></p>
+<p>继续理解这幅图</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052245674.png" alt="img"></p>
+<p>给了一个<code>skel</code>对象</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052246079.png" alt="image-20220405224617985"></p>
+<p>和前面差不多创建了一个<code>Target</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052247107.png" alt="image-20220405224710000"></p>
+<p>然后再一路跟下去</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052257257.png" alt="image-20220405225713166"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052257634.png" alt="image-20220405225758562"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052258544.png" alt="image-20220405225817467"></p>
+<p>我们直接看<code>objTable</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052259469.png" alt="image-20220405225923363"></p>
+<p>默认创建一个分布式垃圾回收</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052300300.png" alt="image-20220405230022252"></p>
+<p>远程服务的对象</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052301960.png" alt="image-20220405230148895"></p>
+<p>创建注册中心的对象</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052302486.png" alt="image-20220405230214441"></p>
+<h3 id="绑定"><a href="#绑定" class="headerlink" title="绑定"></a>绑定</h3><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052304379.png" alt="image-20220405230432299"></p>
+<p>然后就是一个绑定过程</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052305596.png" alt="image-20220405230520526"></p>
+<p>可以看到put的值</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052305303.png" alt="image-20220405230550215"></p>
+<h2 id="客户端请求注册中心"><a href="#客户端请求注册中心" class="headerlink" title="客户端请求注册中心"></a>客户端请求注册中心</h2><p>我这边两边改了下端口</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052326503.png" alt="image-20220405232636396"></p>
+<p><code>liveRef</code></p>
+<p>这边就是直接本地封装了一下</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052332150.png" alt="image-20220405233255005"></p>
+<p>这边又调了一个<code>createProxy</code>，和前面流程是一样的</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052339179.png" alt="image-20220405233903073"></p>
+<p>可以看又注册了一个</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204052339489.png" alt="image-20220405233933386"></p>
+<p>下一步是获取远程对象</p>
+<p>创建一个远程连接</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061042987.png" alt="image-20220406104217882"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061045226.png" alt="image-20220406104520142"></p>
+<p>调了<code>call.executeCall()</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061045428.png" alt="image-20220406104544344"></p>
+<p>然后再看上层的逻辑，用了一个反序列化读取，var22是动态代理，这是一个反序列化的点</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061046133.png" alt="image-20220406104641065"></p>
+<p>还要一个点就是，如果是一个异常的类，然后就会客户端进行一个反序列化，所以说只要调用了<code>invoke</code>就可能被攻击</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061052512.png" alt="image-20220406105209388"></p>
+<p>最后的结果就是</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061054012.png" alt="image-20220406105410901"></p>
+<h2 id="客户端请求服务端"><a href="#客户端请求服务端" class="headerlink" title="客户端请求服务端"></a>客户端请求服务端</h2><p>我们继续调试，一路上到了<code>invoke</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061057349.png" alt="image-20220406105715229"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061100963.png" alt="image-20220406110026858"></p>
+<p>和前面差不多，再跟下去</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061101655.png" alt="image-20220406110115539"></p>
+<p>然后看<code>marshalValue</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061102399.png" alt="image-20220406110206297"></p>
+<p>基本上就是一个序列化的逻辑</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061103713.png" alt="image-20220406110329627"></p>
+<p>最后看到还是调用了<code>call.executeCall()</code>，也就是我们前面看到的反序列化的点还是存在</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061104732.png" alt="image-20220406110440630"></p>
+<p>看<code>unmarshalValue</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061108157.png" alt="image-20220406110848080"></p>
+<p>可以看到这里也可能有一个反序列化的点</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061109103.png" alt="image-20220406110928008"></p>
+<p>可以看到值被反序列化了</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061110698.png" alt="image-20220406111035598"></p>
+<h2 id="客户端请求注册中心-1"><a href="#客户端请求注册中心-1" class="headerlink" title="客户端请求注册中心"></a>客户端请求注册中心</h2><p>这边直接走到<code>listen</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061218665.png" alt="image-20220406121853558"></p>
+<p>我们分析的是客户端请求服务端来调试</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061219222.png" alt="image-20220406121954140"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061221357.png" alt="image-20220406122117283"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061221928.png" alt="image-20220406122137845"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061222027.png" alt="image-20220406122208936"></p>
+<p>可以看到已经开始解析字段了</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061222534.png" alt="image-20220406122246452"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061224794.png" alt="image-20220406122453654"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061225656.png" alt="image-20220406122536535"></p>
+<p>可以看到会获取<code>ObjectTable</code>的<code>target</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061226876.png" alt="image-20220406122612781"></p>
+<p>直接下个断点，然后客户端请求</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061226837.png" alt="image-20220406122636728"></p>
+<p>可以看到直接断到了断点</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061228516.png" alt="image-20220406122828370"></p>
+<p>我们可以看到<code>target</code>的值</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061229301.png" alt="image-20220406122923197"></p>
+<p>获取分发器</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061230151.png" alt="image-20220406123030053"></p>
+<p>一路跟下去</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061235128.png" alt="image-20220406123540034"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061236226.png" alt="image-20220406123623134"></p>
+<p>最后到了</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061237114.png" alt="image-20220406123746022"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061237820.png" alt="image-20220406123758738"></p>
+<p>可以分析<code>dispatch</code></p>
+<p>传的是2</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061242441.png" alt="image-20220406124216394"></p>
+<p>所以是调用case2</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061243546.png" alt="image-20220406124300477"></p>
+<p>可以看到有一个反序列化点，反序列化读出了，所以这是一个可以攻击的点</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061244216.png" alt="image-20220406124459160"></p>
+<p>客户端处理stub,服务端处理skel</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061245499.png" alt="img"></p>
+<h2 id="客户端请求服务端-服务端"><a href="#客户端请求服务端-服务端" class="headerlink" title="客户端请求服务端-服务端"></a>客户端请求服务端-服务端</h2><p>这边会继续调传<code>target</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061314117.png" alt="image-20220406131426057"></p>
+<p>再一路跟下去，不同的就是skel为null</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061315264.png" alt="image-20220406131541165"></p>
+<p>继续可以看到获取了我们定义的远程方法</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061316010.png" alt="image-20220406131632888"></p>
+<p>可以看到和前面一样，会把传参反序列化出来</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061317269.png" alt="image-20220406131726170"></p>
+<p>可以看到做了一个反序列化</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061318666.png"></p>
+<p>可以看到传入的参数和进行了远程调用</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061322682.png" alt="image-20220406132206580"></p>
+<p>最后服务端把返回值序列化传输</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061323583.png" alt="image-20220406132324465"></p>
+<h2 id="客户端请求服务端-DGC-RMI分布式垃圾回收"><a href="#客户端请求服务端-DGC-RMI分布式垃圾回收" class="headerlink" title="客户端请求服务端-DGC(RMI分布式垃圾回收)"></a>客户端请求服务端-DGC(RMI分布式垃圾回收)</h2><p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061716782.png" alt="image-20220406171636723"></p>
+<p>下个断点</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061715430.png" alt="image-20220406171558276"></p>
+<p>可以看到和前面创建代理的时候差不多</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061718553.png" alt="image-20220406171854493"></p>
+<p>还是创建了一个类stub</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061720816.png" alt="image-20220406172032710"></p>
+<p>然后再put到了target</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061721683.png" alt="image-20220406172117574"></p>
+<p>我们看<code>DGCImpl_Stub</code></p>
+<p>可以看到都调用了invoke,前面我们知道invoke里面是有反序列化的点的<img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061722642.png" alt="image-20220406172253555"></p>
+<p>我们再看DGC的服务端，也有反序列化点，也就是说都是可以被攻击的</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204061725607.png" alt="image-20220406172521489"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" rel="tag"># java代码审计</a>
+              <a href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" rel="tag"># 代码审计</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/04/03/shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96(shiro550)/" rel="prev" title="shiro反序列化">
+      <i class="fa fa-chevron-left"></i> shiro反序列化
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#RMI%E6%BA%90%E7%A0%81%E6%A6%82%E8%BF%B0"><span class="nav-text">RMI源码概述</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#demo"><span class="nav-text">demo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RMI%E5%88%9B%E5%BB%BA%E8%BF%9C%E7%A8%8B%E6%9C%8D%E5%8A%A1"><span class="nav-text">RMI创建远程服务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83-%E7%BB%91%E5%AE%9A"><span class="nav-text">创建注册中心+绑定</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83"><span class="nav-text">创建注册中心</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%91%E5%AE%9A"><span class="nav-text">绑定</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%AF%B7%E6%B1%82%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83"><span class="nav-text">客户端请求注册中心</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%AF%B7%E6%B1%82%E6%9C%8D%E5%8A%A1%E7%AB%AF"><span class="nav-text">客户端请求服务端</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%AF%B7%E6%B1%82%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83-1"><span class="nav-text">客户端请求注册中心</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%AF%B7%E6%B1%82%E6%9C%8D%E5%8A%A1%E7%AB%AF-%E6%9C%8D%E5%8A%A1%E7%AB%AF"><span class="nav-text">客户端请求服务端-服务端</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%AF%B7%E6%B1%82%E6%9C%8D%E5%8A%A1%E7%AB%AF-DGC-RMI%E5%88%86%E5%B8%83%E5%BC%8F%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="nav-text">客户端请求服务端-DGC(RMI分布式垃圾回收)</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">apsry</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">apsry</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
