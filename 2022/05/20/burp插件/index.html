@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"apsry.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="burp插件的简单入门">
+<meta property="og:type" content="article">
+<meta property="og:title" content="burp插件的简单入门">
+<meta property="og:url" content="https://apsry.github.io/2022/05/20/burp%E6%8F%92%E4%BB%B6/index.html">
+<meta property="og:site_name" content="apsry">
+<meta property="og:description" content="burp插件的简单入门">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192349640.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192313628.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192332788.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192334827.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192335661.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192337234.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192341950.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192343359.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192347512.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192348942.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192236538.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192237479.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192238723.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192238666.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192252231.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205200035162.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205200037353.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205200039124.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205200038584.png">
+<meta property="og:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205200039018.png">
+<meta property="article:published_time" content="2022-05-20T07:26:00.000Z">
+<meta property="article:modified_time" content="2022-05-19T16:41:49.191Z">
+<meta property="article:author" content="apsry">
+<meta property="article:tag" content="渗透测试">
+<meta property="article:tag" content="burp">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192349640.png">
+
+<link rel="canonical" href="https://apsry.github.io/2022/05/20/burp%E6%8F%92%E4%BB%B6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>burp插件的简单入门 | apsry</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+<!-- 引入目录截取js -->
+<script type="text/javascript" src="/js/src/abstract.js"></script>
+
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">apsry</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">去留无意，宠辱不惊</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://apsry.github.io/2022/05/20/burp%E6%8F%92%E4%BB%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="apsry">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="apsry">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          burp插件的简单入门
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-05-20 15:26:00 / 修改时间：00:41:49" itemprop="dateCreated datePublished" datetime="2022-05-20T15:26:00+08:00">2022-05-20</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" itemprop="url" rel="index"><span itemprop="name">渗透测试</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>burp插件的简单入门</p>
+<span id="more"></span>
+
+<h2 id="burp插件简单入门"><a href="#burp插件简单入门" class="headerlink" title="burp插件简单入门"></a>burp插件简单入门</h2><h3 id="简单介绍"><a href="#简单介绍" class="headerlink" title="简单介绍"></a>简单介绍</h3><p>可以在burp直接下载接口说明和接口</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192349640.png" alt="image-20220519234957408"></p>
+<p>关于入门，可以看一些文章，这里就用hackbar举例</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/d3vilbug/HackBar">https://github.com/d3vilbug/HackBar</a></p>
+<p>把文件下下来，然后分析代码，在我看来如果能借助别人的代码改改达到自己的需求，就没必要去写了，我开始的想法就是写一个burp的笔记本，刚好hackbar就非常适合我的需求。</p>
+<p>我们这边举三个代码来理解</p>
+<p>首先是<code>BurpExtender</code></p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="symbol">BurpExtender</span> <span class="symbol">implements</span> <span class="symbol">IBurpExtender, <span class="symbol">IContextMenuFactory</span></span></span><br></pre></td></tr></table></figure>
+
+<p><strong>简单来说就是需要什么模块就先去注册模块，然后再调用</strong></p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">IBurpExtender：在编写Burp拓展时必须要使用的类，该类的作用是在Burp上正确注册，注册方法是使用<span class="built_in">registerExtenderCallbacks</span>()方法，传递callbacks参数</span><br><span class="line"></span><br><span class="line">IContextMenuFactory：此模块用来拓展右键菜单功能首先使用<span class="built_in">registerContextMenuFactory</span>()方法注册菜单拓展，然后建立<span class="built_in">createMenuItem</span>()方法创建菜单，使用<span class="built_in">add</span>()函数，配合<span class="built_in">JmenuItem</span>()方法设置菜单信息，在此方法内定义actionPerformed参数设置行动函数。</span><br></pre></td></tr></table></figure>
+
+<p>burp的接口可以自行的去官网查看，我觉得其实代码写起来比较简单，相反要是实现一些图形化感觉比较难一些</p>
+<p><a target="_blank" rel="noopener" href="https://portswigger.net/burp/extender/">https://portswigger.net/burp/extender/</a></p>
+<p>可以看这位博主的解释的比较全</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_47767605/article/details/106237259">https://blog.csdn.net/weixin_47767605/article/details/106237259</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/wjrblogs/p/15705552.html">https://www.cnblogs.com/wjrblogs/p/15705552.html</a></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192313628.png" alt="image-20220519231332500"></p>
+<p>我们知道接口的含义，所以就容易理解代码，<code>registerExtenderCallbacks</code>注册模块初始化，<code>createMenuItems</code>创建菜单</p>
+<p>然后看hackbar写的通用方法</p>
+<p>可以看到<code>add_MenuItem_and_listenerd</code>的逻辑就是添加菜单和listener</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//一级菜单:</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> JMenu <span class="title function_">add_MenuItem_and_listener</span><span class="params">(JMenu menu, String[] itemList, Object actionListener)</span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; itemList.length; i++)&#123;</span><br><span class="line">            <span class="type">JMenuItem</span> <span class="variable">item</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">JMenuItem</span>(itemList[i]);</span><br><span class="line">            item.addActionListener((ActionListener) actionListener);</span><br><span class="line">            menu.add(item);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> menu;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>举个例子</p>
+<p>我们看webshell这里，可以看到他只注册了一级菜单，所以这个时候用<code>add_MenuItem_and_listenerd</code>进行一个注册</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192332788.png" alt="image-20220519233258358"></p>
+<p><code>Create_Main_Menu</code>创建主菜单，然后再添加子菜单，如果需要二级菜单就用这个</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//二级菜单: 创建主菜单，并加入子菜单    </span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> JMenu <span class="title function_">Create_Main_Menu</span><span class="params">(JMenu MainMenu, String[] MainMenuItems, String[][] SubMenuItems, Object actionListener)</span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>; i &lt; MainMenuItems.length; i++)&#123;</span><br><span class="line">            <span class="type">JMenu</span> <span class="variable">menu</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">JMenu</span>(MainMenuItems[i]);</span><br><span class="line">            menu = add_MenuItem_and_listener(menu, SubMenuItems[i], actionListener);</span><br><span class="line">            <span class="keyword">if</span>(MainMenuItems[i].equals(<span class="string">&quot;Basic Statements&quot;</span>))&#123;</span><br><span class="line">                MainMenu.add(<span class="keyword">new</span> <span class="title class_">JSeparator</span>());</span><br><span class="line">                MainMenu.add(menu);</span><br><span class="line">                MainMenu.add(<span class="keyword">new</span> <span class="title class_">JSeparator</span>());</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                MainMenu.add(menu);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> MainMenu;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>举个例子</p>
+<p>可以看到<code>LFIMenuItems</code>需要二级菜单</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192334827.png" alt="image-20220519233434671"></p>
+<p><code>prompt_and_validate_input</code>，接受用户的输入</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title function_">prompt_and_validate_input</span><span class="params">(String prompt, String str)</span>&#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">user_input</span> <span class="operator">=</span> JOptionPane.showInputDialog(prompt, str);</span><br><span class="line">        <span class="keyword">while</span>(user_input.trim().equals(<span class="string">&quot;&quot;</span>))&#123;</span><br><span class="line">            user_input = JOptionPane.showInputDialog(prompt, str);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> user_input.trim();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>举个例子</p>
+<p>我们看到调用<code>prompt_and_validate_input</code>去获取用户的输入</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192335661.png" alt="image-20220519233553390"></p>
+<p>其它就不举例子了0.0，比较简单</p>
+<p><code>do_modify_request</code>对输出的文本进行处理</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="type">byte</span>[] do_modify_request(<span class="type">byte</span>[] request, <span class="type">int</span>[] selectedIndex, String modifiedString)&#123;</span><br><span class="line">        <span class="type">byte</span>[] modString = modifiedString.getBytes();</span><br><span class="line">        <span class="type">byte</span>[] newRequest = <span class="keyword">new</span> <span class="title class_">byte</span>[request.length + modifiedString.length() - (selectedIndex[<span class="number">1</span>]-selectedIndex[<span class="number">0</span>])];</span><br><span class="line">        System.arraycopy(request, <span class="number">0</span>, newRequest, <span class="number">0</span>, selectedIndex[<span class="number">0</span>]);</span><br><span class="line">        System.arraycopy(modString, <span class="number">0</span>, newRequest, selectedIndex[<span class="number">0</span>], modString.length);</span><br><span class="line">        System.arraycopy(request, selectedIndex[<span class="number">1</span>], newRequest, selectedIndex[<span class="number">0</span>]+modString.length, request.length-selectedIndex[<span class="number">1</span>]);</span><br><span class="line">        <span class="keyword">return</span> newRequest;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>show_message</code>打印</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">show_message</span><span class="params">(String str1, String str2)</span>&#123;</span><br><span class="line">    JOptionPane.showMessageDialog(<span class="literal">null</span>, str1, str2, <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="魔改"><a href="#魔改" class="headerlink" title="魔改"></a>魔改</h3><p>然后魔改就比较简单了，比如你想增加自己的webshell</p>
+<p>可以先添加菜单</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192337234.png" alt="image-20220519233748585"></p>
+<p>然后可以调用<code>do_WebShell</code>去对传进去的action进行处理，比如这里我们直接添加了behinder的马，然后直接在switch对action进行判断即可，然后照样子把冰蝎马base一些就可以了。注意不要有中文！</p>
+<p>如果想自己写一个菜单，那么直接在<code>BurpExtender.registerExtenderCallbacks</code>注册一个即可，比如我这里的<code>HttpHeader</code></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192341950.png" alt="image-20220519234155611"></p>
+<p>然后创建文件，主要两个点，比较简单，就不继续了</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192343359.png" alt="image-20220519234335585"></p>
+<p>最后效果</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192347512.png" alt="image-20220519234714408"></p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192348942.png" alt="image-20220519234813857"></p>
+<h2 id="burp插件调试"><a href="#burp插件调试" class="headerlink" title="burp插件调试"></a>burp插件调试</h2><p>首先确保IDEA和burp插件代码的一致性</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192236538.png" alt="image-20220519223635438"></p>
+<p>添加远程</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192237479.png" alt="image-20220519223703402"></p>
+<p>配置</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192238723.png" alt="image-20220519223833622"></p>
+<figure class="highlight elm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-agentlib:jdwp=trans<span class="keyword">port</span>=dt_socket,server=y,suspend=n,address=5005</span><br></pre></td></tr></table></figure>
+
+<p>可以看到会出现debug</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192238666.png" alt="image-20220519223854550"></p>
+<p>然后就是关于burp的配置</p>
+<p>需要在启动时加上</p>
+<figure class="highlight elm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-agentlib:jdwp=trans<span class="keyword">port</span>=dt_socket,server=y,suspend=n,address=5005</span><br></pre></td></tr></table></figure>
+
+<p>由于一般大家都是用的破解，比如我原来的命令是这样的</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;./jre\bin\javaw.exe&quot;</span> -Xmx8G -XX:-UseParallelGC -noverify -<span class="keyword">javaagent:BurpSuiteLoader_v2022.2.2.jar </span>-Dfile.encoding=utf<span class="number">-8</span> -<span class="keyword">jar </span><span class="keyword">burpsuite_pro_v2022.2.2.jar</span></span><br></pre></td></tr></table></figure>
+
+<p>这个时候在后面加上即可</p>
+<figure class="highlight elm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-agentlib:jdwp=trans<span class="keyword">port</span>=dt_socket,server=y,suspend=n,address=5005</span><br></pre></td></tr></table></figure>
+
+<p>下载jre的网站</p>
+<p><a target="_blank" rel="noopener" href="http://hg.openjdk.java.net/">http://hg.openjdk.java.net/</a></p>
+<p><a target="_blank" rel="noopener" href="https://jdk.java.net/archive/">https://jdk.java.net/archive/</a></p>
+<p>报了这样的错误，发现是没有下载dll文件，百度下载了个jdwp.dll放到jdk的bin目录</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205192252231.png" alt="image-20220519225249179"></p>
+<p>还有就是注意jdk版本的一致性</p>
+<p>最后命令是</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;\java\jdk-14.0.2\bin\java.exe&quot;</span> -agentlib:<span class="attribute">jdwp</span>=transport=dt_socket,server=y,suspend=n,address=5005  -Xmx8G -XX:-UseParallelGC -noverify -javaagent:BurpSuiteLoader_v2022.2.2.jar -Dfile.<span class="attribute">encoding</span>=utf-8 -jar burpsuite_pro_v2022.2.2.jar</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205200035162.png" alt="image-20220520003500992"></p>
+<p>这个时候我假设在webshell的php下断点</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205200037353.png" alt="image-20220520003724248"></p>
+<p>然后在burp下点击hackbar的php选项</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205200039124.png" alt="image-20220520003931052"></p>
+<p>可以看到已经成功的断在了我们想要的地方</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205200038584.png" alt="image-20220520003829133"></p>
+<p>最终得到想要的结果</p>
+<p><img src="https://adsry.oss-cn-beijing.aliyuncs.com/img/202205200039018.png" alt="image-20220520003907882"></p>
+<p>参考：</p>
+<p><a target="_blank" rel="noopener" href="http://www.code2sec.com/burpsuitecha-jian-kai-fa-tips.html">http://www.code2sec.com/burpsuitecha-jian-kai-fa-tips.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/huahao1989/article/details/107746738">https://blog.csdn.net/huahao1989/article/details/107746738</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.netspi.com/blog/technical/web-application-penetration-testing/debugging-burp-extensions/">https://www.netspi.com/blog/technical/web-application-penetration-testing/debugging-burp-extensions/</a></p>
+<p><a target="_blank" rel="noopener" href="https://portswigger.net/burp/extender/">https://portswigger.net/burp/extender/</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.code2sec.com/burpsuitecha-jian-kai-fa-tips.html">http://www.code2sec.com/burpsuitecha-jian-kai-fa-tips.html</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" rel="tag"># 渗透测试</a>
+              <a href="/tags/burp/" rel="tag"># burp</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/04/30/AWD%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E5%AE%88/" rel="prev" title="AWD培训">
+      <i class="fa fa-chevron-left"></i> AWD培训
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#burp%E6%8F%92%E4%BB%B6%E7%AE%80%E5%8D%95%E5%85%A5%E9%97%A8"><span class="nav-text">burp插件简单入门</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E4%BB%8B%E7%BB%8D"><span class="nav-text">简单介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AD%94%E6%94%B9"><span class="nav-text">魔改</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#burp%E6%8F%92%E4%BB%B6%E8%B0%83%E8%AF%95"><span class="nav-text">burp插件调试</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">apsry</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">apsry</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
