@@ -436,4 +436,233 @@
     
   </entry>
   
+  <entry>
+    <title>Java反序列化-CommonCollections链一(CC0)</title>
+    <link href="https://apsry.github.io/2022/03/13/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96(CC0)%E5%88%86%E6%9E%90/"/>
+    <id>https://apsry.github.io/2022/03/13/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96(CC0)%E5%88%86%E6%9E%90/</id>
+    <published>2022-03-13T01:26:00.000Z</published>
+    <updated>2022-03-28T15:45:28.833Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;Java反序列化-CommonCollections链一(CC0),InvokerTransformer&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="代码审计" scheme="https://apsry.github.io/categories/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/"/>
+    
+    
+    <category term="java代码审计" scheme="https://apsry.github.io/tags/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/"/>
+    
+    <category term="代码审计" scheme="https://apsry.github.io/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Java反序列化漏洞专题-基础篇(urlDNS)</title>
+    <link href="https://apsry.github.io/2022/03/13/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E4%B8%93%E9%A2%98-%E5%9F%BA%E7%A1%80%E7%AF%87/"/>
+    <id>https://apsry.github.io/2022/03/13/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E4%B8%93%E9%A2%98-%E5%9F%BA%E7%A1%80%E7%AF%87/</id>
+    <published>2022-03-13T00:26:00.000Z</published>
+    <updated>2022-03-13T05:20:26.372Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;Java反序列化漏洞专题-基础篇(urlDNS)&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="代码审计" scheme="https://apsry.github.io/categories/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/"/>
+    
+    
+    <category term="java代码审计" scheme="https://apsry.github.io/tags/java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/"/>
+    
+    <category term="代码审计" scheme="https://apsry.github.io/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>外网信息收集</title>
+    <link href="https://apsry.github.io/2022/03/11/%E7%BA%A2%E9%98%9F%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86%E6%89%93%E7%82%B9checklist/"/>
+    <id>https://apsry.github.io/2022/03/11/%E7%BA%A2%E9%98%9F%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86%E6%89%93%E7%82%B9checklist/</id>
+    <published>2022-03-11T09:26:00.000Z</published>
+    <updated>2022-03-11T09:31:39.318Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;外网信息收集&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="信息收集" scheme="https://apsry.github.io/categories/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/"/>
+    
+    
+    <category term="web渗透" scheme="https://apsry.github.io/tags/web%E6%B8%97%E9%80%8F/"/>
+    
+    <category term="信息收集" scheme="https://apsry.github.io/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>内网笔记</title>
+    <link href="https://apsry.github.io/2022/03/11/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2%E7%AC%94%E8%AE%B0/"/>
+    <id>https://apsry.github.io/2022/03/11/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E6%94%BB%E9%98%B2%E7%AC%94%E8%AE%B0/</id>
+    <published>2022-03-11T07:26:00.000Z</published>
+    <updated>2022-03-11T09:06:02.551Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;内网笔记&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="内网" scheme="https://apsry.github.io/categories/%E5%86%85%E7%BD%91/"/>
+    
+    
+    <category term="web渗透" scheme="https://apsry.github.io/tags/web%E6%B8%97%E9%80%8F/"/>
+    
+    <category term="内网" scheme="https://apsry.github.io/tags/%E5%86%85%E7%BD%91/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>redis漏洞复现</title>
+    <link href="https://apsry.github.io/2022/03/10/redis%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"/>
+    <id>https://apsry.github.io/2022/03/10/redis%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</id>
+    <published>2022-03-10T12:26:00.000Z</published>
+    <updated>2022-03-26T14:42:12.453Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;redis漏洞复现&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="web渗透" scheme="https://apsry.github.io/categories/web%E6%B8%97%E9%80%8F/"/>
+    
+    
+    <category term="web渗透" scheme="https://apsry.github.io/tags/web%E6%B8%97%E9%80%8F/"/>
+    
+    <category term="漏洞复现" scheme="https://apsry.github.io/tags/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>fastjson反序列化笔记</title>
+    <link href="https://apsry.github.io/2022/03/10/fastjson/"/>
+    <id>https://apsry.github.io/2022/03/10/fastjson/</id>
+    <published>2022-03-10T11:26:00.000Z</published>
+    <updated>2022-04-03T14:38:42.767Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;fastjson反序列化笔记&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="代码审计" scheme="https://apsry.github.io/categories/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/"/>
+    
+    
+    <category term="代码审计" scheme="https://apsry.github.io/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/"/>
+    
+    <category term="java" scheme="https://apsry.github.io/tags/java/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>owasp top10</title>
+    <link href="https://apsry.github.io/2022/03/04/OWASP-TOP10/"/>
+    <id>https://apsry.github.io/2022/03/04/OWASP-TOP10/</id>
+    <published>2022-03-04T11:26:00.000Z</published>
+    <updated>2022-03-04T14:14:13.260Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;owasp top10&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="web渗透" scheme="https://apsry.github.io/categories/web%E6%B8%97%E9%80%8F/"/>
+    
+    
+    <category term="web渗透" scheme="https://apsry.github.io/tags/web%E6%B8%97%E9%80%8F/"/>
+    
+    <category term="owasp" scheme="https://apsry.github.io/tags/owasp/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>红日靶场一</title>
+    <link href="https://apsry.github.io/2022/03/04/%E7%BA%A2%E6%97%A5%E9%9D%B6%E5%9C%BA%EF%BC%881%EF%BC%89/"/>
+    <id>https://apsry.github.io/2022/03/04/%E7%BA%A2%E6%97%A5%E9%9D%B6%E5%9C%BA%EF%BC%881%EF%BC%89/</id>
+    <published>2022-03-04T07:26:00.000Z</published>
+    <updated>2022-03-04T08:16:58.921Z</updated>
+    
+    
+    <summary type="html">Here&#39;s something encrypted, password is required to continue reading.</summary>
+    
+    
+    
+    <category term="web渗透" scheme="https://apsry.github.io/categories/web%E6%B8%97%E9%80%8F/"/>
+    
+    
+    <category term="web渗透" scheme="https://apsry.github.io/tags/web%E6%B8%97%E9%80%8F/"/>
+    
+    <category term="靶场" scheme="https://apsry.github.io/tags/%E9%9D%B6%E5%9C%BA/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>kali安装优化</title>
+    <link href="https://apsry.github.io/2022/03/04/kali%E4%BC%98%E5%8C%96/"/>
+    <id>https://apsry.github.io/2022/03/04/kali%E4%BC%98%E5%8C%96/</id>
+    <published>2022-03-04T07:24:00.000Z</published>
+    <updated>2022-03-04T08:46:07.577Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;kali初始化&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="linux" scheme="https://apsry.github.io/categories/linux/"/>
+    
+    
+    <category term="linux" scheme="https://apsry.github.io/tags/linux/"/>
+    
+    <category term="kali" scheme="https://apsry.github.io/tags/kali/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>python兼容问题</title>
+    <link href="https://apsry.github.io/2022/03/04/liunx%20python2%E5%92%8C3%E5%85%BC%E5%AE%B9%E5%92%8C%E5%AE%9A%E6%97%B6%E8%BF%90%E8%A1%8C%E8%84%9A%E6%9C%AC/"/>
+    <id>https://apsry.github.io/2022/03/04/liunx%20python2%E5%92%8C3%E5%85%BC%E5%AE%B9%E5%92%8C%E5%AE%9A%E6%97%B6%E8%BF%90%E8%A1%8C%E8%84%9A%E6%9C%AC/</id>
+    <published>2022-03-04T07:24:00.000Z</published>
+    <updated>2022-03-04T08:14:07.603Z</updated>
+    
+    
+    <summary type="html">Here&#39;s something encrypted, password is required to continue reading.</summary>
+    
+    
+    
+    <category term="linux" scheme="https://apsry.github.io/categories/linux/"/>
+    
+    
+    <category term="linux" scheme="https://apsry.github.io/tags/linux/"/>
+    
+    <category term="python" scheme="https://apsry.github.io/tags/python/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>linux学习</title>
+    <link href="https://apsry.github.io/2022/03/04/linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
+    <id>https://apsry.github.io/2022/03/04/linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</id>
+    <published>2022-03-04T07:23:00.000Z</published>
+    <updated>2022-03-04T07:46:03.794Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;linux学习笔记&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="linux" scheme="https://apsry.github.io/categories/linux/"/>
+    
+    
+    <category term="linux" scheme="https://apsry.github.io/tags/linux/"/>
+    
+  </entry>
+  
 </feed>
