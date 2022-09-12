@@ -6,7 +6,7 @@
   <link href="https://apsry.github.io/atom.xml" rel="self"/>
   
   <link href="https://apsry.github.io/"/>
-  <updated>2022-05-19T16:41:49.191Z</updated>
+  <updated>2022-09-12T07:16:04.109Z</updated>
   <id>https://apsry.github.io/</id>
   
   <author>
@@ -15,6 +15,27 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>SSRF入门</title>
+    <link href="https://apsry.github.io/2022/09/12/ssrf/"/>
+    <id>https://apsry.github.io/2022/09/12/ssrf/</id>
+    <published>2022-09-12T07:26:00.000Z</published>
+    <updated>2022-09-12T07:16:04.109Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;SSRF入门&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="web安全" scheme="https://apsry.github.io/categories/web%E5%AE%89%E5%85%A8/"/>
+    
+    
+    <category term="web安全" scheme="https://apsry.github.io/tags/web%E5%AE%89%E5%85%A8/"/>
+    
+    <category term="SSRF" scheme="https://apsry.github.io/tags/SSRF/"/>
+    
+  </entry>
   
   <entry>
     <title>burp插件的简单入门</title>
